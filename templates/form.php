@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<div class="beruang-form-row">
 			<label for="beruang-description"><?php esc_html_e( 'Description', 'beruang' ); ?></label>
-			<input type="text" id="beruang-description" name="description" placeholder="<?php esc_attr_e( 'Description', 'beruang' ); ?>" />
+			<input type="text" id="beruang-description" name="description" placeholder="<?php esc_attr_e( 'Description', 'beruang' ); ?>" required />
 		</div>
 		<div class="beruang-form-row">
 			<label for="beruang-category"><?php esc_html_e( 'Category', 'beruang' ); ?></label>

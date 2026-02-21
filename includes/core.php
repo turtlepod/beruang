@@ -97,8 +97,9 @@ function enqueue_front_scripts() {
 				'manage_categories'       => __( 'Manage categories', 'beruang' ),
 				'add_category'            => __( 'Add category', 'beruang' ),
 				'update_category'         => __( 'Update category', 'beruang' ),
-				'confirm_delete_category' => __( 'Delete this category?', 'beruang' ),
-				'no_categories'           => __( 'No categories yet.', 'beruang' ),
+				'confirm_delete_category'   => __( 'Delete this category?', 'beruang' ),
+				'confirm_delete_transaction' => __( 'Delete this transaction?', 'beruang' ),
+				'no_categories'             => __( 'No categories yet.', 'beruang' ),
 			),
 		)
 	);

@@ -485,7 +485,8 @@
 	color: #1d2327;
 }
 
-.beruang-tx-actions .beruang-edit-tx-btn {
+.beruang-tx-actions .beruang-edit-tx-btn,
+.beruang-tx-actions .beruang-delete-tx-btn {
 	padding: 0.25em 0.5em;
 	font-size: 0.85em;
 	background: #f0f0f1;
@@ -497,6 +498,12 @@
 
 .beruang-tx-actions .beruang-edit-tx-btn:hover {
 	background: #e0e0e0;
+}
+
+.beruang-tx-actions .beruang-delete-tx-btn:hover {
+	background: #d63638;
+	color: #fff;
+	border-color: #d63638;
 }
 
 .beruang-transaction-item:last-child {

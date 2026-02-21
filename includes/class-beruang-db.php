@@ -439,6 +439,25 @@ class DB {
 	}
 
 	/**
+	 * Delete a transaction (must belong to user).
+	 *
+	 * @param int $user_id User ID.
+	 * @param int $id      Transaction ID.
+	 * @return bool
+	 */
+	public static function delete_transaction( $user_id, $id ) {
+		$table = self::table_transaction();
+		return (bool) self::wpdb()->delete(
+			$table,
+			array(
+				'id'      => absint( $id ),
+				'user_id' => absint( $user_id ),
+			),
+			array( '%d', '%d' )
+		);
+	}
+
+	/**
 	 * Insert a new transaction.
 	 *
 	 * @param int   $user_id User ID.

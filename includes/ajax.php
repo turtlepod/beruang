@@ -22,6 +22,7 @@ function ajax_setup() {
 	add_action( 'wp_ajax_beruang_save_transaction', __NAMESPACE__ . '\ajax_save_transaction' );
 	add_action( 'wp_ajax_beruang_get_transaction', __NAMESPACE__ . '\ajax_get_transaction' );
 	add_action( 'wp_ajax_beruang_update_transaction', __NAMESPACE__ . '\ajax_update_transaction' );
+	add_action( 'wp_ajax_beruang_delete_transaction', __NAMESPACE__ . '\ajax_delete_transaction' );
 	add_action( 'wp_ajax_beruang_get_transactions', __NAMESPACE__ . '\ajax_get_transactions' );
 	add_action( 'wp_ajax_beruang_get_categories', __NAMESPACE__ . '\ajax_get_categories' );
 	add_action( 'wp_ajax_beruang_save_category', __NAMESPACE__ . '\ajax_save_category' );
@@ -150,6 +151,19 @@ function ajax_update_transaction() {
 		wp_send_json_success( array( 'id' => $id ) );
 	}
 	wp_send_json_error( array( 'message' => __( 'Failed to update.', 'beruang' ) ) );
+}
+
+/**
+ * Delete a transaction (must belong to current user).
+ */
+function ajax_delete_transaction() {
+	$user_id = ajax_auth();
+	$id      = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
+	if ( ! $id ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid ID.', 'beruang' ) ) );
+	}
+	$ok = DB::delete_transaction( $user_id, $id );
+	wp_send_json_success( array( 'deleted' => $ok ) );
 }
 
 /**

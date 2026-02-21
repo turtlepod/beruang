@@ -290,7 +290,7 @@
 						html += '<div class="beruang-transaction-item" data-id="' + tx.id + '">';
 						html += '<span class="beruang-tx-desc">' + escapeHtml(tx.description || '—') + '</span>';
 						html += '<span class="beruang-tx-amount ' + tx.type + '">' + (tx.type === 'income' ? '+' : '-') + formatNum(Math.abs(parseFloat(tx.amount))) + '</span>';
-						html += '<span class="beruang-tx-actions"><button type="button" class="beruang-edit-tx-btn">' + (i18n.edit || 'Edit') + '</button></span>';
+						html += '<span class="beruang-tx-actions"><button type="button" class="beruang-edit-tx-btn">' + (i18n.edit || 'Edit') + '</button> <button type="button" class="beruang-delete-tx-btn">' + (i18n.delete || 'Delete') + '</button></span>';
 						html += '</div>';
 					});
 					html += '</div></div>';
@@ -303,6 +303,11 @@
 		}
 
 		jQuery('.beruang-filter-apply').on('click', loadList);
+		jQuery('.beruang-filter-reset').on('click', function () {
+			jQuery('.beruang-filter-search').val('');
+			jQuery('.beruang-filter-category').val('');
+			loadList();
+		});
 
 		// Edit transaction modal
 		var $editModal = jQuery('#beruang-edit-tx-modal');
@@ -344,6 +349,13 @@
 						$editModal.attr('hidden', true);
 						loadList();
 					}
+				});
+			});
+			jQuery(document).on('click', '.beruang-delete-tx-btn', function () {
+				var id = jQuery(this).closest('.beruang-transaction-item').data('id');
+				if (!id || !confirm(i18n.confirm_delete_transaction || 'Delete this transaction?')) return;
+				request('beruang_delete_transaction', { id: id }).done(function (r) {
+					if (r.success) loadList();
 				});
 			});
 		}
