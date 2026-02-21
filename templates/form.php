@@ -1,8 +1,8 @@
 <?php
 /**
- * Template for [mowi-form] shortcode.
+ * Template for [beruang-form] shortcode.
  *
- * @package Mowi
+ * @package Beruang
  * @var string $today      Default date (Y-m-d).
  * @var string $time       Default time (H:i).
  * @var string $currency   Currency code.
@@ -13,24 +13,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="mowi mowi-form-wrapper">
-	<form class="mowi-form" id="mowi-transaction-form">
-		<div class="mowi-form-row mowi-datetime-row">
-			<label for="mowi-date"><?php esc_html_e( 'Date', 'mowi' ); ?></label>
-			<span class="mowi-datetime-wrap">
-				<input type="date" id="mowi-date" name="date" value="<?php echo esc_attr( $today ); ?>" required />
-				<input type="time" id="mowi-time" name="time" value="<?php echo esc_attr( $time ); ?>" />
+<div class="beruang beruang-form-wrapper">
+	<form class="beruang-form" id="beruang-transaction-form">
+		<div class="beruang-form-row beruang-datetime-row">
+			<label for="beruang-date"><?php esc_html_e( 'Date', 'beruang' ); ?></label>
+			<span class="beruang-datetime-wrap">
+				<input type="date" id="beruang-date" name="date" value="<?php echo esc_attr( $today ); ?>" required />
+				<input type="time" id="beruang-time" name="time" value="<?php echo esc_attr( $time ); ?>" />
 			</span>
 		</div>
-		<div class="mowi-form-row">
-			<label for="mowi-description"><?php esc_html_e( 'Description', 'mowi' ); ?></label>
-			<input type="text" id="mowi-description" name="description" placeholder="<?php esc_attr_e( 'Description', 'mowi' ); ?>" />
+		<div class="beruang-form-row">
+			<label for="beruang-description"><?php esc_html_e( 'Description', 'beruang' ); ?></label>
+			<input type="text" id="beruang-description" name="description" placeholder="<?php esc_attr_e( 'Description', 'beruang' ); ?>" />
 		</div>
-		<div class="mowi-form-row">
-			<label for="mowi-category"><?php esc_html_e( 'Category', 'mowi' ); ?></label>
-			<span class="mowi-category-wrap">
-				<select id="mowi-category" name="category_id">
-					<option value="0"><?php esc_html_e( 'Uncategorized', 'mowi' ); ?></option>
+		<div class="beruang-form-row">
+			<label for="beruang-category"><?php esc_html_e( 'Category', 'beruang' ); ?></label>
+			<span class="beruang-category-wrap">
+				<select id="beruang-category" name="category_id">
+					<option value="0"><?php esc_html_e( 'Uncategorized', 'beruang' ); ?></option>
 					<?php
 					foreach ( $categories as $cat ) {
 						$depth  = (int) ( $cat['depth'] ?? 0 );
@@ -39,62 +39,62 @@ if ( ! defined( 'ABSPATH' ) ) {
 					}
 					?>
 				</select>
-				<button type="button" class="mowi-manage-categories-btn" title="<?php esc_attr_e( 'Manage categories', 'mowi' ); ?>" aria-label="<?php esc_attr_e( 'Manage categories', 'mowi' ); ?>"><?php \Mowi\mowi_icon( 'list' ); ?></button>
+				<button type="button" class="beruang-manage-categories-btn" title="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'list' ); ?></button>
 			</span>
 		</div>
-		<div class="mowi-form-row mowi-amount-row">
-			<label for="mowi-amount"><?php esc_html_e( 'Amount', 'mowi' ); ?></label>
-			<span class="mowi-amount-wrap">
-				<input type="number" id="mowi-amount" name="amount" step="0.01" min="0" value="" required placeholder="0" />
-				<button type="button" class="mowi-calc-btn" title="<?php esc_attr_e( 'Calculator', 'mowi' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'mowi' ); ?>"><?php \Mowi\mowi_icon( 'calc' ); ?></button>
+		<div class="beruang-form-row beruang-amount-row">
+			<label for="beruang-amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label>
+			<span class="beruang-amount-wrap">
+				<input type="number" id="beruang-amount" name="amount" step="0.01" min="0" value="" required placeholder="0" />
+				<button type="button" class="beruang-calc-btn" title="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'calc' ); ?></button>
 			</span>
-			<span class="mowi-currency-label"><?php echo esc_html( $currency ); ?></span>
+			<span class="beruang-currency-label"><?php echo esc_html( $currency ); ?></span>
 		</div>
-		<div class="mowi-form-row mowi-type-row">
-			<label><?php esc_html_e( 'Type', 'mowi' ); ?></label>
-			<div class="mowi-type-toggle">
-				<button type="button" class="mowi-type-btn active" data-type="expense"><?php esc_html_e( 'Expense', 'mowi' ); ?></button>
-				<button type="button" class="mowi-type-btn" data-type="income"><?php esc_html_e( 'Income', 'mowi' ); ?></button>
+		<div class="beruang-form-row beruang-type-row">
+			<label><?php esc_html_e( 'Type', 'beruang' ); ?></label>
+			<div class="beruang-type-toggle">
+				<button type="button" class="beruang-type-btn active" data-type="expense"><?php esc_html_e( 'Expense', 'beruang' ); ?></button>
+				<button type="button" class="beruang-type-btn" data-type="income"><?php esc_html_e( 'Income', 'beruang' ); ?></button>
 			</div>
-			<input type="hidden" name="type" id="mowi-type" value="expense" />
+			<input type="hidden" name="type" id="beruang-type" value="expense" />
 		</div>
-		<div class="mowi-form-row mowi-submit-row">
-			<button type="submit" class="mowi-submit"><?php esc_html_e( 'Save', 'mowi' ); ?></button>
-			<span class="mowi-form-message" aria-live="polite"></span>
+		<div class="beruang-form-row beruang-submit-row">
+			<button type="submit" class="beruang-submit"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
+			<span class="beruang-form-message" aria-live="polite"></span>
 		</div>
 	</form>
-	<div class="mowi-calc-modal" id="mowi-calc-modal" hidden>
-		<div class="mowi-calc-content">
-			<input type="text" class="mowi-calc-display" readonly value="0" />
-			<div class="mowi-calc-buttons"></div>
-			<button type="button" class="mowi-calc-close"><?php esc_html_e( 'Close & Insert', 'mowi' ); ?></button>
+	<div class="beruang-calc-modal" id="beruang-calc-modal" hidden>
+		<div class="beruang-calc-content">
+			<input type="text" class="beruang-calc-display" readonly value="0" />
+			<div class="beruang-calc-buttons"></div>
+			<button type="button" class="beruang-calc-close"><?php esc_html_e( 'Close & Insert', 'beruang' ); ?></button>
 		</div>
 	</div>
-	<div class="mowi-categories-modal" id="mowi-categories-modal" hidden>
-		<div class="mowi-categories-modal-inner">
-			<h4><?php esc_html_e( 'Manage categories', 'mowi' ); ?></h4>
-			<form id="mowi-category-form" class="mowi-categories-form">
-				<input type="hidden" id="mowi-cat-edit-id" name="id" value="" />
-				<div class="mowi-form-row">
-					<label for="mowi-cat-name"><?php esc_html_e( 'Name', 'mowi' ); ?></label>
-					<input type="text" id="mowi-cat-name" name="name" required />
+	<div class="beruang-categories-modal" id="beruang-categories-modal" hidden>
+		<div class="beruang-categories-modal-inner">
+			<h4><?php esc_html_e( 'Manage categories', 'beruang' ); ?></h4>
+			<form id="beruang-category-form" class="beruang-categories-form">
+				<input type="hidden" id="beruang-cat-edit-id" name="id" value="" />
+				<div class="beruang-form-row">
+					<label for="beruang-cat-name"><?php esc_html_e( 'Name', 'beruang' ); ?></label>
+					<input type="text" id="beruang-cat-name" name="name" required />
 				</div>
-				<div class="mowi-form-row">
-					<label for="mowi-cat-parent"><?php esc_html_e( 'Parent', 'mowi' ); ?></label>
-					<select id="mowi-cat-parent" name="parent_id">
+				<div class="beruang-form-row">
+					<label for="beruang-cat-parent"><?php esc_html_e( 'Parent', 'beruang' ); ?></label>
+					<select id="beruang-cat-parent" name="parent_id">
 						<option value="0">—</option>
 					</select>
 				</div>
-				<div class="mowi-form-row">
-					<button type="submit" class="mowi-submit mowi-cat-submit-add"><?php esc_html_e( 'Add category', 'mowi' ); ?></button>
-					<button type="button" class="mowi-cat-cancel-edit" style="display:none;"><?php esc_html_e( 'Cancel', 'mowi' ); ?></button>
+				<div class="beruang-form-row">
+					<button type="submit" class="beruang-submit beruang-cat-submit-add"><?php esc_html_e( 'Add category', 'beruang' ); ?></button>
+					<button type="button" class="beruang-cat-cancel-edit" style="display:none;"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
 				</div>
 			</form>
-			<div class="mowi-categories-list-wrap">
-				<p class="mowi-loading mowi-cat-loading"><?php esc_html_e( 'Loading…', 'mowi' ); ?></p>
-				<ul class="mowi-categories-list" id="mowi-categories-list"></ul>
+			<div class="beruang-categories-list-wrap">
+				<p class="beruang-loading beruang-cat-loading"><?php esc_html_e( 'Loading…', 'beruang' ); ?></p>
+				<ul class="beruang-categories-list" id="beruang-categories-list"></ul>
 			</div>
-			<button type="button" class="mowi-categories-modal-close"><?php esc_html_e( 'Close', 'mowi' ); ?></button>
+			<button type="button" class="beruang-categories-modal-close"><?php esc_html_e( 'Close', 'beruang' ); ?></button>
 		</div>
 	</div>
 </div>

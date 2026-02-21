@@ -1,11 +1,11 @@
 <?php
 /**
- * Shortcodes for Mowi.
+ * Shortcodes for Beruang.
  *
- * @package Mowi
+ * @package Beruang
  */
 
-namespace Mowi;
+namespace Beruang;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Register shortcodes.
  */
 function shortcodes_setup() {
-	add_shortcode( 'mowi-form', __NAMESPACE__ . '\shortcode_render_form' );
-	add_shortcode( 'mowi-list', __NAMESPACE__ . '\shortcode_render_list' );
-	add_shortcode( 'mowi-graph', __NAMESPACE__ . '\shortcode_render_graph' );
-	add_shortcode( 'mowi-budget', __NAMESPACE__ . '\shortcode_render_budget' );
+	add_shortcode( 'beruang-form', __NAMESPACE__ . '\shortcode_render_form' );
+	add_shortcode( 'beruang-list', __NAMESPACE__ . '\shortcode_render_list' );
+	add_shortcode( 'beruang-graph', __NAMESPACE__ . '\shortcode_render_graph' );
+	add_shortcode( 'beruang-budget', __NAMESPACE__ . '\shortcode_render_budget' );
 }
 add_action( 'init', __NAMESPACE__ . '\shortcodes_setup' );
 
@@ -30,7 +30,7 @@ add_action( 'init', __NAMESPACE__ . '\shortcodes_setup' );
  * @return void
  */
 function shortcode_load_template( $name, $args = array() ) {
-	$path = MOWI_PLUGIN_DIR . 'templates/' . $name;
+	$path = BERUANG_PLUGIN_DIR . 'templates/' . $name;
 	if ( ! file_exists( $path ) ) {
 		return;
 	}
@@ -41,34 +41,34 @@ function shortcode_load_template( $name, $args = array() ) {
 }
 
 /**
- * [mowi-form]
+ * [beruang-form]
  *
  * @param array $atts Shortcode attributes.
  * @return string
  */
 function shortcode_render_form( $atts ) {
 	if ( ! is_user_logged_in() ) {
-		return '<p class="mowi-login-required">' . esc_html__( 'Please log in to add transactions.', 'mowi' ) . '</p>';
+		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to add transactions.', 'beruang' ) . '</p>';
 	}
 	ob_start();
 	shortcode_load_template( 'form.php', array(
 		'today'      => current_time( 'Y-m-d' ),
 		'time'       => current_time( 'H:i' ),
-		'currency'   => get_option( 'mowi_currency', 'IDR' ),
+		'currency'   => get_option( 'beruang_currency', 'IDR' ),
 		'categories' => DB::get_categories_flat( get_current_user_id(), true ),
 	) );
 	return ob_get_clean();
 }
 
 /**
- * [mowi-list]
+ * [beruang-list]
  *
  * @param array $atts Shortcode attributes.
  * @return string
  */
 function shortcode_render_list( $atts ) {
 	if ( ! is_user_logged_in() ) {
-		return '<p class="mowi-login-required">' . esc_html__( 'Please log in to view transactions.', 'mowi' ) . '</p>';
+		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view transactions.', 'beruang' ) . '</p>';
 	}
 	ob_start();
 	shortcode_load_template( 'list.php', array(
@@ -80,14 +80,14 @@ function shortcode_render_list( $atts ) {
 }
 
 /**
- * [mowi-graph]
+ * [beruang-graph]
  *
  * @param array $atts Shortcode attributes.
  * @return string
  */
 function shortcode_render_graph( $atts ) {
 	if ( ! is_user_logged_in() ) {
-		return '<p class="mowi-login-required">' . esc_html__( 'Please log in to view graphs.', 'mowi' ) . '</p>';
+		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view graphs.', 'beruang' ) . '</p>';
 	}
 	ob_start();
 	shortcode_load_template( 'graph.php', array(
@@ -97,18 +97,18 @@ function shortcode_render_graph( $atts ) {
 }
 
 /**
- * [mowi-budget]
+ * [beruang-budget]
  *
  * @param array $atts Shortcode attributes.
  * @return string
  */
 function shortcode_render_budget( $atts ) {
 	if ( ! is_user_logged_in() ) {
-		return '<p class="mowi-login-required">' . esc_html__( 'Please log in to view budgets.', 'mowi' ) . '</p>';
+		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view budgets.', 'beruang' ) . '</p>';
 	}
 	ob_start();
 	shortcode_load_template( 'budget.php', array(
-		'currency'   => get_option( 'mowi_currency', 'IDR' ),
+		'currency'   => get_option( 'beruang_currency', 'IDR' ),
 		'categories' => DB::get_categories_flat( get_current_user_id(), true ),
 	) );
 	return ob_get_clean();
@@ -122,10 +122,10 @@ function shortcode_render_budget( $atts ) {
  * @return string
  */
 function shortcode_format_amount( $amount, $currency = '' ) {
-	$dec = get_option( 'mowi_decimal_sep', ',' );
-	$thou = get_option( 'mowi_thousands_sep', '.' );
+	$dec = get_option( 'beruang_decimal_sep', ',' );
+	$thou = get_option( 'beruang_thousands_sep', '.' );
 	if ( $currency === '' ) {
-		$currency = get_option( 'mowi_currency', 'IDR' );
+		$currency = get_option( 'beruang_currency', 'IDR' );
 	}
 	$formatted = number_format( (float) $amount, $dec === '.' ? 2 : 0, $dec, $thou );
 	return $formatted . ' ' . $currency;

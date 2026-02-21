@@ -1,11 +1,11 @@
 <?php
 /**
- * WP-CLI commands for Mowi.
+ * WP-CLI commands for Beruang.
  *
- * @package Mowi
+ * @package Beruang
  */
 
-namespace Mowi;
+namespace Beruang;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -57,7 +57,7 @@ class CLI {
 			$this->transaction_list( $assoc_args );
 			return;
 		}
-		\WP_CLI::error( 'Usage: wp mowi transaction list [--user_id=] [--year=] [--month=] [--type=] [--format=] [--fields=] [--per_page=] [--page=]' );
+		\WP_CLI::error( 'Usage: wp beruang transaction list [--user_id=] [--year=] [--month=] [--type=] [--format=] [--fields=] [--per_page=] [--page=]' );
 	}
 
 	private function transaction_list( $assoc_args ) {
@@ -112,7 +112,7 @@ class CLI {
 			$this->category_list( $assoc_args );
 			return;
 		}
-		\WP_CLI::error( 'Usage: wp mowi category list [--user_id=] [--format=] [--fields=]' );
+		\WP_CLI::error( 'Usage: wp beruang category list [--user_id=] [--format=] [--fields=]' );
 	}
 
 	private function category_list( $assoc_args ) {
@@ -152,7 +152,7 @@ class CLI {
 			$this->budget_list( $assoc_args );
 			return;
 		}
-		\WP_CLI::error( 'Usage: wp mowi budget list [--user_id=] [--format=] [--fields=]' );
+		\WP_CLI::error( 'Usage: wp beruang budget list [--user_id=] [--format=] [--fields=]' );
 	}
 
 	private function budget_list( $assoc_args ) {
@@ -195,7 +195,7 @@ class CLI {
 			$this->budget_category_list( $assoc_args );
 			return;
 		}
-		\WP_CLI::error( 'Usage: wp mowi budget-category list [--budget_id=] [--category_id=] [--format=] [--fields=]' );
+		\WP_CLI::error( 'Usage: wp beruang budget-category list [--budget_id=] [--category_id=] [--format=] [--fields=]' );
 	}
 
 	private function budget_category_list( $assoc_args ) {

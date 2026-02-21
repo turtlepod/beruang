@@ -1,11 +1,11 @@
 <?php
 /**
- * AJAX handlers for Mowi (frontend shortcodes).
+ * AJAX handlers for Beruang (frontend shortcodes).
  *
- * @package Mowi
+ * @package Beruang
  */
 
-namespace Mowi;
+namespace Beruang;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,18 +15,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Register AJAX action hooks. Hooked to init.
  */
 function ajax_setup() {
-	add_action( 'wp_ajax_mowi_save_transaction', __NAMESPACE__ . '\ajax_save_transaction' );
-	add_action( 'wp_ajax_mowi_get_transaction', __NAMESPACE__ . '\ajax_get_transaction' );
-	add_action( 'wp_ajax_mowi_update_transaction', __NAMESPACE__ . '\ajax_update_transaction' );
-	add_action( 'wp_ajax_mowi_get_transactions', __NAMESPACE__ . '\ajax_get_transactions' );
-	add_action( 'wp_ajax_mowi_get_categories', __NAMESPACE__ . '\ajax_get_categories' );
-	add_action( 'wp_ajax_mowi_save_category', __NAMESPACE__ . '\ajax_save_category' );
-	add_action( 'wp_ajax_mowi_delete_category', __NAMESPACE__ . '\ajax_delete_category' );
-	add_action( 'wp_ajax_mowi_get_budgets', __NAMESPACE__ . '\ajax_get_budgets' );
-	add_action( 'wp_ajax_mowi_get_budget', __NAMESPACE__ . '\ajax_get_budget' );
-	add_action( 'wp_ajax_mowi_save_budget', __NAMESPACE__ . '\ajax_save_budget' );
-	add_action( 'wp_ajax_mowi_delete_budget', __NAMESPACE__ . '\ajax_delete_budget' );
-	add_action( 'wp_ajax_mowi_get_graph_data', __NAMESPACE__ . '\ajax_get_graph_data' );
+	add_action( 'wp_ajax_beruang_save_transaction', __NAMESPACE__ . '\ajax_save_transaction' );
+	add_action( 'wp_ajax_beruang_get_transaction', __NAMESPACE__ . '\ajax_get_transaction' );
+	add_action( 'wp_ajax_beruang_update_transaction', __NAMESPACE__ . '\ajax_update_transaction' );
+	add_action( 'wp_ajax_beruang_get_transactions', __NAMESPACE__ . '\ajax_get_transactions' );
+	add_action( 'wp_ajax_beruang_get_categories', __NAMESPACE__ . '\ajax_get_categories' );
+	add_action( 'wp_ajax_beruang_save_category', __NAMESPACE__ . '\ajax_save_category' );
+	add_action( 'wp_ajax_beruang_delete_category', __NAMESPACE__ . '\ajax_delete_category' );
+	add_action( 'wp_ajax_beruang_get_budgets', __NAMESPACE__ . '\ajax_get_budgets' );
+	add_action( 'wp_ajax_beruang_get_budget', __NAMESPACE__ . '\ajax_get_budget' );
+	add_action( 'wp_ajax_beruang_save_budget', __NAMESPACE__ . '\ajax_save_budget' );
+	add_action( 'wp_ajax_beruang_delete_budget', __NAMESPACE__ . '\ajax_delete_budget' );
+	add_action( 'wp_ajax_beruang_get_graph_data', __NAMESPACE__ . '\ajax_get_graph_data' );
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\ajax_setup' );
 
@@ -37,10 +37,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\ajax_setup' );
  */
 function ajax_auth() {
 	if ( ! is_user_logged_in() ) {
-		wp_send_json_error( array( 'message' => __( 'Not logged in.', 'mowi' ) ) );
+		wp_send_json_error( array( 'message' => __( 'Not logged in.', 'beruang' ) ) );
 	}
-	if ( ! check_ajax_referer( 'mowi_ajax', 'nonce', false ) ) {
-		wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'mowi' ) ) );
+	if ( ! check_ajax_referer( 'beruang_ajax', 'nonce', false ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'beruang' ) ) );
 	}
 	return get_current_user_id();
 }
@@ -68,7 +68,7 @@ function ajax_save_transaction() {
 	if ( $id ) {
 		wp_send_json_success( array( 'id' => $id ) );
 	}
-	wp_send_json_error( array( 'message' => __( 'Failed to save.', 'mowi' ) ) );
+	wp_send_json_error( array( 'message' => __( 'Failed to save.', 'beruang' ) ) );
 }
 
 /**
@@ -102,11 +102,11 @@ function ajax_get_transaction() {
 	$user_id = ajax_auth();
 	$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
 	if ( ! $id ) {
-		wp_send_json_error( array( 'message' => __( 'Invalid ID.', 'mowi' ) ) );
+		wp_send_json_error( array( 'message' => __( 'Invalid ID.', 'beruang' ) ) );
 	}
 	$row = DB::get_transaction_for_user( $user_id, $id );
 	if ( ! $row ) {
-		wp_send_json_error( array( 'message' => __( 'Transaction not found.', 'mowi' ) ) );
+		wp_send_json_error( array( 'message' => __( 'Transaction not found.', 'beruang' ) ) );
 	}
 	wp_send_json_success( array( 'transaction' => $row ) );
 }
@@ -118,11 +118,11 @@ function ajax_update_transaction() {
 	$user_id = ajax_auth();
 	$id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 	if ( ! $id ) {
-		wp_send_json_error( array( 'message' => __( 'Invalid ID.', 'mowi' ) ) );
+		wp_send_json_error( array( 'message' => __( 'Invalid ID.', 'beruang' ) ) );
 	}
 	$existing = DB::get_transaction_for_user( $user_id, $id );
 	if ( ! $existing ) {
-		wp_send_json_error( array( 'message' => __( 'Transaction not found.', 'mowi' ) ) );
+		wp_send_json_error( array( 'message' => __( 'Transaction not found.', 'beruang' ) ) );
 	}
 	$data = array(
 		'date'        => isset( $_POST['date'] ) ? sanitize_text_field( $_POST['date'] ) : $existing['date'],
@@ -139,7 +139,7 @@ function ajax_update_transaction() {
 	if ( $ok ) {
 		wp_send_json_success( array( 'id' => $id ) );
 	}
-	wp_send_json_error( array( 'message' => __( 'Failed to update.', 'mowi' ) ) );
+	wp_send_json_error( array( 'message' => __( 'Failed to update.', 'beruang' ) ) );
 }
 
 /**
@@ -160,13 +160,13 @@ function ajax_save_category() {
 	$name = isset( $_POST['name'] ) ? sanitize_text_field( $_POST['name'] ) : '';
 	$parent_id = isset( $_POST['parent_id'] ) ? absint( $_POST['parent_id'] ) : 0;
 	if ( $name === '' ) {
-		wp_send_json_error( array( 'message' => __( 'Name required.', 'mowi' ) ) );
+		wp_send_json_error( array( 'message' => __( 'Name required.', 'beruang' ) ) );
 	}
 	$saved = DB::save_category( $user_id, array( 'name' => $name, 'parent_id' => $parent_id ), $id );
 	if ( $saved ) {
 		wp_send_json_success( array( 'id' => $saved ) );
 	}
-	wp_send_json_error( array( 'message' => __( 'Failed to save category.', 'mowi' ) ) );
+	wp_send_json_error( array( 'message' => __( 'Failed to save category.', 'beruang' ) ) );
 }
 
 /**
@@ -176,7 +176,7 @@ function ajax_delete_category() {
 	$user_id = ajax_auth();
 	$id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 	if ( ! $id ) {
-		wp_send_json_error( array( 'message' => __( 'Invalid ID.', 'mowi' ) ) );
+		wp_send_json_error( array( 'message' => __( 'Invalid ID.', 'beruang' ) ) );
 	}
 	$ok = DB::delete_category( $user_id, $id );
 	wp_send_json_success( array( 'deleted' => $ok ) );
@@ -211,11 +211,11 @@ function ajax_get_budget() {
 	$user_id = ajax_auth();
 	$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
 	if ( ! $id ) {
-		wp_send_json_error( array( 'message' => __( 'Invalid ID.', 'mowi' ) ) );
+		wp_send_json_error( array( 'message' => __( 'Invalid ID.', 'beruang' ) ) );
 	}
 	$row = DB::get_budget_for_user( $user_id, $id );
 	if ( ! $row ) {
-		wp_send_json_error( array( 'message' => __( 'Budget not found.', 'mowi' ) ) );
+		wp_send_json_error( array( 'message' => __( 'Budget not found.', 'beruang' ) ) );
 	}
 	wp_send_json_success( array( 'budget' => $row ) );
 }
@@ -234,7 +234,7 @@ function ajax_save_budget() {
 		$category_ids = array_map( 'absint', $_POST['category_ids'] );
 	}
 	if ( $name === '' ) {
-		wp_send_json_error( array( 'message' => __( 'Name required.', 'mowi' ) ) );
+		wp_send_json_error( array( 'message' => __( 'Name required.', 'beruang' ) ) );
 	}
 	$saved = DB::save_budget( $user_id, array(
 		'name' => $name,
@@ -245,7 +245,7 @@ function ajax_save_budget() {
 	if ( $saved ) {
 		wp_send_json_success( array( 'id' => $saved ) );
 	}
-	wp_send_json_error( array( 'message' => __( 'Failed to save budget.', 'mowi' ) ) );
+	wp_send_json_error( array( 'message' => __( 'Failed to save budget.', 'beruang' ) ) );
 }
 
 /**
@@ -255,7 +255,7 @@ function ajax_delete_budget() {
 	$user_id = ajax_auth();
 	$id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 	if ( ! $id ) {
-		wp_send_json_error( array( 'message' => __( 'Invalid ID.', 'mowi' ) ) );
+		wp_send_json_error( array( 'message' => __( 'Invalid ID.', 'beruang' ) ) );
 	}
 	$ok = DB::delete_budget( $user_id, $id );
 	wp_send_json_success( array( 'deleted' => $ok ) );

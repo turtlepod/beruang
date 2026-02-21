@@ -1,11 +1,11 @@
 <?php
 /**
- * Database schema and CRUD for Mowi.
+ * Database schema and CRUD for Beruang.
  *
- * @package Mowi
+ * @package Beruang
  */
 
-namespace Mowi;
+namespace Beruang;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class DB {
 
 	const DB_VERSION = 1;
-	const OPTION_DB_VERSION = 'mowi_db_version';
+	const OPTION_DB_VERSION = 'beruang_db_version';
 
 	/**
 	 * @var \wpdb
@@ -28,28 +28,28 @@ class DB {
 	 * @return string
 	 */
 	public static function table_category() {
-		return self::wpdb()->prefix . 'mowi_category';
+		return self::wpdb()->prefix . 'beruang_category';
 	}
 
 	/**
 	 * @return string
 	 */
 	public static function table_transaction() {
-		return self::wpdb()->prefix . 'mowi_transaction';
+		return self::wpdb()->prefix . 'beruang_transaction';
 	}
 
 	/**
 	 * @return string
 	 */
 	public static function table_budget() {
-		return self::wpdb()->prefix . 'mowi_budget';
+		return self::wpdb()->prefix . 'beruang_budget';
 	}
 
 	/**
 	 * @return string
 	 */
 	public static function table_budget_category() {
-		return self::wpdb()->prefix . 'mowi_budget_category';
+		return self::wpdb()->prefix . 'beruang_budget_category';
 	}
 
 	/**

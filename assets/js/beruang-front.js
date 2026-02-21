@@ -1,10 +1,10 @@
 (function () {
 	'use strict';
 
-	var mowi = window.mowiData || {};
-	var ajaxUrl = mowi.ajax_url || '';
-	var nonce = mowi.nonce || '';
-	var i18n = mowi.i18n || {};
+	var beruang = window.beruangData || {};
+	var ajaxUrl = beruang.ajax_url || '';
+	var nonce = beruang.nonce || '';
+	var i18n = beruang.i18n || {};
 
 	function request(action, data, method) {
 		data = data || {};
@@ -20,15 +20,15 @@
 
 	// --- Form ---
 	jQuery(function () {
-		var $form = jQuery('#mowi-transaction-form');
+		var $form = jQuery('#beruang-transaction-form');
 		if (!$form.length) return;
 
-		var $typeField = jQuery('#mowi-type');
-		var $message = $form.find('.mowi-form-message');
+		var $typeField = jQuery('#beruang-type');
+		var $message = $form.find('.beruang-form-message');
 
-		jQuery('.mowi-type-btn').on('click', function () {
+		jQuery('.beruang-type-btn').on('click', function () {
 			var t = jQuery(this).data('type');
-			jQuery('.mowi-type-btn').removeClass('active');
+			jQuery('.beruang-type-btn').removeClass('active');
 			jQuery(this).addClass('active');
 			$typeField.val(t);
 		});
@@ -44,7 +44,7 @@
 				amount: $form.find('[name="amount"]').val(),
 				type: $typeField.val(),
 			};
-			request('mowi_save_transaction', data).done(function (r) {
+			request('beruang_save_transaction', data).done(function (r) {
 				if (r.success) {
 					$message.text(i18n.saved || 'Saved.').css('color', '#00a32a');
 					$form.find('[name="description"]').val('');
@@ -58,15 +58,15 @@
 		});
 
 		// Manage categories modal
-		var $catModal = jQuery('#mowi-categories-modal');
-		var $catForm = jQuery('#mowi-category-form');
-		var $catList = jQuery('#mowi-categories-list');
-		var $catEditId = jQuery('#mowi-cat-edit-id');
-		var $catName = jQuery('#mowi-cat-name');
-		var $catParent = jQuery('#mowi-cat-parent');
-		var $catSubmitBtn = $catForm.find('.mowi-cat-submit-add');
-		var $catCancelBtn = $catForm.find('.mowi-cat-cancel-edit');
-		var $mainCategorySelect = jQuery('#mowi-category');
+		var $catModal = jQuery('#beruang-categories-modal');
+		var $catForm = jQuery('#beruang-category-form');
+		var $catList = jQuery('#beruang-categories-list');
+		var $catEditId = jQuery('#beruang-cat-edit-id');
+		var $catName = jQuery('#beruang-cat-name');
+		var $catParent = jQuery('#beruang-cat-parent');
+		var $catSubmitBtn = $catForm.find('.beruang-cat-submit-add');
+		var $catCancelBtn = $catForm.find('.beruang-cat-cancel-edit');
+		var $mainCategorySelect = jQuery('#beruang-category');
 
 		function buildCategoryOptions(categories, excludeId) {
 			var opts = '<option value="0">—</option>';
@@ -90,7 +90,7 @@
 		}
 
 		function refreshCategoriesInModal(excludeId, selectedParentId) {
-			request('mowi_get_categories').done(function (r) {
+			request('beruang_get_categories').done(function (r) {
 				if (!r.success || !r.data || !r.data.categories) return;
 				var cats = r.data.categories;
 				$catParent[0].innerHTML = buildCategoryOptions(cats, excludeId);
@@ -100,30 +100,30 @@
 				cats.forEach(function (c) {
 					var depth = parseInt(c.depth, 10) || 0;
 					var indent = new Array(depth + 1).join('— ');
-					listHtml += '<li class="mowi-cat-item" data-id="' + c.id + '" data-name="' + escapeHtml(c.name || '') + '" data-parent="' + (c.parent_id || 0) + '">';
-					listHtml += '<span class="mowi-cat-item-name">' + escapeHtml(indent + (c.name || '')) + '</span>';
-					listHtml += ' <button type="button" class="mowi-cat-edit-btn">' + (i18n.edit || 'Edit') + '</button>';
-					listHtml += ' <button type="button" class="mowi-cat-delete-btn">' + (i18n.delete || 'Delete') + '</button>';
+					listHtml += '<li class="beruang-cat-item" data-id="' + c.id + '" data-name="' + escapeHtml(c.name || '') + '" data-parent="' + (c.parent_id || 0) + '">';
+					listHtml += '<span class="beruang-cat-item-name">' + escapeHtml(indent + (c.name || '')) + '</span>';
+					listHtml += ' <button type="button" class="beruang-cat-edit-btn">' + (i18n.edit || 'Edit') + '</button>';
+					listHtml += ' <button type="button" class="beruang-cat-delete-btn">' + (i18n.delete || 'Delete') + '</button>';
 					listHtml += '</li>';
 				});
-				$catList.html(listHtml || '<li class="mowi-cat-empty">' + (i18n.no_categories || 'No categories yet.') + '</li>');
-				jQuery('.mowi-cat-loading').hide();
+				$catList.html(listHtml || '<li class="beruang-cat-empty">' + (i18n.no_categories || 'No categories yet.') + '</li>');
+				jQuery('.beruang-cat-loading').hide();
 			});
 		}
 
-		jQuery('.mowi-manage-categories-btn').on('click', function () {
+		jQuery('.beruang-manage-categories-btn').on('click', function () {
 			$catEditId.val('');
 			$catName.val('');
 			$catParent.val('0');
 			$catSubmitBtn.text(i18n.add_category || 'Add category').show();
 			$catCancelBtn.hide();
 			$catModal.attr('hidden', false);
-			jQuery('.mowi-cat-loading').show();
+			jQuery('.beruang-cat-loading').show();
 			$catList.empty();
 			refreshCategoriesInModal();
 		});
 
-		$catModal.find('.mowi-categories-modal-close').on('click', function () { $catModal.attr('hidden', true); });
+		$catModal.find('.beruang-categories-modal-close').on('click', function () { $catModal.attr('hidden', true); });
 		$catModal.on('click', function (e) {
 			if (e.target === $catModal[0]) $catModal.attr('hidden', true);
 		});
@@ -133,7 +133,7 @@
 			var id = $catEditId.val();
 			var name = $catName.val();
 			var parentId = $catParent.val() || '0';
-			request('mowi_save_category', { id: id || 0, name: name, parent_id: parentId }).done(function (r) {
+			request('beruang_save_category', { id: id || 0, name: name, parent_id: parentId }).done(function (r) {
 				if (r.success) {
 					$catEditId.val('');
 					$catName.val('');
@@ -153,8 +153,8 @@
 			$catCancelBtn.hide();
 		});
 
-		jQuery(document).on('click', '.mowi-cat-edit-btn', function () {
-			var $li = jQuery(this).closest('.mowi-cat-item');
+		jQuery(document).on('click', '.beruang-cat-edit-btn', function () {
+			var $li = jQuery(this).closest('.beruang-cat-item');
 			var id = $li.data('id');
 			var name = $li.data('name');
 			var parent = $li.data('parent');
@@ -165,25 +165,25 @@
 			refreshCategoriesInModal(id, parent || '0');
 		});
 
-		jQuery(document).on('click', '.mowi-cat-delete-btn', function () {
-			var id = jQuery(this).closest('.mowi-cat-item').data('id');
+		jQuery(document).on('click', '.beruang-cat-delete-btn', function () {
+			var id = jQuery(this).closest('.beruang-cat-item').data('id');
 			if (!id || !confirm(i18n.confirm_delete_category || 'Delete this category?')) return;
-			request('mowi_delete_category', { id: id }).done(function (r) {
+			request('beruang_delete_category', { id: id }).done(function (r) {
 				if (r.success) refreshCategoriesInModal();
 			});
 		});
 
 		// Calculator button: simple modal with basic calc
-		var $calcBtn = $form.find('.mowi-calc-btn');
-		var $calcModal = jQuery('#mowi-calc-modal');
-		var $calcDisplay = $calcModal.find('.mowi-calc-display');
-		var $amountInput = $form.find('#mowi-amount');
+		var $calcBtn = $form.find('.beruang-calc-btn');
+		var $calcModal = jQuery('#beruang-calc-modal');
+		var $calcDisplay = $calcModal.find('.beruang-calc-display');
+		var $amountInput = $form.find('#beruang-amount');
 		if ($calcModal.length && $calcBtn.length) {
 			$calcBtn.on('click', function () {
 				$calcDisplay.val($amountInput.val() || '0');
 				$calcModal.attr('hidden', false);
 			});
-			$calcModal.find('.mowi-calc-close').on('click', function () {
+			$calcModal.find('.beruang-calc-close').on('click', function () {
 				$amountInput.val($calcDisplay.val());
 				$calcModal.attr('hidden', true);
 			});
@@ -202,7 +202,7 @@
 				['0','00','000','.'],
 				['=','+','-','*']
 			];
-			var $container = $calcModal.find('.mowi-calc-buttons');
+			var $container = $calcModal.find('.beruang-calc-buttons');
 			$container.empty();
 			btns.forEach(function (row) {
 				row.forEach(function (key) {
@@ -237,11 +237,11 @@
 
 	// --- List ---
 	jQuery(function () {
-		var $accordion = jQuery('#mowi-list-accordion');
+		var $accordion = jQuery('#beruang-list-accordion');
 		if (!$accordion.length) return;
 
-		var $filters = jQuery('#mowi-list-filters');
-		var $filterBtn = jQuery('.mowi-filter-btn');
+		var $filters = jQuery('#beruang-list-filters');
+		var $filterBtn = jQuery('.beruang-filter-btn');
 		if ($filterBtn.length) {
 			$filterBtn.on('click', function () {
 				var hidden = $filters.attr('hidden');
@@ -253,10 +253,10 @@
 		function loadList() {
 			var month = $accordion.data('month');
 			var year = $accordion.data('year');
-			var search = jQuery('.mowi-filter-search').val() || '';
-			var categoryId = jQuery('.mowi-filter-category').val() || '';
-			$accordion.html('<p class="mowi-loading">' + (i18n.loading || 'Loading…') + '</p>');
-			request('mowi_get_transactions', {
+			var search = jQuery('.beruang-filter-search').val() || '';
+			var categoryId = jQuery('.beruang-filter-category').val() || '';
+			$accordion.html('<p class="beruang-loading">' + (i18n.loading || 'Loading…') + '</p>');
+			request('beruang_get_transactions', {
 				month: month,
 				year: year,
 				search: search,
@@ -264,7 +264,7 @@
 				page: 1
 			}, 'GET').done(function (r) {
 				if (!r.success || !r.data || !r.data.items) {
-					$accordion.html('<p class="mowi-loading">' + (i18n.error || 'Error') + '</p>');
+					$accordion.html('<p class="beruang-loading">' + (i18n.error || 'Error') + '</p>');
 					return;
 				}
 				var items = r.data.items;
@@ -283,63 +283,63 @@
 						var amt = parseFloat(tx.amount);
 						dayTotal += tx.type === 'income' ? amt : -amt;
 					});
-					html += '<div class="mowi-accordion-group">';
-					html += '<div class="mowi-accordion-head"><span>' + date + '</span><span>' + formatNum(dayTotal) + '</span></div>';
-					html += '<div class="mowi-accordion-body">';
+					html += '<div class="beruang-accordion-group">';
+					html += '<div class="beruang-accordion-head"><span>' + date + '</span><span>' + formatNum(dayTotal) + '</span></div>';
+					html += '<div class="beruang-accordion-body">';
 					dayItems.forEach(function (tx) {
-						html += '<div class="mowi-transaction-item" data-id="' + tx.id + '">';
-						html += '<span class="mowi-tx-desc">' + escapeHtml(tx.description || '—') + '</span>';
-						html += '<span class="mowi-tx-amount ' + tx.type + '">' + (tx.type === 'income' ? '+' : '-') + formatNum(Math.abs(parseFloat(tx.amount))) + '</span>';
-						html += '<span class="mowi-tx-actions"><button type="button" class="mowi-edit-tx-btn">' + (i18n.edit || 'Edit') + '</button></span>';
+						html += '<div class="beruang-transaction-item" data-id="' + tx.id + '">';
+						html += '<span class="beruang-tx-desc">' + escapeHtml(tx.description || '—') + '</span>';
+						html += '<span class="beruang-tx-amount ' + tx.type + '">' + (tx.type === 'income' ? '+' : '-') + formatNum(Math.abs(parseFloat(tx.amount))) + '</span>';
+						html += '<span class="beruang-tx-actions"><button type="button" class="beruang-edit-tx-btn">' + (i18n.edit || 'Edit') + '</button></span>';
 						html += '</div>';
 					});
 					html += '</div></div>';
 				});
-				if (!dates.length) html = '<p class="mowi-loading">' + (i18n.no_transactions || 'No transactions.') + '</p>';
+				if (!dates.length) html = '<p class="beruang-loading">' + (i18n.no_transactions || 'No transactions.') + '</p>';
 				$accordion.html(html);
 			}).fail(function () {
-				$accordion.html('<p class="mowi-loading">' + (i18n.error || 'Error') + '</p>');
+				$accordion.html('<p class="beruang-loading">' + (i18n.error || 'Error') + '</p>');
 			});
 		}
 
-		jQuery('.mowi-filter-apply').on('click', loadList);
+		jQuery('.beruang-filter-apply').on('click', loadList);
 
 		// Edit transaction modal
-		var $editModal = jQuery('#mowi-edit-tx-modal');
-		var $editForm = jQuery('#mowi-edit-tx-form');
+		var $editModal = jQuery('#beruang-edit-tx-modal');
+		var $editForm = jQuery('#beruang-edit-tx-form');
 		if ($editModal.length && $editForm.length) {
-			jQuery(document).on('click', '.mowi-edit-tx-btn', function () {
-				var id = jQuery(this).closest('.mowi-transaction-item').data('id');
+			jQuery(document).on('click', '.beruang-edit-tx-btn', function () {
+				var id = jQuery(this).closest('.beruang-transaction-item').data('id');
 				if (!id) return;
-				request('mowi_get_transaction', { id: id }, 'GET').done(function (r) {
+				request('beruang_get_transaction', { id: id }, 'GET').done(function (r) {
 					if (!r.success || !r.data || !r.data.transaction) return;
 					var t = r.data.transaction;
-					jQuery('#mowi-edit-tx-id').val(t.id);
-					jQuery('#mowi-edit-tx-date').val(t.date || '');
-					jQuery('#mowi-edit-tx-time').val(t.time || '');
-					jQuery('#mowi-edit-tx-description').val(t.description || '');
-					jQuery('#mowi-edit-tx-category').val(t.category_id || '0');
-					jQuery('#mowi-edit-tx-amount').val(t.amount);
-					jQuery('#mowi-edit-tx-type').val(t.type === 'income' ? 'income' : 'expense');
+					jQuery('#beruang-edit-tx-id').val(t.id);
+					jQuery('#beruang-edit-tx-date').val(t.date || '');
+					jQuery('#beruang-edit-tx-time').val(t.time || '');
+					jQuery('#beruang-edit-tx-description').val(t.description || '');
+					jQuery('#beruang-edit-tx-category').val(t.category_id || '0');
+					jQuery('#beruang-edit-tx-amount').val(t.amount);
+					jQuery('#beruang-edit-tx-type').val(t.type === 'income' ? 'income' : 'expense');
 					$editModal.attr('hidden', false);
 				});
 			});
-			jQuery('.mowi-edit-tx-cancel').on('click', function () { $editModal.attr('hidden', true); });
+			jQuery('.beruang-edit-tx-cancel').on('click', function () { $editModal.attr('hidden', true); });
 			$editModal.on('click', function (e) {
 				if (e.target === $editModal[0]) $editModal.attr('hidden', true);
 			});
 			$editForm.on('submit', function (e) {
 				e.preventDefault();
 				var data = {
-					id: jQuery('#mowi-edit-tx-id').val(),
-					date: jQuery('#mowi-edit-tx-date').val(),
-					time: jQuery('#mowi-edit-tx-time').val() || null,
-					description: jQuery('#mowi-edit-tx-description').val(),
-					category_id: jQuery('#mowi-edit-tx-category').val() || 0,
-					amount: jQuery('#mowi-edit-tx-amount').val(),
-					type: jQuery('#mowi-edit-tx-type').val()
+					id: jQuery('#beruang-edit-tx-id').val(),
+					date: jQuery('#beruang-edit-tx-date').val(),
+					time: jQuery('#beruang-edit-tx-time').val() || null,
+					description: jQuery('#beruang-edit-tx-description').val(),
+					category_id: jQuery('#beruang-edit-tx-category').val() || 0,
+					amount: jQuery('#beruang-edit-tx-amount').val(),
+					type: jQuery('#beruang-edit-tx-type').val()
 				};
-				request('mowi_update_transaction', data).done(function (r) {
+				request('beruang_update_transaction', data).done(function (r) {
 					if (r.success) {
 						$editModal.attr('hidden', true);
 						loadList();
@@ -352,12 +352,12 @@
 	});
 
 	function formatNum(n) {
-		var dec = mowi.decimal_sep || ',';
-		var thou = mowi.thousands_sep || '.';
+		var dec = beruang.decimal_sep || ',';
+		var thou = beruang.thousands_sep || '.';
 		var s = Number(n).toFixed(dec === '.' ? 2 : 0);
 		var parts = s.split('.');
 		parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thou);
-		return parts.join(dec) + ' ' + (mowi.currency || 'IDR');
+		return parts.join(dec) + ' ' + (beruang.currency || 'IDR');
 	}
 
 	function escapeHtml(s) {
@@ -368,16 +368,16 @@
 
 	// --- Graph ---
 	jQuery(function () {
-		var $wrap = jQuery('.mowi-graph-wrapper');
-		var $canvas = jQuery('#mowi-graph-canvas');
+		var $wrap = jQuery('.beruang-graph-wrapper');
+		var $canvas = jQuery('#beruang-graph-canvas');
 		if (!$canvas.length || typeof window.Chart === 'undefined') return;
 
 		var chart = null;
 
 		function loadGraph() {
-			var year = parseInt(jQuery('.mowi-graph-year').val(), 10);
-			var groupBy = jQuery('.mowi-graph-group').val();
-			request('mowi_get_graph_data', { year: year, group_by: groupBy }, 'GET').done(function (r) {
+			var year = parseInt(jQuery('.beruang-graph-year').val(), 10);
+			var groupBy = jQuery('.beruang-graph-group').val();
+			request('beruang_get_graph_data', { year: year, group_by: groupBy }, 'GET').done(function (r) {
 				if (!r.success || !r.data || !r.data.data) return;
 				renderChart(r.data.data, groupBy, year);
 			});
@@ -443,7 +443,7 @@
 			}
 		}
 
-		jQuery('.mowi-graph-year, .mowi-graph-group').on('change', loadGraph);
+		jQuery('.beruang-graph-year, .beruang-graph-group').on('change', loadGraph);
 		// Chart.js may load after DOM ready
 		if (window.Chart) loadGraph();
 		else jQuery(window).on('load', function () { setTimeout(loadGraph, 100); });
@@ -451,16 +451,16 @@
 
 	// --- Budget ---
 	jQuery(function () {
-		var $list = jQuery('#mowi-budget-list');
-		var $modal = jQuery('#mowi-budget-modal');
-		var $form = jQuery('#mowi-budget-form');
+		var $list = jQuery('#beruang-budget-list');
+		var $modal = jQuery('#beruang-budget-modal');
+		var $form = jQuery('#beruang-budget-form');
 		if (!$list.length) return;
 
 		function loadBudgets() {
-			$list.html('<p class="mowi-loading">' + (i18n.loading || 'Loading…') + '</p>');
-			request('mowi_get_budgets').done(function (r) {
+			$list.html('<p class="beruang-loading">' + (i18n.loading || 'Loading…') + '</p>');
+			request('beruang_get_budgets').done(function (r) {
 				if (!r.success || !r.data || !r.data.budgets) {
-					$list.html('<p class="mowi-loading">' + (i18n.error || 'Error') + '</p>');
+					$list.html('<p class="beruang-loading">' + (i18n.error || 'Error') + '</p>');
 					return;
 				}
 				var budgets = r.data.budgets;
@@ -468,27 +468,27 @@
 				budgets.forEach(function (b) {
 					var pct = Math.round(parseFloat(b.progress) || 0);
 					var over = pct > 100;
-					html += '<div class="mowi-budget-card" data-id="' + b.id + '">';
+					html += '<div class="beruang-budget-card" data-id="' + b.id + '">';
 					html += '<h4>' + escapeHtml(b.name) + ' <small>(' + (b.type === 'yearly' ? (i18n.yearly || 'Yearly') : (i18n.monthly || 'Monthly')) + ')</small></h4>';
-					html += '<div class="mowi-budget-progress-wrap"><div class="mowi-budget-progress-bar ' + (over ? 'over' : '') + '" style="width:' + Math.min(pct, 100) + '%"></div></div>';
-					html += '<div class="mowi-budget-meta">' + formatNum(b.spent) + ' / ' + formatNum(b.target_amount) + ' (' + pct + '%)</div>';
-					html += '<span class="mowi-budget-actions"><button type="button" class="mowi-budget-edit" data-id="' + b.id + '">' + (i18n.edit || 'Edit') + '</button> <button type="button" class="mowi-budget-delete" data-id="' + b.id + '">' + (i18n.delete || 'Delete') + '</button></span>';
+					html += '<div class="beruang-budget-progress-wrap"><div class="beruang-budget-progress-bar ' + (over ? 'over' : '') + '" style="width:' + Math.min(pct, 100) + '%"></div></div>';
+					html += '<div class="beruang-budget-meta">' + formatNum(b.spent) + ' / ' + formatNum(b.target_amount) + ' (' + pct + '%)</div>';
+					html += '<span class="beruang-budget-actions"><button type="button" class="beruang-budget-edit" data-id="' + b.id + '">' + (i18n.edit || 'Edit') + '</button> <button type="button" class="beruang-budget-delete" data-id="' + b.id + '">' + (i18n.delete || 'Delete') + '</button></span>';
 					html += '</div>';
 				});
-				if (!budgets.length) html = '<p class="mowi-loading">' + (i18n.no_budgets || 'No budgets.') + '</p>';
+				if (!budgets.length) html = '<p class="beruang-loading">' + (i18n.no_budgets || 'No budgets.') + '</p>';
 				$list.html(html);
 
-				jQuery('.mowi-budget-delete').on('click', function () {
+				jQuery('.beruang-budget-delete').on('click', function () {
 					var id = jQuery(this).data('id');
 					if (!id || !confirm(i18n.confirm_delete || 'Delete this budget?')) return;
-					request('mowi_delete_budget', { id: id }).done(function (res) {
+					request('beruang_delete_budget', { id: id }).done(function (res) {
 						if (res.success) loadBudgets();
 					});
 				});
-				jQuery('.mowi-budget-edit').on('click', function () {
+				jQuery('.beruang-budget-edit').on('click', function () {
 					var id = jQuery(this).data('id');
 					if (!id) return;
-					request('mowi_get_budget', { id: id }, 'GET').done(function (r) {
+					request('beruang_get_budget', { id: id }, 'GET').done(function (r) {
 						if (!r.success || !r.data || !r.data.budget) return;
 						var b = r.data.budget;
 						$form.find('[name="id"]').val(b.id);
@@ -503,11 +503,11 @@
 					});
 				});
 			}).fail(function () {
-				$list.html('<p class="mowi-loading">' + (i18n.error || 'Error') + '</p>');
+				$list.html('<p class="beruang-loading">' + (i18n.error || 'Error') + '</p>');
 			});
 		}
 
-		jQuery('.mowi-budget-add').on('click', function () {
+		jQuery('.beruang-budget-add').on('click', function () {
 			$form.find('[name="id"]').val('');
 			$form.find('[name="name"]').val('');
 			$form.find('[name="target_amount"]').val('');
@@ -516,8 +516,8 @@
 			$modal.attr('hidden', false);
 		});
 
-		jQuery('.mowi-budget-modal-close, .mowi-budget-modal').on('click', function (e) {
-			if (e.target === this || jQuery(e.target).hasClass('mowi-budget-modal-close')) $modal.attr('hidden', true);
+		jQuery('.beruang-budget-modal-close, .beruang-budget-modal').on('click', function (e) {
+			if (e.target === this || jQuery(e.target).hasClass('beruang-budget-modal-close')) $modal.attr('hidden', true);
 		});
 
 		$form.on('submit', function (e) {
@@ -528,7 +528,7 @@
 			var type = $form.find('[name="type"]').val();
 			var catIds = [];
 			$form.find('[name="category_ids[]"]:checked').each(function () { catIds.push(jQuery(this).val()); });
-			request('mowi_save_budget', {
+			request('beruang_save_budget', {
 				id: id || 0,
 				name: name,
 				target_amount: target,

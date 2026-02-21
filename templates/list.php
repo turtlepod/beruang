@@ -1,8 +1,8 @@
 <?php
 /**
- * Template for [mowi-list] shortcode.
+ * Template for [beruang-list] shortcode.
  *
- * @package Mowi
+ * @package Beruang
  * @var int   $year       Current year.
  * @var int   $month      Current month.
  * @var array $categories Flat categories from DB.
@@ -12,15 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="mowi mowi-list-wrapper">
-	<div class="mowi-list-header">
-		<h3 class="mowi-list-title"><?php esc_html_e( 'Transactions', 'mowi' ); ?></h3>
-		<button type="button" class="mowi-filter-btn" title="<?php esc_attr_e( 'Filter', 'mowi' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'mowi' ); ?>">⊕</button>
+<div class="beruang beruang-list-wrapper">
+	<div class="beruang-list-header">
+		<h3 class="beruang-list-title"><?php esc_html_e( 'Transactions', 'beruang' ); ?></h3>
+		<button type="button" class="beruang-filter-btn" title="<?php esc_attr_e( 'Filter', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'beruang' ); ?>">⊕</button>
 	</div>
-	<div class="mowi-list-filters" id="mowi-list-filters" hidden>
-		<input type="text" class="mowi-filter-search" placeholder="<?php esc_attr_e( 'Search description', 'mowi' ); ?>" />
-		<select class="mowi-filter-category">
-			<option value=""><?php esc_html_e( 'All categories', 'mowi' ); ?></option>
+	<div class="beruang-list-filters" id="beruang-list-filters" hidden>
+		<input type="text" class="beruang-filter-search" placeholder="<?php esc_attr_e( 'Search description', 'beruang' ); ?>" />
+		<select class="beruang-filter-category">
+			<option value=""><?php esc_html_e( 'All categories', 'beruang' ); ?></option>
 			<?php
 			foreach ( $categories as $cat ) {
 				$depth  = (int) ( $cat['depth'] ?? 0 );
@@ -29,32 +29,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 			}
 			?>
 		</select>
-		<button type="button" class="mowi-filter-apply"><?php esc_html_e( 'Apply', 'mowi' ); ?></button>
+		<button type="button" class="beruang-filter-apply"><?php esc_html_e( 'Apply', 'beruang' ); ?></button>
 	</div>
-	<div class="mowi-list-accordion" id="mowi-list-accordion" data-month="<?php echo esc_attr( $month ); ?>" data-year="<?php echo esc_attr( $year ); ?>">
-		<p class="mowi-loading"><?php esc_html_e( 'Loading…', 'mowi' ); ?></p>
+	<div class="beruang-list-accordion" id="beruang-list-accordion" data-month="<?php echo esc_attr( $month ); ?>" data-year="<?php echo esc_attr( $year ); ?>">
+		<p class="beruang-loading"><?php esc_html_e( 'Loading…', 'beruang' ); ?></p>
 	</div>
-	<div class="mowi-edit-tx-modal" id="mowi-edit-tx-modal" hidden>
-		<div class="mowi-edit-tx-modal-inner">
-			<h4><?php esc_html_e( 'Edit transaction', 'mowi' ); ?></h4>
-			<form id="mowi-edit-tx-form">
-				<input type="hidden" name="id" id="mowi-edit-tx-id" value="" />
-				<div class="mowi-form-row">
-					<label for="mowi-edit-tx-date"><?php esc_html_e( 'Date', 'mowi' ); ?></label>
-					<input type="date" id="mowi-edit-tx-date" name="date" required />
+	<div class="beruang-edit-tx-modal" id="beruang-edit-tx-modal" hidden>
+		<div class="beruang-edit-tx-modal-inner">
+			<h4><?php esc_html_e( 'Edit transaction', 'beruang' ); ?></h4>
+			<form id="beruang-edit-tx-form">
+				<input type="hidden" name="id" id="beruang-edit-tx-id" value="" />
+				<div class="beruang-form-row">
+					<label for="beruang-edit-tx-date"><?php esc_html_e( 'Date', 'beruang' ); ?></label>
+					<input type="date" id="beruang-edit-tx-date" name="date" required />
 				</div>
-				<div class="mowi-form-row">
-					<label for="mowi-edit-tx-time"><?php esc_html_e( 'Time', 'mowi' ); ?></label>
-					<input type="time" id="mowi-edit-tx-time" name="time" />
+				<div class="beruang-form-row">
+					<label for="beruang-edit-tx-time"><?php esc_html_e( 'Time', 'beruang' ); ?></label>
+					<input type="time" id="beruang-edit-tx-time" name="time" />
 				</div>
-				<div class="mowi-form-row">
-					<label for="mowi-edit-tx-description"><?php esc_html_e( 'Description', 'mowi' ); ?></label>
-					<input type="text" id="mowi-edit-tx-description" name="description" />
+				<div class="beruang-form-row">
+					<label for="beruang-edit-tx-description"><?php esc_html_e( 'Description', 'beruang' ); ?></label>
+					<input type="text" id="beruang-edit-tx-description" name="description" />
 				</div>
-				<div class="mowi-form-row">
-					<label for="mowi-edit-tx-category"><?php esc_html_e( 'Category', 'mowi' ); ?></label>
-					<select id="mowi-edit-tx-category" name="category_id">
-						<option value="0"><?php esc_html_e( 'Uncategorized', 'mowi' ); ?></option>
+				<div class="beruang-form-row">
+					<label for="beruang-edit-tx-category"><?php esc_html_e( 'Category', 'beruang' ); ?></label>
+					<select id="beruang-edit-tx-category" name="category_id">
+						<option value="0"><?php esc_html_e( 'Uncategorized', 'beruang' ); ?></option>
 						<?php
 						foreach ( $categories as $cat ) {
 							$depth  = (int) ( $cat['depth'] ?? 0 );
@@ -64,20 +64,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 						?>
 					</select>
 				</div>
-				<div class="mowi-form-row">
-					<label for="mowi-edit-tx-amount"><?php esc_html_e( 'Amount', 'mowi' ); ?></label>
-					<input type="number" id="mowi-edit-tx-amount" name="amount" step="0.01" min="0" required />
+				<div class="beruang-form-row">
+					<label for="beruang-edit-tx-amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label>
+					<input type="number" id="beruang-edit-tx-amount" name="amount" step="0.01" min="0" required />
 				</div>
-				<div class="mowi-form-row">
-					<label><?php esc_html_e( 'Type', 'mowi' ); ?></label>
-					<select id="mowi-edit-tx-type" name="type">
-						<option value="expense"><?php esc_html_e( 'Expense', 'mowi' ); ?></option>
-						<option value="income"><?php esc_html_e( 'Income', 'mowi' ); ?></option>
+				<div class="beruang-form-row">
+					<label><?php esc_html_e( 'Type', 'beruang' ); ?></label>
+					<select id="beruang-edit-tx-type" name="type">
+						<option value="expense"><?php esc_html_e( 'Expense', 'beruang' ); ?></option>
+						<option value="income"><?php esc_html_e( 'Income', 'beruang' ); ?></option>
 					</select>
 				</div>
-				<div class="mowi-form-row">
-					<button type="submit" class="mowi-submit"><?php esc_html_e( 'Update', 'mowi' ); ?></button>
-					<button type="button" class="mowi-edit-tx-cancel"><?php esc_html_e( 'Cancel', 'mowi' ); ?></button>
+				<div class="beruang-form-row">
+					<button type="submit" class="beruang-submit"><?php esc_html_e( 'Update', 'beruang' ); ?></button>
+					<button type="button" class="beruang-edit-tx-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
 				</div>
 			</form>
 		</div>

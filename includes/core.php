@@ -1,23 +1,23 @@
 <?php
 /**
- * Core bootstrap for Mowi plugin.
+ * Core bootstrap for Beruang plugin.
  *
- * @package Mowi
+ * @package Beruang
  */
 
-namespace Mowi;
+namespace Beruang;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once MOWI_PLUGIN_DIR . 'includes/class-mowi-db.php';
-require_once MOWI_PLUGIN_DIR . 'includes/icon-helpers.php';
-require_once MOWI_PLUGIN_DIR . 'includes/admin.php';
-require_once MOWI_PLUGIN_DIR . 'includes/ajax.php';
-require_once MOWI_PLUGIN_DIR . 'includes/shortcodes.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-db.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/icon-helpers.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/admin.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/ajax.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/shortcodes.php';
 
-register_activation_hook( MOWI_PLUGIN_FILE, array( DB::class, 'install' ) );
+register_activation_hook( BERUANG_PLUGIN_FILE, array( DB::class, 'install' ) );
 
 // Bootstrap.
 add_action( 'plugins_loaded', __NAMESPACE__ . '\on_plugins_loaded' );
@@ -26,7 +26,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\on_plugins_loaded' );
  * Fires on plugins_loaded: load text domain, register shortcodes, and hook actions.
  */
 function on_plugins_loaded() {
-	load_plugin_textdomain( 'mowi', false, dirname( plugin_basename( MOWI_PLUGIN_FILE ) ) . '/languages' );
+	load_plugin_textdomain( 'beruang', false, dirname( plugin_basename( BERUANG_PLUGIN_FILE ) ) . '/languages' );
 	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_front_scripts' );
 }
 
@@ -36,18 +36,18 @@ function on_plugins_loaded() {
 function enqueue_front_scripts() {
 	$post = get_post( get_queried_object_id() );
 
-	if ( ! $post || ! has_shortcode( $post->post_content ?? '', 'mowi-form' ) && ! has_shortcode( $post->post_content ?? '', 'mowi-list' ) && ! has_shortcode( $post->post_content ?? '', 'mowi-graph' ) && ! has_shortcode( $post->post_content ?? '', 'mowi-budget' ) ) {
+	if ( ! $post || ! has_shortcode( $post->post_content ?? '', 'beruang-form' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-list' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-graph' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-budget' ) ) {
 		return;
 	}
 
 	wp_enqueue_style(
-		'mowi-front',
-		MOWI_PLUGIN_URL . 'assets/css/mowi-front.css',
+		'beruang-front',
+		BERUANG_PLUGIN_URL . 'assets/css/beruang-front.css',
 		array(),
-		MOWI_VERSION
+		BERUANG_VERSION
 	);
 	$deps = array( 'jquery' );
-	if ( has_shortcode( $post->post_content ?? '', 'mowi-graph' ) ) {
+	if ( has_shortcode( $post->post_content ?? '', 'beruang-graph' ) ) {
 		wp_enqueue_script(
 			'chartjs',
 			'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js',
@@ -58,44 +58,44 @@ function enqueue_front_scripts() {
 		$deps[] = 'chartjs';
 	}
 	wp_enqueue_script(
-		'mowi-front',
-		MOWI_PLUGIN_URL . 'assets/js/mowi-front.js',
+		'beruang-front',
+		BERUANG_PLUGIN_URL . 'assets/js/beruang-front.js',
 		$deps,
-		MOWI_VERSION,
+		BERUANG_VERSION,
 		true
 	);
-	wp_localize_script( 'mowi-front', 'mowiData', array(
+	wp_localize_script( 'beruang-front', 'beruangData', array(
 		'ajax_url' => admin_url( 'admin-ajax.php' ),
-		'nonce'   => wp_create_nonce( 'mowi_ajax' ),
-		'currency' => get_option( 'mowi_currency', 'IDR' ),
-		'decimal_sep' => get_option( 'mowi_decimal_sep', ',' ),
-		'thousands_sep' => get_option( 'mowi_thousands_sep', '.' ),
+		'nonce'   => wp_create_nonce( 'beruang_ajax' ),
+		'currency' => get_option( 'beruang_currency', 'IDR' ),
+		'decimal_sep' => get_option( 'beruang_decimal_sep', ',' ),
+		'thousands_sep' => get_option( 'beruang_thousands_sep', '.' ),
 		'i18n' => array(
-			'uncategorized' => __( 'Uncategorized', 'mowi' ),
-			'expense' => __( 'Expense', 'mowi' ),
-			'income' => __( 'Income', 'mowi' ),
-			'saved' => __( 'Saved.', 'mowi' ),
-			'error' => __( 'Something went wrong.', 'mowi' ),
-			'filter' => __( 'Filter', 'mowi' ),
-			'search' => __( 'Search', 'mowi' ),
-			'monthly' => __( 'Monthly', 'mowi' ),
-			'yearly' => __( 'Yearly', 'mowi' ),
-			'add_budget' => __( 'Add budget', 'mowi' ),
-			'budget_name' => __( 'Budget name', 'mowi' ),
-			'target' => __( 'Target', 'mowi' ),
-			'categories' => __( 'Categories', 'mowi' ),
-			'loading' => __( 'Loading…', 'mowi' ),
-			'no_transactions' => __( 'No transactions.', 'mowi' ),
-			'no_budgets' => __( 'No budgets.', 'mowi' ),
-			'no_data' => __( 'No data', 'mowi' ),
-			'confirm_delete' => __( 'Delete this budget?', 'mowi' ),
-			'delete' => __( 'Delete', 'mowi' ),
-			'edit' => __( 'Edit', 'mowi' ),
-			'manage_categories' => __( 'Manage categories', 'mowi' ),
-			'add_category' => __( 'Add category', 'mowi' ),
-			'update_category' => __( 'Update category', 'mowi' ),
-			'confirm_delete_category' => __( 'Delete this category?', 'mowi' ),
-			'no_categories' => __( 'No categories yet.', 'mowi' ),
+			'uncategorized' => __( 'Uncategorized', 'beruang' ),
+			'expense' => __( 'Expense', 'beruang' ),
+			'income' => __( 'Income', 'beruang' ),
+			'saved' => __( 'Saved.', 'beruang' ),
+			'error' => __( 'Something went wrong.', 'beruang' ),
+			'filter' => __( 'Filter', 'beruang' ),
+			'search' => __( 'Search', 'beruang' ),
+			'monthly' => __( 'Monthly', 'beruang' ),
+			'yearly' => __( 'Yearly', 'beruang' ),
+			'add_budget' => __( 'Add budget', 'beruang' ),
+			'budget_name' => __( 'Budget name', 'beruang' ),
+			'target' => __( 'Target', 'beruang' ),
+			'categories' => __( 'Categories', 'beruang' ),
+			'loading' => __( 'Loading…', 'beruang' ),
+			'no_transactions' => __( 'No transactions.', 'beruang' ),
+			'no_budgets' => __( 'No budgets.', 'beruang' ),
+			'no_data' => __( 'No data', 'beruang' ),
+			'confirm_delete' => __( 'Delete this budget?', 'beruang' ),
+			'delete' => __( 'Delete', 'beruang' ),
+			'edit' => __( 'Edit', 'beruang' ),
+			'manage_categories' => __( 'Manage categories', 'beruang' ),
+			'add_category' => __( 'Add category', 'beruang' ),
+			'update_category' => __( 'Update category', 'beruang' ),
+			'confirm_delete_category' => __( 'Delete this category?', 'beruang' ),
+			'no_categories' => __( 'No categories yet.', 'beruang' ),
 		),
 	) );
 }
