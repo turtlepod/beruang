@@ -67,24 +67,27 @@
 		var $catSubmitBtn = $catForm.find('.beruang-cat-submit-add');
 		var $catCancelBtn = $catForm.find('.beruang-cat-cancel-edit');
 		var $mainCategorySelect = jQuery('#beruang-category');
+		var optionTpl = wp.template('beruang-option');
+		var catItemTpl = wp.template('beruang-cat-item');
+		var catEmptyTpl = wp.template('beruang-cat-empty');
 
 		function buildCategoryOptions(categories, excludeId) {
-			var opts = '<option value="0">—</option>';
+			var opts = optionTpl({ value: '0', label: '—' });
 			(categories || []).forEach(function (c) {
 				if (excludeId && parseInt(c.id, 10) === parseInt(excludeId, 10)) return;
 				var depth = parseInt(c.depth, 10) || 0;
 				var indent = new Array(depth + 1).join('— ');
-				opts += '<option value="' + c.id + '">' + escapeHtml(indent + (c.name || '')) + '</option>';
+				opts += optionTpl({ value: c.id, label: indent + (c.name || '') });
 			});
 			return opts;
 		}
 
 		function buildMainCategoryOptions(categories) {
-			var opts = '<option value="0">' + (i18n.uncategorized || 'Uncategorized') + '</option>';
+			var opts = optionTpl({ value: '0', label: i18n.uncategorized || 'Uncategorized' });
 			(categories || []).forEach(function (c) {
 				var depth = parseInt(c.depth, 10) || 0;
 				var indent = new Array(depth + 1).join('— ');
-				opts += '<option value="' + c.id + '">' + escapeHtml(indent + (c.name || '')) + '</option>';
+				opts += optionTpl({ value: c.id, label: indent + (c.name || '') });
 			});
 			return opts;
 		}
@@ -98,15 +101,18 @@
 				$mainCategorySelect[0].innerHTML = buildMainCategoryOptions(cats);
 				var listHtml = '';
 				cats.forEach(function (c) {
-					var depth = parseInt(c.depth, 10) || 0;
-					var indent = new Array(depth + 1).join('— ');
-					listHtml += '<li class="beruang-cat-item" data-id="' + c.id + '" data-name="' + escapeHtml(c.name || '') + '" data-parent="' + (c.parent_id || 0) + '">';
-					listHtml += '<span class="beruang-cat-item-name">' + escapeHtml(indent + (c.name || '')) + '</span>';
-					listHtml += ' <button type="button" class="beruang-cat-edit-btn">' + (i18n.edit || 'Edit') + '</button>';
-					listHtml += ' <button type="button" class="beruang-cat-delete-btn">' + (i18n.delete || 'Delete') + '</button>';
-					listHtml += '</li>';
-				});
-				$catList.html(listHtml || '<li class="beruang-cat-empty">' + (i18n.no_categories || 'No categories yet.') + '</li>');
+						var depth = parseInt(c.depth, 10) || 0;
+						var indent = new Array(depth + 1).join('— ');
+						listHtml += catItemTpl({
+							id: c.id,
+							name: c.name || '',
+							parent: c.parent_id || 0,
+							displayName: indent + (c.name || ''),
+							editLabel: i18n.edit || 'Edit',
+							deleteLabel: i18n.delete || 'Delete'
+						});
+					});
+				$catList.html(listHtml || catEmptyTpl({ message: i18n.no_categories || 'No categories yet.' }));
 				jQuery('.beruang-cat-loading').hide();
 			});
 		}
@@ -250,12 +256,16 @@
 			});
 		}
 
+		var msgTpl = wp.template('beruang-message');
+		var txItemTpl = wp.template('beruang-transaction-item');
+		var accordionTpl = wp.template('beruang-accordion-group');
+
 		function loadList() {
 			var month = $accordion.data('month');
 			var year = $accordion.data('year');
 			var search = jQuery('.beruang-filter-search').val() || '';
 			var categoryId = jQuery('.beruang-filter-category').val() || '';
-			$accordion.html('<p class="beruang-loading">' + (i18n.loading || 'Loading…') + '</p>');
+			$accordion.html(msgTpl({ message: i18n.loading || 'Loading…' }));
 			request('beruang_get_transactions', {
 				month: month,
 				year: year,
@@ -264,7 +274,7 @@
 				page: 1
 			}, 'GET').done(function (r) {
 				if (!r.success || !r.data || !r.data.items) {
-					$accordion.html('<p class="beruang-loading">' + (i18n.error || 'Error') + '</p>');
+					$accordion.html(msgTpl({ message: i18n.error || 'Error' }));
 					return;
 				}
 				var items = r.data.items;
@@ -283,22 +293,27 @@
 						var amt = parseFloat(tx.amount);
 						dayTotal += tx.type === 'income' ? amt : -amt;
 					});
-					html += '<div class="beruang-accordion-group">';
-					html += '<div class="beruang-accordion-head"><span>' + date + '</span><span>' + formatNum(dayTotal) + '</span></div>';
-					html += '<div class="beruang-accordion-body">';
+					var itemsHtml = '';
 					dayItems.forEach(function (tx) {
-						html += '<div class="beruang-transaction-item" data-id="' + tx.id + '">';
-						html += '<span class="beruang-tx-desc">' + escapeHtml(tx.description || '—') + '</span>';
-						html += '<span class="beruang-tx-amount ' + tx.type + '">' + (tx.type === 'income' ? '+' : '-') + formatNum(Math.abs(parseFloat(tx.amount))) + '</span>';
-						html += '<span class="beruang-tx-actions"><button type="button" class="beruang-edit-tx-btn">' + (i18n.edit || 'Edit') + '</button> <button type="button" class="beruang-delete-tx-btn">' + (i18n.delete || 'Delete') + '</button></span>';
-						html += '</div>';
+						itemsHtml += txItemTpl({
+							id: tx.id,
+							description: tx.description || '—',
+							amountDisplay: (tx.type === 'income' ? '+' : '-') + formatNum(Math.abs(parseFloat(tx.amount))),
+							type: tx.type,
+							editLabel: i18n.edit || 'Edit',
+							deleteLabel: i18n.delete || 'Delete'
+						});
 					});
-					html += '</div></div>';
+					html += accordionTpl({
+						date: date,
+						dayTotal: formatNum(dayTotal),
+						itemsHtml: itemsHtml
+					});
 				});
-				if (!dates.length) html = '<p class="beruang-loading">' + (i18n.no_transactions || 'No transactions.') + '</p>';
+				if (!dates.length) html = msgTpl({ message: i18n.no_transactions || 'No transactions.' });
 				$accordion.html(html);
 			}).fail(function () {
-				$accordion.html('<p class="beruang-loading">' + (i18n.error || 'Error') + '</p>');
+				$accordion.html(msgTpl({ message: i18n.error || 'Error' }));
 			});
 		}
 
@@ -370,12 +385,6 @@
 		var parts = s.split('.');
 		parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thou);
 		return parts.join(dec) + ' ' + (beruang.currency || 'IDR');
-	}
-
-	function escapeHtml(s) {
-		var div = document.createElement('div');
-		div.textContent = s;
-		return div.innerHTML;
 	}
 
 	// --- Graph ---
@@ -468,11 +477,14 @@
 		var $form = jQuery('#beruang-budget-form');
 		if (!$list.length) return;
 
+		var msgTpl = wp.template('beruang-message');
+		var budgetCardTpl = wp.template('beruang-budget-card');
+
 		function loadBudgets() {
-			$list.html('<p class="beruang-loading">' + (i18n.loading || 'Loading…') + '</p>');
+			$list.html(msgTpl({ message: i18n.loading || 'Loading…' }));
 			request('beruang_get_budgets').done(function (r) {
 				if (!r.success || !r.data || !r.data.budgets) {
-					$list.html('<p class="beruang-loading">' + (i18n.error || 'Error') + '</p>');
+					$list.html(msgTpl({ message: i18n.error || 'Error' }));
 					return;
 				}
 				var budgets = r.data.budgets;
@@ -480,14 +492,20 @@
 				budgets.forEach(function (b) {
 					var pct = Math.round(parseFloat(b.progress) || 0);
 					var over = pct > 100;
-					html += '<div class="beruang-budget-card" data-id="' + b.id + '">';
-					html += '<h4>' + escapeHtml(b.name) + ' <small>(' + (b.type === 'yearly' ? (i18n.yearly || 'Yearly') : (i18n.monthly || 'Monthly')) + ')</small></h4>';
-					html += '<div class="beruang-budget-progress-wrap"><div class="beruang-budget-progress-bar ' + (over ? 'over' : '') + '" style="width:' + Math.min(pct, 100) + '%"></div></div>';
-					html += '<div class="beruang-budget-meta">' + formatNum(b.spent) + ' / ' + formatNum(b.target_amount) + ' (' + pct + '%)</div>';
-					html += '<span class="beruang-budget-actions"><button type="button" class="beruang-budget-edit" data-id="' + b.id + '">' + (i18n.edit || 'Edit') + '</button> <button type="button" class="beruang-budget-delete" data-id="' + b.id + '">' + (i18n.delete || 'Delete') + '</button></span>';
-					html += '</div>';
+					html += budgetCardTpl({
+						id: b.id,
+						name: b.name,
+						typeLabel: b.type === 'yearly' ? (i18n.yearly || 'Yearly') : (i18n.monthly || 'Monthly'),
+						progressWidth: Math.min(pct, 100),
+						progressClass: over ? 'over' : '',
+						spentFormatted: formatNum(b.spent),
+						targetFormatted: formatNum(b.target_amount),
+						pct: pct,
+						editLabel: i18n.edit || 'Edit',
+						deleteLabel: i18n.delete || 'Delete'
+					});
 				});
-				if (!budgets.length) html = '<p class="beruang-loading">' + (i18n.no_budgets || 'No budgets.') + '</p>';
+				if (!budgets.length) html = msgTpl({ message: i18n.no_budgets || 'No budgets.' });
 				$list.html(html);
 
 				jQuery('.beruang-budget-delete').on('click', function () {
@@ -515,7 +533,7 @@
 					});
 				});
 			}).fail(function () {
-				$list.html('<p class="beruang-loading">' + (i18n.error || 'Error') + '</p>');
+				$list.html(msgTpl({ message: i18n.error || 'Error' }));
 			});
 		}
 

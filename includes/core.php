@@ -46,7 +46,7 @@ function enqueue_front_scripts() {
 		array(),
 		BERUANG_VERSION
 	);
-	$deps = array( 'jquery' );
+	$deps = array( 'jquery', 'wp-util' );
 	if ( has_shortcode( $post->post_content ?? '', 'beruang-graph' ) ) {
 		wp_enqueue_script(
 			'chartjs',
@@ -64,6 +64,7 @@ function enqueue_front_scripts() {
 		BERUANG_VERSION,
 		true
 	);
+	add_action( 'wp_footer', __NAMESPACE__ . '\print_front_templates', 5 );
 	wp_localize_script(
 		'beruang-front',
 		'beruangData',
@@ -103,4 +104,15 @@ function enqueue_front_scripts() {
 			),
 		)
 	);
+}
+
+/**
+ * Output wp.template script blocks in footer.
+ */
+function print_front_templates() {
+	$post = get_post( get_queried_object_id() );
+	if ( ! $post || ( ! has_shortcode( $post->post_content ?? '', 'beruang-form' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-list' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-budget' ) ) ) {
+		return;
+	}
+	include BERUANG_PLUGIN_DIR . 'includes/templates-js.php';
 }
