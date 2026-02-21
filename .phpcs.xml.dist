@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ruleset name="Beruang">
+	<description>PHPCS configuration for Beruang plugin.</description>
+	<rule ref="10up-Default"/>
+	<config name="testVersion" value="7.4-"/>
+	<file>.</file>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/example-plugin/*</exclude-pattern>
+</ruleset>
