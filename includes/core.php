@@ -36,7 +36,7 @@ function on_plugins_loaded() {
 function enqueue_front_scripts() {
 	$post = get_post( get_queried_object_id() );
 
-	if ( ! $post || ! has_shortcode( $post->post_content ?? '', 'beruang-form' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-list' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-graph' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-budget' ) ) {
+	if ( ! $post || ( ! has_shortcode( $post->post_content ?? '', 'beruang-form' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-list' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-graph' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-budget' ) ) ) {
 		return;
 	}
 
@@ -64,38 +64,42 @@ function enqueue_front_scripts() {
 		BERUANG_VERSION,
 		true
 	);
-	wp_localize_script( 'beruang-front', 'beruangData', array(
-		'ajax_url' => admin_url( 'admin-ajax.php' ),
-		'nonce'   => wp_create_nonce( 'beruang_ajax' ),
-		'currency' => get_option( 'beruang_currency', 'IDR' ),
-		'decimal_sep' => get_option( 'beruang_decimal_sep', ',' ),
-		'thousands_sep' => get_option( 'beruang_thousands_sep', '.' ),
-		'i18n' => array(
-			'uncategorized' => __( 'Uncategorized', 'beruang' ),
-			'expense' => __( 'Expense', 'beruang' ),
-			'income' => __( 'Income', 'beruang' ),
-			'saved' => __( 'Saved.', 'beruang' ),
-			'error' => __( 'Something went wrong.', 'beruang' ),
-			'filter' => __( 'Filter', 'beruang' ),
-			'search' => __( 'Search', 'beruang' ),
-			'monthly' => __( 'Monthly', 'beruang' ),
-			'yearly' => __( 'Yearly', 'beruang' ),
-			'add_budget' => __( 'Add budget', 'beruang' ),
-			'budget_name' => __( 'Budget name', 'beruang' ),
-			'target' => __( 'Target', 'beruang' ),
-			'categories' => __( 'Categories', 'beruang' ),
-			'loading' => __( 'Loading…', 'beruang' ),
-			'no_transactions' => __( 'No transactions.', 'beruang' ),
-			'no_budgets' => __( 'No budgets.', 'beruang' ),
-			'no_data' => __( 'No data', 'beruang' ),
-			'confirm_delete' => __( 'Delete this budget?', 'beruang' ),
-			'delete' => __( 'Delete', 'beruang' ),
-			'edit' => __( 'Edit', 'beruang' ),
-			'manage_categories' => __( 'Manage categories', 'beruang' ),
-			'add_category' => __( 'Add category', 'beruang' ),
-			'update_category' => __( 'Update category', 'beruang' ),
-			'confirm_delete_category' => __( 'Delete this category?', 'beruang' ),
-			'no_categories' => __( 'No categories yet.', 'beruang' ),
-		),
-	) );
+	wp_localize_script(
+		'beruang-front',
+		'beruangData',
+		array(
+			'ajax_url'      => admin_url( 'admin-ajax.php' ),
+			'nonce'         => wp_create_nonce( 'beruang_ajax' ),
+			'currency'      => get_option( 'beruang_currency', 'IDR' ),
+			'decimal_sep'   => get_option( 'beruang_decimal_sep', ',' ),
+			'thousands_sep' => get_option( 'beruang_thousands_sep', '.' ),
+			'i18n'          => array(
+				'uncategorized'           => __( 'Uncategorized', 'beruang' ),
+				'expense'                 => __( 'Expense', 'beruang' ),
+				'income'                  => __( 'Income', 'beruang' ),
+				'saved'                   => __( 'Saved.', 'beruang' ),
+				'error'                   => __( 'Something went wrong.', 'beruang' ),
+				'filter'                  => __( 'Filter', 'beruang' ),
+				'search'                  => __( 'Search', 'beruang' ),
+				'monthly'                 => __( 'Monthly', 'beruang' ),
+				'yearly'                  => __( 'Yearly', 'beruang' ),
+				'add_budget'              => __( 'Add budget', 'beruang' ),
+				'budget_name'             => __( 'Budget name', 'beruang' ),
+				'target'                  => __( 'Target', 'beruang' ),
+				'categories'              => __( 'Categories', 'beruang' ),
+				'loading'                 => __( 'Loading…', 'beruang' ),
+				'no_transactions'         => __( 'No transactions.', 'beruang' ),
+				'no_budgets'              => __( 'No budgets.', 'beruang' ),
+				'no_data'                 => __( 'No data', 'beruang' ),
+				'confirm_delete'          => __( 'Delete this budget?', 'beruang' ),
+				'delete'                  => __( 'Delete', 'beruang' ),
+				'edit'                    => __( 'Edit', 'beruang' ),
+				'manage_categories'       => __( 'Manage categories', 'beruang' ),
+				'add_category'            => __( 'Add category', 'beruang' ),
+				'update_category'         => __( 'Update category', 'beruang' ),
+				'confirm_delete_category' => __( 'Delete this category?', 'beruang' ),
+				'no_categories'           => __( 'No categories yet.', 'beruang' ),
+			),
+		)
+	);
 }

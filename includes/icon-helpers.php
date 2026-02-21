@@ -26,8 +26,8 @@ function beruang_get_icons() {
 /**
  * Output an SVG icon.
  *
- * @param string   $name Icon name (e.g. 'calc', 'manage').
- * @param array    $args Optional. {
+ * @param string $name Icon name (e.g. 'calc', 'manage').
+ * @param array  $args Optional. {
  *     @type string $class   CSS class for the wrapper.
  *     @type string $size   Width/height, e.g. '20' or '1.25em'.
  *     @type array  $attrs  Additional attributes for the SVG.
@@ -46,7 +46,7 @@ function beruang_icon( $name, $args = array() ) {
 	);
 	$args     = wp_parse_args( $args, $defaults );
 
-	$svg = $icons[ $name ];
+	$svg   = $icons[ $name ];
 	$class = trim( 'beruang-icon beruang-icon-' . $name . ' ' . $args['class'] );
 
 	// Inject size if provided.

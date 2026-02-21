@@ -34,8 +34,8 @@ function shortcode_load_template( $name, $args = array() ) {
 	if ( ! file_exists( $path ) ) {
 		return;
 	}
-	if ( ! empty( $args ) ) {
-		extract( $args );
+	foreach ( $args as $key => $val ) {
+		${$key} = $val;
 	}
 	include $path;
 }
@@ -43,74 +43,86 @@ function shortcode_load_template( $name, $args = array() ) {
 /**
  * [beruang-form]
  *
- * @param array $atts Shortcode attributes.
+ * @param array $atts Shortcode attributes. Unused but required by shortcode API.
  * @return string
  */
-function shortcode_render_form( $atts ) {
+function shortcode_render_form( $atts ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	if ( ! is_user_logged_in() ) {
 		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to add transactions.', 'beruang' ) . '</p>';
 	}
 	ob_start();
-	shortcode_load_template( 'form.php', array(
-		'today'      => current_time( 'Y-m-d' ),
-		'time'       => current_time( 'H:i' ),
-		'currency'   => get_option( 'beruang_currency', 'IDR' ),
-		'categories' => DB::get_categories_flat( get_current_user_id(), true ),
-	) );
+	shortcode_load_template(
+		'form.php',
+		array(
+			'today'      => current_time( 'Y-m-d' ),
+			'time'       => current_time( 'H:i' ),
+			'currency'   => get_option( 'beruang_currency', 'IDR' ),
+			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
+		)
+	);
 	return ob_get_clean();
 }
 
 /**
  * [beruang-list]
  *
- * @param array $atts Shortcode attributes.
+ * @param array $atts Shortcode attributes. Unused but required by shortcode API.
  * @return string
  */
-function shortcode_render_list( $atts ) {
+function shortcode_render_list( $atts ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	if ( ! is_user_logged_in() ) {
 		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view transactions.', 'beruang' ) . '</p>';
 	}
 	ob_start();
-	shortcode_load_template( 'list.php', array(
-		'year'       => (int) current_time( 'Y' ),
-		'month'      => (int) current_time( 'n' ),
-		'categories' => DB::get_categories_flat( get_current_user_id(), true ),
-	) );
+	shortcode_load_template(
+		'list.php',
+		array(
+			'year'       => (int) current_time( 'Y' ),
+			'month'      => (int) current_time( 'n' ),
+			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
+		)
+	);
 	return ob_get_clean();
 }
 
 /**
  * [beruang-graph]
  *
- * @param array $atts Shortcode attributes.
+ * @param array $atts Shortcode attributes. Unused but required by shortcode API.
  * @return string
  */
-function shortcode_render_graph( $atts ) {
+function shortcode_render_graph( $atts ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	if ( ! is_user_logged_in() ) {
 		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view graphs.', 'beruang' ) . '</p>';
 	}
 	ob_start();
-	shortcode_load_template( 'graph.php', array(
-		'year' => (int) current_time( 'Y' ),
-	) );
+	shortcode_load_template(
+		'graph.php',
+		array(
+			'year' => (int) current_time( 'Y' ),
+		)
+	);
 	return ob_get_clean();
 }
 
 /**
  * [beruang-budget]
  *
- * @param array $atts Shortcode attributes.
+ * @param array $atts Shortcode attributes. Unused but required by shortcode API.
  * @return string
  */
-function shortcode_render_budget( $atts ) {
+function shortcode_render_budget( $atts ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	if ( ! is_user_logged_in() ) {
 		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view budgets.', 'beruang' ) . '</p>';
 	}
 	ob_start();
-	shortcode_load_template( 'budget.php', array(
-		'currency'   => get_option( 'beruang_currency', 'IDR' ),
-		'categories' => DB::get_categories_flat( get_current_user_id(), true ),
-	) );
+	shortcode_load_template(
+		'budget.php',
+		array(
+			'currency'   => get_option( 'beruang_currency', 'IDR' ),
+			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
+		)
+	);
 	return ob_get_clean();
 }
 
@@ -122,11 +134,11 @@ function shortcode_render_budget( $atts ) {
  * @return string
  */
 function shortcode_format_amount( $amount, $currency = '' ) {
-	$dec = get_option( 'beruang_decimal_sep', ',' );
+	$dec  = get_option( 'beruang_decimal_sep', ',' );
 	$thou = get_option( 'beruang_thousands_sep', '.' );
-	if ( $currency === '' ) {
+	if ( '' === $currency ) {
 		$currency = get_option( 'beruang_currency', 'IDR' );
 	}
-	$formatted = number_format( (float) $amount, $dec === '.' ? 2 : 0, $dec, $thou );
+	$formatted = number_format( (float) $amount, '.' === $dec ? 2 : 0, $dec, $thou );
 	return $formatted . ' ' . $currency;
 }
