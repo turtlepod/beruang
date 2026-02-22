@@ -213,17 +213,20 @@ function ajax_delete_category() {
  * Get budgets with progress (spent in period).
  */
 function ajax_get_budgets() {
-	$user_id   = ajax_auth();
-	$budgets   = DB::get_budgets( $user_id );
-	$year      = (int) current_time( 'Y' );
-	$month     = (int) current_time( 'n' );
-	$date_from = sprintf( '%04d-%02d-01', $year, $month );
-	$date_to   = gmdate( 'Y-m-t', strtotime( $date_from ) );
+	$user_id = ajax_auth();
+	$budgets = DB::get_budgets( $user_id );
+	$year    = isset( $_REQUEST['year'] ) ? absint( $_REQUEST['year'] ) : (int) current_time( 'Y' );
+	$month   = isset( $_REQUEST['month'] ) ? absint( $_REQUEST['month'] ) : (int) current_time( 'n' );
+	$year    = $year > 0 ? $year : (int) current_time( 'Y' );
+	$month   = $month >= 1 && $month <= 12 ? $month : (int) current_time( 'n' );
 	foreach ( $budgets as &$b ) {
 		$cat_ids = ! empty( $b['category_ids'] ) ? $b['category_ids'] : array();
 		if ( 'yearly' === $b['type'] ) {
-			$date_from = $year . '-01-01';
-			$date_to   = $year . '-12-31';
+			$date_from = sprintf( '%04d-01-01', $year );
+			$date_to   = sprintf( '%04d-12-31', $year );
+		} else {
+			$date_from = sprintf( '%04d-%02d-01', $year, $month );
+			$date_to   = gmdate( 'Y-m-t', strtotime( $date_from ) );
 		}
 		$b['spent']    = DB::sum_expenses( $user_id, $date_from, $date_to, $cat_ids );
 		$b['progress'] = (float) $b['target_amount'] > 0 ? min( 100, ( $b['spent'] / (float) $b['target_amount'] ) * 100 ) : 0; // phpcs:ignore WordPress.PHP.YodaConditions.NotYoda

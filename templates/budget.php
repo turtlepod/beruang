@@ -5,6 +5,8 @@
  * @package Beruang
  * @var string $currency   Currency code.
  * @var array  $categories Flat categories from DB.
+ * @var int    $year       Current year for filter.
+ * @var int    $month      Current month for filter.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,9 +16,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="beruang beruang-budget-wrapper">
 	<div class="beruang-budget-header">
 		<h2 class="beruang-section-title"><?php esc_html_e( 'Budgets', 'beruang' ); ?></h2>
-		<button type="button" class="beruang-budget-add" title="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+		<div class="beruang-budget-header-actions">
+			<button type="button" class="beruang-budget-add" title="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-filter-btn" title="<?php esc_attr_e( 'Filter', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'filter', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+		</div>
 	</div>
-	<div class="beruang-budget-list" id="beruang-budget-list">
+	<div class="beruang-budget-filters" id="beruang-budget-filters" hidden>
+		<select class="beruang-filter-year" aria-label="<?php esc_attr_e( 'Year', 'beruang' ); ?>">
+			<?php
+			$current_year = (int) current_time( 'Y' );
+			for ( $y = $current_year; $y >= $current_year - 10; $y-- ) {
+				printf( '<option value="%s"%s>%s</option>', esc_attr( (string) $y ), selected( $year, $y, false ), esc_html( (string) $y ) );
+			}
+			?>
+		</select>
+		<select class="beruang-filter-month" aria-label="<?php esc_attr_e( 'Month', 'beruang' ); ?>">
+			<?php
+			$month_names = array(
+				1  => __( 'January', 'beruang' ),
+				2  => __( 'February', 'beruang' ),
+				3  => __( 'March', 'beruang' ),
+				4  => __( 'April', 'beruang' ),
+				5  => __( 'May', 'beruang' ),
+				6  => __( 'June', 'beruang' ),
+				7  => __( 'July', 'beruang' ),
+				8  => __( 'August', 'beruang' ),
+				9  => __( 'September', 'beruang' ),
+				10 => __( 'October', 'beruang' ),
+				11 => __( 'November', 'beruang' ),
+				12 => __( 'December', 'beruang' ),
+			);
+			foreach ( $month_names as $m => $label ) {
+				printf( '<option value="%s"%s>%s</option>', esc_attr( (string) $m ), selected( $month, $m, false ), esc_html( $label ) );
+			}
+			?>
+		</select>
+		<button type="button" class="beruang-filter-apply"><?php esc_html_e( 'Apply', 'beruang' ); ?></button>
+		<button type="button" class="beruang-filter-reset"><?php esc_html_e( 'Reset', 'beruang' ); ?></button>
+	</div>
+	<div class="beruang-budget-list" id="beruang-budget-list" data-year="<?php echo esc_attr( $year ); ?>" data-month="<?php echo esc_attr( $month ); ?>">
 		<p class="beruang-loading"><?php esc_html_e( 'Loading…', 'beruang' ); ?></p>
 	</div>
 	<div class="beruang-budget-modal beruang-modal" id="beruang-budget-modal" hidden>

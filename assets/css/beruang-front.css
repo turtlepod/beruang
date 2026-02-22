@@ -717,7 +717,7 @@
 
 .beruang-transaction-item {
 	display: grid;
-	grid-template-columns: 1fr auto auto;
+	grid-template-columns: 5em 4em 1fr auto auto;
 	gap: 0.5em 1em;
 	padding: 0.5em 0;
 	border-bottom: 1px solid #eee;
@@ -726,9 +726,22 @@
 	color: #1d2327;
 }
 
-
 .beruang-transaction-item:last-child {
 	border-bottom: none;
+}
+
+.beruang-tx-date {
+	min-width: 5em;
+	font-size: 0.9em;
+	opacity: 0.85;
+	color: #50575e;
+}
+
+.beruang-tx-time {
+	min-width: 4em;
+	font-size: 0.9em;
+	opacity: 0.85;
+	color: #50575e;
 }
 
 .beruang-tx-desc {
@@ -806,7 +819,47 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	gap: 0.5em;
 	margin-bottom: 1em;
+}
+
+.beruang-budget-header-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	margin-left: auto;
+}
+
+.beruang-budget-header-actions .beruang-filter-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5em;
+	height: 2.5em;
+	padding: 0;
+}
+
+.beruang-budget-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+	margin-bottom: 1em;
+	padding: 0.75em;
+	background: #f6f7f7;
+	border-radius: 4px;
+	color: #1d2327;
+}
+
+.beruang-budget-filters[hidden] {
+	display: none !important;
+}
+
+.beruang-budget-filters select {
+	padding: 0.4em;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	background: #fff;
+	color: #1d2327;
 }
 
 .beruang-budget-add {

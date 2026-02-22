@@ -321,8 +321,30 @@
 					}
 					var itemsHtml = '';
 					monthItems.forEach(function (tx) {
+						var dateDisplay = '—';
+						var timeDisplay = '—';
+						if (tx.date) {
+							var d = String(tx.date).trim();
+							var parts = d.split('-');
+							if (parts.length === 3) {
+								var y = parseInt(parts[0], 10);
+								var m = parseInt(parts[1], 10) - 1;
+								var day = parseInt(parts[2], 10);
+								var tmpDate = new Date(Date.UTC(y, m, day));
+								var locale = beruang.locale || 'en-US';
+								dateDisplay = new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', timeZone: 'UTC' }).format(tmpDate);
+							} else {
+								dateDisplay = d;
+							}
+						}
+						if (tx.time && String(tx.time).trim()) {
+							var t = String(tx.time).trim();
+							timeDisplay = t.substring(0, 5);
+						}
 						itemsHtml += txItemTpl({
 							id: tx.id,
+							dateDisplay: dateDisplay,
+							timeDisplay: timeDisplay,
 							description: tx.description || '—',
 							amountDisplay: (tx.type === 'income' ? '+' : '-') + formatNum(Math.abs(parseFloat(tx.amount))),
 							type: tx.type,
@@ -565,6 +587,18 @@
 		var $form = jQuery('#beruang-budget-form');
 		if (!$list.length) return;
 
+		var $budgetWrap = $list.closest('.beruang-budget-wrapper');
+		var $filters = $budgetWrap.find('#beruang-budget-filters');
+		var $filterBtn = $budgetWrap.find('.beruang-budget-header .beruang-filter-btn');
+
+		if ($filterBtn.length && $filters.length) {
+			$filterBtn.on('click', function () {
+				var hidden = $filters.attr('hidden');
+				if (hidden !== undefined && hidden !== false) $filters.attr('hidden', false);
+				else $filters.attr('hidden', true);
+			});
+		}
+
 		var msgTpl = wp.template('beruang-message');
 		var budgetCardTpl = wp.template('beruang-budget-card');
 
@@ -598,8 +632,10 @@
 		});
 
 		function loadBudgets() {
+			var year = $budgetWrap.find('.beruang-filter-year').length ? parseInt($budgetWrap.find('.beruang-filter-year').val(), 10) : $list.data('year');
+			var month = $budgetWrap.find('.beruang-filter-month').length ? parseInt($budgetWrap.find('.beruang-filter-month').val(), 10) : $list.data('month');
 			$list.html(msgTpl({ message: i18n.loading || 'Loading…' }));
-			request('beruang_get_budgets').done(function (r) {
+			request('beruang_get_budgets', { year: year, month: month }).done(function (r) {
 				if (!r.success || !r.data || !r.data.budgets) {
 					$list.html(msgTpl({ message: i18n.error || 'Error' }));
 					return;
@@ -628,6 +664,13 @@
 				$list.html(msgTpl({ message: i18n.error || 'Error' }));
 			});
 		}
+
+		jQuery($budgetWrap).on('click', '.beruang-filter-apply', loadBudgets);
+		jQuery($budgetWrap).on('click', '.beruang-filter-reset', function () {
+			$budgetWrap.find('.beruang-filter-year').val($list.data('year'));
+			$budgetWrap.find('.beruang-filter-month').val($list.data('month'));
+			loadBudgets();
+		});
 
 		jQuery('.beruang-budget-add').on('click', function () {
 			$form.find('[name="id"]').val('');
