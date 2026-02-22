@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-db.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/icon-helpers.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/seed.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/admin.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/ajax.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/shortcodes.php';

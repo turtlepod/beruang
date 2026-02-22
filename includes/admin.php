@@ -25,8 +25,24 @@ const ADMIN_CAPABILITY = 'manage_options';
 function admin_setup() {
 	add_action( 'admin_menu', __NAMESPACE__ . '\admin_register_menu' );
 	add_action( 'admin_init', __NAMESPACE__ . '\admin_register_settings' );
+	add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\admin_enqueue_styles' );
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\admin_setup' );
+
+/**
+ * Enqueue admin styles when on Beruang admin pages.
+ */
+function admin_enqueue_styles( $hook ) {
+	if ( strpos( $hook, 'beruang' ) === false ) {
+		return;
+	}
+	wp_enqueue_style(
+		'beruang-admin',
+		BERUANG_PLUGIN_URL . 'assets/css/beruang-admin.css',
+		array(),
+		filemtime( BERUANG_PLUGIN_DIR . 'assets/css/beruang-admin.css' )
+	);
+}
 
 /**
  * Register top-level Beruang menu and submenus (Settings, Transactions, Categories, Budgets, Budget Categories).
@@ -52,6 +68,8 @@ function admin_register_menu() {
  * Register admin_post handlers and option settings (currency, decimal/thousands separators).
  */
 function admin_register_settings() {
+	add_action( 'admin_post_beruang_export', __NAMESPACE__ . '\admin_handle_export' );
+	add_action( 'admin_post_beruang_export_csv', __NAMESPACE__ . '\admin_handle_export_csv' );
 	add_action( 'admin_post_beruang_update_transaction', __NAMESPACE__ . '\admin_handle_update_transaction' );
 	add_action( 'admin_post_beruang_update_category', __NAMESPACE__ . '\admin_handle_update_category' );
 	add_action( 'admin_post_beruang_update_budget', __NAMESPACE__ . '\admin_handle_update_budget' );
@@ -93,10 +111,6 @@ function admin_page_settings() {
 	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
 		return;
 	}
-	if ( isset( $_POST['beruang_export'] ) && check_admin_referer( 'beruang_export' ) ) {
-		admin_handle_export();
-		return;
-	}
 	if ( isset( $_POST['beruang_import'] ) && check_admin_referer( 'beruang_import' ) && ! empty( $_FILES['beruang_import_file']['tmp_name'] ) ) {
 		admin_handle_import();
 	}
@@ -128,9 +142,35 @@ function admin_page_settings() {
 		<hr />
 		<h2><?php esc_html_e( 'Export / Import', 'beruang' ); ?></h2>
 		<p>
-			<form method="post" style="display:inline;">
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:block;margin-bottom:1em;">
+				<input type="hidden" name="action" value="beruang_export" />
 				<?php wp_nonce_field( 'beruang_export' ); ?>
-				<button type="submit" name="beruang_export" class="button"><?php esc_html_e( 'Export my data (JSON)', 'beruang' ); ?></button>
+				<label><?php esc_html_e( 'User', 'beruang' ); ?>
+				<?php
+				wp_dropdown_users(
+					array(
+						'name'     => 'beruang_export_user_id',
+						'selected' => get_current_user_id(),
+					)
+				);
+				?>
+				</label>
+				<button type="submit" name="beruang_export" class="button"><?php esc_html_e( 'Export data (JSON)', 'beruang' ); ?></button>
+			</form>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:block;margin-bottom:1em;">
+				<input type="hidden" name="action" value="beruang_export_csv" />
+				<?php wp_nonce_field( 'beruang_export_csv' ); ?>
+				<label><?php esc_html_e( 'User', 'beruang' ); ?>
+				<?php
+				wp_dropdown_users(
+					array(
+						'name'     => 'beruang_export_user_id',
+						'selected' => get_current_user_id(),
+					)
+				);
+				?>
+				</label>
+				<button type="submit" name="beruang_export_csv" class="button"><?php esc_html_e( 'Export transactions (CSV)', 'beruang' ); ?></button>
 			</form>
 		</p>
 		<form method="post" enctype="multipart/form-data">
@@ -147,27 +187,94 @@ function admin_page_settings() {
 /**
  * Export current user's data as JSON and send download response.
  *
- * Exits after sending headers and output.
+ * Handled via admin_post before any output; exits after sending headers and body.
  */
 function admin_handle_export() {
-	$user_id = get_current_user_id();
+	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+	}
+	check_admin_referer( 'beruang_export' );
+	$user_id = isset( $_POST['beruang_export_user_id'] ) ? absint( $_POST['beruang_export_user_id'] ) : 0;
+	if ( ! $user_id ) {
+		$user_id = get_current_user_id();
+	}
 	if ( ! $user_id ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
 	}
+	$user         = get_userdata( $user_id );
 	$categories   = DB::get_categories_flat( $user_id, false );
 	$transactions = DB::get_transactions( $user_id, array( 'per_page' => 99999 ) );
 	$budgets      = DB::get_budgets( $user_id );
 	$data         = array(
-		'version'      => 1,
-		'exported'     => current_time( 'c' ),
-		'user_id'      => $user_id,
-		'categories'   => $categories,
-		'transactions' => $transactions['items'],
-		'budgets'      => $budgets,
+		'version'       => 1,
+		'exported'      => current_time( 'c' ),
+		'user_id'       => $user_id,
+		'user_login'    => $user ? $user->user_login : '',
+		'user_email'    => $user ? $user->user_email : '',
+		'display_name'  => $user ? $user->display_name : '',
+		'categories'    => $categories,
+		'transactions'   => $transactions['items'],
+		'budgets'       => $budgets,
 	);
 	header( 'Content-Type: application/json; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename="beruang-export-' . gmdate( 'Y-m-d' ) . '.json"' );
 	echo wp_json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
+	exit;
+}
+
+/**
+ * Export current user's transactions as CSV.
+ *
+ * Handled via admin_post before any output; exits after sending headers and body.
+ */
+function admin_handle_export_csv() {
+	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+	}
+	check_admin_referer( 'beruang_export_csv' );
+	$user_id = isset( $_POST['beruang_export_user_id'] ) ? absint( $_POST['beruang_export_user_id'] ) : 0;
+	if ( ! $user_id ) {
+		$user_id = get_current_user_id();
+	}
+	if ( ! $user_id ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+	}
+	$user         = get_userdata( $user_id );
+	$user_login   = $user ? $user->user_login : '';
+	$user_email   = $user ? $user->user_email : '';
+	$display_name = $user ? $user->display_name : '';
+	$transactions = DB::get_transactions( $user_id, array( 'per_page' => 99999 ) );
+	$items        = $transactions['items'];
+	$categories   = DB::get_categories_flat( $user_id, false );
+	$cat_names    = array();
+	foreach ( $categories as $c ) {
+		$cat_names[ (int) $c['id'] ] = $c['name'] ?? '';
+	}
+	header( 'Content-Type: text/csv; charset=utf-8' );
+	header( 'Content-Disposition: attachment; filename="beruang-transactions-' . gmdate( 'Y-m-d' ) . '.csv"' );
+	$output = fopen( 'php://output', 'w' );
+	// UTF-8 BOM for Excel compatibility.
+	fprintf( $output, "\xEF\xBB\xBF" );
+	fputcsv( $output, array( 'id', 'user_id', 'user_login', 'user_email', 'display_name', 'date', 'time', 'description', 'category_id', 'category_name', 'amount', 'type' ) );
+	foreach ( $items as $row ) {
+		$cat_id   = isset( $row['category_id'] ) ? (int) $row['category_id'] : 0;
+		$cat_name = $cat_id && isset( $cat_names[ $cat_id ] ) ? $cat_names[ $cat_id ] : '';
+		fputcsv( $output, array(
+			$row['id'] ?? '',
+			$row['user_id'] ?? '',
+			$user_login,
+			$user_email,
+			$display_name,
+			$row['date'] ?? '',
+			$row['time'] ?? '',
+			$row['description'] ?? '',
+			$row['category_id'] ?? '',
+			$cat_name,
+			$row['amount'] ?? '',
+			$row['type'] ?? '',
+		) );
+	}
+	fclose( $output );
 	exit;
 }
 
@@ -649,6 +756,7 @@ function admin_page_transactions() {
 			<label><?php esc_html_e( 'User ID', 'beruang' ); ?> <input type="number" name="user_id" value="<?php echo $user_filter ? esc_attr( $user_filter ) : ''; ?>" min="1" /></label>
 			<button type="submit" class="button"><?php esc_html_e( 'Filter', 'beruang' ); ?></button>
 		</form>
+		<div class="beruang-admin-table-wrap beruang-transactions-table-wrap">
 		<table class="wp-list-table widefat fixed striped">
 			<thead><tr>
 				<th><?php esc_html_e( 'ID', 'beruang' ); ?></th><th><?php esc_html_e( 'User ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Date', 'beruang' ); ?></th><th><?php esc_html_e( 'Time', 'beruang' ); ?></th>
@@ -675,6 +783,7 @@ function admin_page_transactions() {
 			?>
 			</tbody>
 		</table>
+		</div>
 		<?php
 		if ( $total > $per_page ) {
 			echo '<p class="tablenav">' . esc_html__( 'Total:', 'beruang' ) . ' ' . (int) $total . ' | ';
@@ -720,22 +829,6 @@ function admin_page_categories() {
 	}
 	if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) {
 		$message = __( 'Category not found.', 'beruang' );
-	}
-	if ( isset( $_POST['beruang_add_category'] ) && check_admin_referer( 'beruang_category' ) && $user_filter ) {
-		$name      = isset( $_POST['beruang_cat_name'] ) ? sanitize_text_field( wp_unslash( $_POST['beruang_cat_name'] ) ) : '';
-		$parent_id = isset( $_POST['beruang_cat_parent'] ) ? absint( $_POST['beruang_cat_parent'] ) : 0;
-		if ( '' !== $name ) {
-			DB::save_category(
-				$user_filter,
-				array(
-					'name'      => $name,
-					'parent_id' => $parent_id,
-				),
-				0
-			);
-			$message    = __( 'Category added.', 'beruang' );
-			$categories = DB::get_categories_flat( $user_filter, true );
-		}
 	}
 	if ( isset( $_GET['delete'] ) && check_admin_referer( 'beruang_delete_cat_' . absint( $_GET['delete'] ) ) ) {
 		DB::delete_category( $user_filter, absint( $_GET['delete'] ) );
@@ -789,14 +882,7 @@ function admin_page_categories() {
 			</form>
 		</div>
 		<?php } ?>
-		<form method="post" style="margin:1em 0;">
-			<?php wp_nonce_field( 'beruang_category' ); ?>
-			<label><?php esc_html_e( 'Name', 'beruang' ); ?> <input type="text" name="beruang_cat_name" required /></label>
-			<label><?php esc_html_e( 'Parent', 'beruang' ); ?> <select name="beruang_cat_parent"><option value="0">—</option>
-				<?php foreach ( $categories as $c ) { ?><option value="<?php echo esc_attr( $c['id'] ); ?>"><?php echo esc_html( str_repeat( '— ', (int) ( $c['depth'] ?? 0 ) ) . $c['name'] ); ?></option><?php } ?>
-			</select></label>
-			<button type="submit" name="beruang_add_category" class="button"><?php esc_html_e( 'Add category', 'beruang' ); ?></button>
-		</form>
+		<div class="beruang-admin-table-wrap">
 		<table class="wp-list-table widefat fixed striped">
 			<thead><tr><th><?php esc_html_e( 'ID', 'beruang' ); ?></th><th><?php esc_html_e( 'User ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Name', 'beruang' ); ?></th><th><?php esc_html_e( 'Parent ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Actions', 'beruang' ); ?></th></tr></thead>
 			<tbody>
@@ -829,6 +915,7 @@ function admin_page_categories() {
 			?>
 			</tbody>
 		</table>
+		</div>
 	</div>
 	<?php
 }
@@ -907,6 +994,7 @@ function admin_page_budgets() {
 			</form>
 		</div>
 		<?php } ?>
+		<div class="beruang-admin-table-wrap">
 		<table class="wp-list-table widefat fixed striped">
 			<thead><tr><th><?php esc_html_e( 'ID', 'beruang' ); ?></th><th><?php esc_html_e( 'User ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Name', 'beruang' ); ?></th><th><?php esc_html_e( 'Target', 'beruang' ); ?></th><th><?php esc_html_e( 'Type', 'beruang' ); ?></th><th><?php esc_html_e( 'Category IDs', 'beruang' ); ?></th><th><?php esc_html_e( 'Actions', 'beruang' ); ?></th></tr></thead>
 			<tbody>
@@ -930,6 +1018,7 @@ function admin_page_budgets() {
 			?>
 			</tbody>
 		</table>
+		</div>
 	</div>
 	<?php
 }
@@ -989,6 +1078,7 @@ function admin_page_budget_categories() {
 			<button type="submit" class="button"><?php esc_html_e( 'Add link', 'beruang' ); ?></button>
 		</form>
 		<?php } ?>
+		<div class="beruang-admin-table-wrap">
 		<table class="wp-list-table widefat fixed striped">
 			<thead><tr><th><?php esc_html_e( 'Budget ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Budget name', 'beruang' ); ?></th><th><?php esc_html_e( 'Category ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Category name', 'beruang' ); ?></th><th><?php esc_html_e( 'User ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Actions', 'beruang' ); ?></th></tr></thead>
 			<tbody>
@@ -1012,6 +1102,7 @@ function admin_page_budget_categories() {
 			?>
 			</tbody>
 		</table>
+		</div>
 	</div>
 	<?php
 }

@@ -239,4 +239,101 @@ class CLI {
 		$fields = isset( $assoc_args['fields'] ) ? $assoc_args['fields'] : 'budget_id,category_id';
 		\WP_CLI\Utils\format_items( $format, $items, explode( ',', $fields ) );
 	}
+
+	/**
+	 * Seed dummy data: categories, budgets, budget-categories, and transactions.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--user_id=<id>]
+	 * : User ID to seed data for. Default: 1
+	 *
+	 * [--transactions=<n>]
+	 * : Number of transactions to generate. Default: 1000
+	 *
+	 * @param array $args       Positional args.
+	 * @param array $assoc_args Associative args.
+	 */
+	public function seed( $args, $assoc_args ) {
+		$user_id  = isset( $assoc_args['user_id'] ) ? absint( $assoc_args['user_id'] ) : 1;
+		$tx_count = isset( $assoc_args['transactions'] ) ? absint( $assoc_args['transactions'] ) : 1000;
+		$user     = get_userdata( $user_id );
+		if ( ! $user ) {
+			\WP_CLI::error( "User ID $user_id not found." );
+		}
+		\WP_CLI::log( "Seeding data for user $user_id ({$user->user_login})..." );
+		$result = seed_dummy_data( $user_id, $tx_count );
+		\WP_CLI::success(
+			sprintf(
+				'Created %d transactions, %d categories, and %d budgets.',
+				$result['transactions'],
+				$result['categories'],
+				$result['budgets']
+			)
+		);
+	}
+
+	/**
+	 * Reset (delete) all Beruang data for a user.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--user_id=<id>]
+	 * : User ID to reset. Default: 1
+	 *
+	 * [--all]
+	 * : Reset data for all users.
+	 *
+	 * @param array $args       Positional args.
+	 * @param array $assoc_args Associative args.
+	 */
+	public function reset( $args, $assoc_args ) {
+		$all = ! empty( $assoc_args['all'] );
+		if ( $all ) {
+			global $wpdb;
+			$tx_table   = DB::table_transaction();
+			$budget_table = DB::table_budget();
+			$bc_table    = DB::table_budget_category();
+			$cat_table   = DB::table_category();
+			$user_ids    = $wpdb->get_col( "SELECT DISTINCT user_id FROM $tx_table UNION SELECT DISTINCT user_id FROM $budget_table UNION SELECT DISTINCT user_id FROM $cat_table" );
+			$user_ids    = array_filter( array_map( 'absint', $user_ids ) );
+			if ( empty( $user_ids ) ) {
+				\WP_CLI::success( 'No data to reset.' );
+				return;
+			}
+			$total = array( 'transactions' => 0, 'budgets' => 0, 'categories' => 0 );
+			foreach ( $user_ids as $uid ) {
+				$r = DB::reset_user_data( $uid );
+				$total['transactions'] += $r['transactions'];
+				$total['budgets']      += $r['budgets'];
+				$total['categories']   += $r['categories'];
+			}
+			\WP_CLI::success(
+				sprintf(
+					'Reset %d transactions, %d budgets, %d categories for %d user(s).',
+					$total['transactions'],
+					$total['budgets'],
+					$total['categories'],
+					count( $user_ids )
+				)
+			);
+			return;
+		}
+		$user_id = isset( $assoc_args['user_id'] ) ? absint( $assoc_args['user_id'] ) : 1;
+		$user    = get_userdata( $user_id );
+		if ( ! $user ) {
+			\WP_CLI::error( "User ID $user_id not found." );
+		}
+		$result = DB::reset_user_data( $user_id );
+		\WP_CLI::success(
+			sprintf(
+				'Reset %d transactions, %d budgets, %d categories for user %d (%s).',
+				$result['transactions'],
+				$result['budgets'],
+				$result['categories'],
+				$user_id,
+				$user->user_login
+			)
+		);
+	}
 }

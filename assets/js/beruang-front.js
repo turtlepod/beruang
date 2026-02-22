@@ -274,10 +274,12 @@
 		var accordionTpl = wp.template('beruang-accordion-group');
 
 		function loadList() {
-			var month = $accordion.data('month');
-			var year = $accordion.data('year');
-			var search = jQuery('.beruang-filter-search').val() || '';
-			var categoryId = jQuery('.beruang-filter-category').val() || '';
+			var $monthSel = $listWrap.find('.beruang-filter-month');
+			var $yearSel = $listWrap.find('.beruang-filter-year');
+			var month = $monthSel.length ? parseInt($monthSel.val(), 10) : $accordion.data('month');
+			var year = $yearSel.length ? parseInt($yearSel.val(), 10) : $accordion.data('year');
+			var search = $listWrap.find('.beruang-filter-search').val() || '';
+			var categoryId = $listWrap.find('.beruang-filter-category').val() || '';
 			$accordion.html(msgTpl({ message: i18n.loading || 'Loading…' }));
 			request('beruang_get_transactions', {
 				month: month,
@@ -332,8 +334,10 @@
 
 		jQuery('.beruang-filter-apply').on('click', loadList);
 		jQuery('.beruang-filter-reset').on('click', function () {
-			jQuery('.beruang-filter-search').val('');
-			jQuery('.beruang-filter-category').val('');
+			$listWrap.find('.beruang-filter-month').val($accordion.data('month'));
+			$listWrap.find('.beruang-filter-year').val($accordion.data('year'));
+			$listWrap.find('.beruang-filter-search').val('');
+			$listWrap.find('.beruang-filter-category').val('');
 			loadList();
 		});
 

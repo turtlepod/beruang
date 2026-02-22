@@ -18,9 +18,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<button type="button" class="beruang-filter-btn" title="<?php esc_attr_e( 'Filter', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'filter', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 	</div>
 	<div class="beruang-list-filters" id="beruang-list-filters" hidden>
+		<select class="beruang-filter-month" aria-label="<?php esc_attr_e( 'Month', 'beruang' ); ?>">
+			<?php
+			for ( $m = 1; $m <= 12; $m++ ) {
+				$month_name = date_i18n( 'F', strtotime( "2000-$m-01" ) );
+				printf( '<option value="%d"%s>%s</option>', $m, selected( $month, $m, false ), esc_html( $month_name ) );
+			}
+			?>
+		</select>
+		<select class="beruang-filter-year" aria-label="<?php esc_attr_e( 'Year', 'beruang' ); ?>">
+			<?php
+			$current_year = (int) current_time( 'Y' );
+			for ( $y = $current_year; $y >= $current_year - 10; $y-- ) {
+				printf( '<option value="%d"%s>%d</option>', $y, selected( $year, $y, false ), $y );
+			}
+			?>
+		</select>
 		<input type="text" class="beruang-filter-search" placeholder="<?php esc_attr_e( 'Search description', 'beruang' ); ?>" />
 		<select class="beruang-filter-category">
 			<option value=""><?php esc_html_e( 'All categories', 'beruang' ); ?></option>
+			<option value="0"><?php esc_html_e( 'Uncategorized', 'beruang' ); ?></option>
 			<?php
 			foreach ( $categories as $cat ) {
 				$depth  = (int) ( $cat['depth'] ?? 0 );

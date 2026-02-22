@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Beruang
  * Description:       Track money, transactions, and budgets. Per-user data with shortcodes and admin pages.
- * Version:           1.0.0
+ * Version:           0.1.0-beta
  * Requires at least: 5.9
  * Author:            Beruang
  * Text Domain:       beruang
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BERUANG_VERSION', '1.0.0' );
+define( 'BERUANG_VERSION', '0.1.0-beta' );
 define( 'BERUANG_PLUGIN_FILE', __FILE__ );
 define( 'BERUANG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BERUANG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

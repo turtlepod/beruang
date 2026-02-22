@@ -521,6 +521,34 @@ class DB {
 		return (float) $sum;
 	}
 
+	/**
+	 * Delete all Beruang data for a user: transactions, budget-category links, budgets, categories.
+	 *
+	 * @param int $user_id User ID.
+	 * @return array{ transactions: int, budgets: int, categories: int } Counts of deleted rows.
+	 */
+	public static function reset_user_data( $user_id ) {
+		$table   = self::table_transaction();
+		$user_id = absint( $user_id );
+		$tx      = self::wpdb()->query( self::wpdb()->prepare( "DELETE FROM $table WHERE user_id = %d", $user_id ) );
+		$budget  = self::table_budget();
+		$bc      = self::table_budget_category();
+		$ids     = self::wpdb()->get_col( self::wpdb()->prepare( "SELECT id FROM $budget WHERE user_id = %d", $user_id ) );
+		$bc_del  = 0;
+		if ( ! empty( $ids ) ) {
+			$placeholders = implode( ',', array_map( 'absint', $ids ) );
+			$bc_del      = self::wpdb()->query( "DELETE FROM $bc WHERE budget_id IN ($placeholders)" );
+		}
+		$bud_del = self::wpdb()->query( self::wpdb()->prepare( "DELETE FROM $budget WHERE user_id = %d", $user_id ) );
+		$cat     = self::table_category();
+		$cat_del = self::wpdb()->query( self::wpdb()->prepare( "DELETE FROM $cat WHERE user_id = %d", $user_id ) );
+		return array(
+			'transactions' => (int) $tx,
+			'budgets'      => (int) $bud_del,
+			'categories'   => (int) $cat_del,
+		);
+	}
+
 	// --- Budgets ---
 
 	/**

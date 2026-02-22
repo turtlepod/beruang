@@ -1,0 +1,53 @@
+/**
+ * Beruang admin styles.
+ *
+ * @package Beruang
+ */
+
+/* Filter form spacing and layout. */
+.beruang-admin-filter {
+	margin-bottom: 1.5em;
+}
+
+.beruang-admin-filter label {
+	display: inline-block;
+	margin-right: 0.5em;
+}
+
+@media screen and (max-width: 782px) {
+	.beruang-admin-filter label {
+		display: block;
+		margin-bottom: 0.5em;
+	}
+
+	.beruang-admin-filter .button {
+		margin-top: 0.25em;
+	}
+}
+
+/* Responsive table wrapper: horizontal scroll on narrow viewports. */
+.beruang-admin-table-wrap {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	max-width: 100%;
+	margin-bottom: 1em;
+}
+
+/* Override WordPress fixed layout so columns keep readable width and scroll instead of squashing. */
+.beruang-admin-table-wrap .wp-list-table {
+	table-layout: auto;
+	min-width: 900px;
+	width: 100%;
+}
+
+.beruang-admin-table-wrap .wp-list-table th,
+.beruang-admin-table-wrap .wp-list-table td {
+	white-space: nowrap;
+}
+
+/* Transactions table: allow Description column (5th) to wrap for long text. */
+.beruang-transactions-table-wrap .wp-list-table td:nth-child(5) {
+	white-space: normal;
+	min-width: 120px;
+	max-width: 220px;
+}
