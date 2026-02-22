@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="beruang beruang-list-wrapper">
 	<div class="beruang-list-header">
-		<h3 class="beruang-list-title"><?php esc_html_e( 'Transactions', 'beruang' ); ?></h3>
+		<h2 class="beruang-section-title"><?php esc_html_e( 'Transactions', 'beruang' ); ?></h2>
 		<button type="button" class="beruang-filter-btn" title="<?php esc_attr_e( 'Filter', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'filter', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 	</div>
 	<div class="beruang-list-filters" id="beruang-list-filters" hidden>

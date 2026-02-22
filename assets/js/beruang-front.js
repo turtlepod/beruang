@@ -258,8 +258,9 @@
 		var $accordion = jQuery('#beruang-list-accordion');
 		if (!$accordion.length) return;
 
-		var $filters = jQuery('#beruang-list-filters');
-		var $filterBtn = jQuery('.beruang-filter-btn');
+		var $listWrap = $accordion.closest('.beruang-list-wrapper');
+		var $filters = $listWrap.find('#beruang-list-filters');
+		var $filterBtn = $listWrap.find('.beruang-filter-btn');
 		if ($filterBtn.length) {
 			$filterBtn.on('click', function () {
 				var hidden = $filters.attr('hidden');
@@ -408,6 +409,16 @@
 		var $wrap = jQuery('.beruang-graph-wrapper');
 		var $canvas = jQuery('#beruang-graph-canvas');
 		if (!$canvas.length || typeof window.Chart === 'undefined') return;
+
+		var $graphFilters = jQuery('#beruang-graph-filters');
+		var $graphFilterBtn = $wrap.find('.beruang-filter-btn');
+		if ($graphFilterBtn.length && $graphFilters.length) {
+			$graphFilterBtn.on('click', function () {
+				var hidden = $graphFilters.attr('hidden');
+				if (hidden !== undefined && hidden !== false) $graphFilters.attr('hidden', false);
+				else $graphFilters.attr('hidden', true);
+			});
+		}
 
 		var chart = null;
 

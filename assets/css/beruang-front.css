@@ -26,6 +26,8 @@
 
 .beruang-form-wrapper .beruang-form {
 	max-width: 20em;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .beruang-form-row {
@@ -217,6 +219,7 @@
 
 .beruang-type-btn:hover:not(.active) {
 	background: #e8e8e8;
+	color: #1d2327;
 	border-color: #787c82;
 }
 
@@ -531,9 +534,11 @@
 	margin-bottom: 0.75em;
 }
 
-.beruang-list-title {
+/* Section titles - Transactions, Budgets, Graph */
+.beruang-section-title {
 	margin: 0;
 	font-size: 1.25em;
+	font-weight: 600;
 	color: #1d2327;
 }
 
@@ -548,6 +553,7 @@
 
 .beruang-filter-btn:hover {
 	background: #dcdcde;
+	color: #1d2327;
 	border-color: #787c82;
 }
 
@@ -566,13 +572,17 @@
 	display: none !important;
 }
 
-.beruang-list-filters input,
+.beruang-list-filters input[type="text"],
 .beruang-list-filters select {
 	padding: 0.4em;
 	border: 1px solid #8c8f94;
 	border-radius: 4px;
 	background: #fff;
 	color: #1d2327;
+}
+
+.beruang-list-filters input[type="text"]:focus{
+	background: #fff;
 }
 
 .beruang-filter-apply {
@@ -599,6 +609,7 @@
 
 .beruang-filter-reset:hover {
 	background: #dcdcde;
+	color: #1d2327;
 	border-color: #787c82;
 }
 
@@ -683,14 +694,30 @@
 	padding: 1em 0;
 }
 
-.beruang-graph-controls {
+.beruang-graph-header {
 	display: flex;
-	gap: 0.75em;
-	margin-bottom: 1em;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 0.75em;
 }
 
-.beruang-graph-controls select {
-	padding: 0.5em;
+.beruang-graph-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+	margin-bottom: 1em;
+	padding: 0.75em;
+	background: #f6f7f7;
+	border-radius: 4px;
+	color: #1d2327;
+}
+
+.beruang-graph-filters[hidden] {
+	display: none !important;
+}
+
+.beruang-graph-filters select {
+	padding: 0.4em;
 	border: 1px solid #8c8f94;
 	border-radius: 4px;
 	background: #fff;
@@ -721,12 +748,22 @@
 }
 
 .beruang-budget-add {
-	padding: 0.5em 1em;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5em;
+	height: 2.5em;
+	padding: 0;
 	background: #2271b1;
 	color: #fff;
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
+	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.beruang-budget-add .beruang-icon {
+	color: inherit;
 }
 
 .beruang-budget-add:hover {

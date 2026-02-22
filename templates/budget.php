@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="beruang beruang-budget-wrapper">
 	<div class="beruang-budget-header">
-		<h3 class="beruang-budget-title"><?php esc_html_e( 'Budgets', 'beruang' ); ?></h3>
-		<button type="button" class="beruang-budget-add"><?php esc_html_e( 'Add budget', 'beruang' ); ?></button>
+		<h2 class="beruang-section-title"><?php esc_html_e( 'Budgets', 'beruang' ); ?></h2>
+		<button type="button" class="beruang-budget-add" title="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 	</div>
 	<div class="beruang-budget-list" id="beruang-budget-list">
 		<p class="beruang-loading"><?php esc_html_e( 'Loading…', 'beruang' ); ?></p>
