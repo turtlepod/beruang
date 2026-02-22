@@ -61,11 +61,12 @@ function enqueue_front_scripts() {
 	);
 	$deps = array( 'jquery', 'wp-util' );
 	if ( has_shortcode( $post->post_content ?? '', 'beruang-graph' ) ) {
+		$chart_asset = BERUANG_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
 		wp_enqueue_script(
 			'chartjs',
-			'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js',
+			BERUANG_PLUGIN_URL . 'assets/js/chart.umd.min.js',
 			array(),
-			'4.4.1',
+			file_exists( $chart_asset ) ? (string) filemtime( $chart_asset ) : '4.4.1',
 			true
 		);
 		$deps[] = 'chartjs';

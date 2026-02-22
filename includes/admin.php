@@ -696,6 +696,20 @@ function admin_handle_add_budget_category() {
 		);
 		exit;
 	}
+	$budget   = DB::get_budget_by_id( $budget_id );
+	$category = DB::get_category_by_id( $category_id );
+	if ( ! $budget || ! $category || (int) $budget['user_id'] !== (int) $category['user_id'] ) {
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'          => 'beruang-budget-categories',
+					'beruang_error' => 'invalid',
+				),
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
+	}
 	DB::insert_budget_category( $budget_id, $category_id );
 	wp_safe_redirect(
 		add_query_arg(

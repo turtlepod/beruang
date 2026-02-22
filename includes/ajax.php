@@ -62,6 +62,10 @@ function ajax_save_transaction() {
 	$amount      = isset( $_POST['amount'] ) ? floatval( $_POST['amount'] ) : 0;
 	$type        = isset( $_POST['type'] ) && 'income' === $_POST['type'] ? 'income' : 'expense';
 
+	if ( $category_id > 0 && ! DB::get_category_for_user( $user_id, $category_id ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid category.', 'beruang' ) ) );
+	}
+
 	$id = DB::insert_transaction(
 		$user_id,
 		array(
@@ -91,6 +95,9 @@ function ajax_get_transactions() {
 		$category_id = absint( $category_id );
 	}
 	$page   = isset( $_GET['page'] ) ? max( 1, absint( $_GET['page'] ) ) : 1;
+	if ( $category_id > 0 && ! DB::get_category_for_user( $user_id, $category_id ) ) {
+		$category_id = '';
+	}
 	$args   = array(
 		'year'        => $year,
 		'search'      => $search,
@@ -142,6 +149,10 @@ function ajax_update_transaction() {
 	if ( '' === $data['time'] ) {
 		$data['time'] = null;
 	}
+	$cat_id = (int) $data['category_id'];
+	if ( $cat_id > 0 && ! DB::get_category_for_user( $user_id, $cat_id ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid category.', 'beruang' ) ) );
+	}
 	$ok = DB::update_transaction( $id, $data );
 	if ( $ok ) {
 		wp_send_json_success( array( 'id' => $id ) );
@@ -181,6 +192,12 @@ function ajax_save_category() {
 	$parent_id = isset( $_POST['parent_id'] ) ? absint( $_POST['parent_id'] ) : 0;
 	if ( '' === $name ) {
 		wp_send_json_error( array( 'message' => __( 'Name required.', 'beruang' ) ) );
+	}
+	if ( $id > 0 && ! DB::get_category_for_user( $user_id, $id ) ) {
+		wp_send_json_error( array( 'message' => __( 'Category not found.', 'beruang' ) ) );
+	}
+	if ( $parent_id > 0 && ! DB::get_category_for_user( $user_id, $parent_id ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid parent category.', 'beruang' ) ) );
 	}
 	$saved = DB::save_category(
 		$user_id,
@@ -265,6 +282,14 @@ function ajax_save_budget() {
 	}
 	if ( '' === $name ) {
 		wp_send_json_error( array( 'message' => __( 'Name required.', 'beruang' ) ) );
+	}
+	if ( $id > 0 && ! DB::get_budget_for_user( $user_id, $id ) ) {
+		wp_send_json_error( array( 'message' => __( 'Budget not found.', 'beruang' ) ) );
+	}
+	foreach ( $category_ids as $cid ) {
+		if ( $cid > 0 && ! DB::get_category_for_user( $user_id, $cid ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid category.', 'beruang' ) ) );
+		}
 	}
 	$saved = DB::save_budget(
 		$user_id,
