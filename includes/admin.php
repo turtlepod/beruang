@@ -104,6 +104,47 @@ function admin_register_settings() {
 			'sanitize_callback' => 'sanitize_text_field',
 		)
 	);
+	register_setting(
+		'beruang_settings',
+		'beruang_pwa_enabled',
+		array(
+			'type'              => 'boolean',
+			'default'           => false,
+			'sanitize_callback' => function ( $v ) {
+				return ! empty( $v );
+			},
+		)
+	);
+	register_setting(
+		'beruang_settings',
+		'beruang_pwa_app_name',
+		array(
+			'type'              => 'string',
+			'default'           => '',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	register_setting(
+		'beruang_settings',
+		'beruang_pwa_short_name',
+		array(
+			'type'              => 'string',
+			'default'           => '',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	register_setting(
+		'beruang_settings',
+		'beruang_pwa_theme_color',
+		array(
+			'type'              => 'string',
+			'default'           => '#2271b1',
+			'sanitize_callback' => function ( $v ) {
+				$sanitized = sanitize_hex_color( $v );
+				return ! empty( $sanitized ) ? $sanitized : '#2271b1';
+			},
+		)
+	);
 }
 
 /**
@@ -116,9 +157,13 @@ function admin_page_settings() {
 	if ( isset( $_POST['beruang_import'] ) && check_admin_referer( 'beruang_import' ) && ! empty( $_FILES['beruang_import_file']['tmp_name'] ) ) {
 		admin_handle_import();
 	}
-	$currency      = get_option( 'beruang_currency', 'IDR' );
-	$decimal_sep   = get_option( 'beruang_decimal_sep', ',' );
-	$thousands_sep = get_option( 'beruang_thousands_sep', '.' );
+	$currency        = get_option( 'beruang_currency', 'IDR' );
+	$decimal_sep     = get_option( 'beruang_decimal_sep', ',' );
+	$thousands_sep   = get_option( 'beruang_thousands_sep', '.' );
+	$pwa_enabled     = (bool) get_option( 'beruang_pwa_enabled', false );
+	$pwa_app_name    = get_option( 'beruang_pwa_app_name', '' );
+	$pwa_short_name  = get_option( 'beruang_pwa_short_name', '' );
+	$pwa_theme_color = get_option( 'beruang_pwa_theme_color', '#2271b1' );
 	settings_errors( 'beruang_import' );
 	?>
 	<div class="wrap">
@@ -137,6 +182,39 @@ function admin_page_settings() {
 				<tr>
 					<th scope="row"><label for="beruang_thousands_sep"><?php esc_html_e( 'Thousands separator', 'beruang' ); ?></label></th>
 					<td><input type="text" id="beruang_thousands_sep" name="beruang_thousands_sep" value="<?php echo esc_attr( $thousands_sep ); ?>" maxlength="2" /></td>
+				</tr>
+			</table>
+			<h2><?php esc_html_e( 'Web app', 'beruang' ); ?></h2>
+			<p class="description"><?php esc_html_e( 'Allow visitors to install your site as an app on their device (Add to Home Screen).', 'beruang' ); ?></p>
+			<table class="form-table">
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Enable web app install', 'beruang' ); ?></th>
+					<td>
+						<label>
+							<input type="checkbox" name="beruang_pwa_enabled" value="1" <?php checked( $pwa_enabled ); ?> />
+							<?php esc_html_e( 'Enable', 'beruang' ); ?>
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="beruang_pwa_app_name"><?php esc_html_e( 'App name', 'beruang' ); ?></label></th>
+					<td>
+						<input type="text" id="beruang_pwa_app_name" name="beruang_pwa_app_name" value="<?php echo esc_attr( $pwa_app_name ); ?>" class="regular-text" />
+						<p class="description"><?php esc_html_e( 'Display name when installed. Leave blank to use site title.', 'beruang' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="beruang_pwa_short_name"><?php esc_html_e( 'Short name', 'beruang' ); ?></label></th>
+					<td>
+						<input type="text" id="beruang_pwa_short_name" name="beruang_pwa_short_name" value="<?php echo esc_attr( $pwa_short_name ); ?>" class="regular-text" maxlength="12" />
+						<p class="description"><?php esc_html_e( 'Shown on home screen when space is limited (max 12 chars). Leave blank to auto-truncate app name.', 'beruang' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="beruang_pwa_theme_color"><?php esc_html_e( 'Theme color', 'beruang' ); ?></label></th>
+					<td>
+						<input type="text" id="beruang_pwa_theme_color" name="beruang_pwa_theme_color" value="<?php echo esc_attr( $pwa_theme_color ); ?>" class="small-text" />
+					</td>
 				</tr>
 			</table>
 			<?php submit_button(); ?>

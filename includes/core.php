@@ -16,12 +16,23 @@ require_once BERUANG_PLUGIN_DIR . 'includes/icon-helpers.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/seed.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/admin.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/ajax.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/manifest.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/shortcodes.php';
 
-register_activation_hook( BERUANG_PLUGIN_FILE, array( DB::class, 'install' ) );
+register_activation_hook( BERUANG_PLUGIN_FILE, __NAMESPACE__ . '\on_activation' );
+register_deactivation_hook( BERUANG_PLUGIN_FILE, 'flush_rewrite_rules' );
 
 // Bootstrap.
 add_action( 'plugins_loaded', __NAMESPACE__ . '\on_plugins_loaded' );
+
+/**
+ * Fires on plugin activation: install DB tables and flush rewrite rules for manifest.
+ */
+function on_activation() {
+	DB::install();
+	manifest_register_rewrite();
+	flush_rewrite_rules();
+}
 
 /**
  * Fires on plugins_loaded: load text domain, register shortcodes, and hook actions.
@@ -29,6 +40,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\on_plugins_loaded' );
 function on_plugins_loaded() {
 	load_plugin_textdomain( 'beruang', false, dirname( plugin_basename( BERUANG_PLUGIN_FILE ) ) . '/languages' );
 	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_front_scripts' );
+	manifest_setup();
 }
 
 /**
