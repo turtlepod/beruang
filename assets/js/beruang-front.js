@@ -164,8 +164,9 @@
 			$catCancelBtn.hide();
 		});
 
-		jQuery(document).on('click', '.beruang-cat-edit-btn', function () {
+		jQuery(document).on('click', '.beruang-action-edit', function () {
 			var $li = jQuery(this).closest('.beruang-cat-item');
+			if (!$li.length) return;
 			var id = $li.data('id');
 			var name = $li.data('name');
 			var parent = $li.data('parent');
@@ -176,8 +177,10 @@
 			refreshCategoriesInModal(id, parent || '0');
 		});
 
-		jQuery(document).on('click', '.beruang-cat-delete-btn', function () {
-			var id = jQuery(this).closest('.beruang-cat-item').data('id');
+		jQuery(document).on('click', '.beruang-action-delete', function () {
+			var $li = jQuery(this).closest('.beruang-cat-item');
+			if (!$li.length) return;
+			var id = $li.data('id');
 			if (!id || !confirm(i18n.confirm_delete_category || 'Delete this category?')) return;
 			request('beruang_delete_category', { id: id }).done(function (r) {
 				if (r.success) refreshCategoriesInModal();
@@ -337,8 +340,10 @@
 		var $editModal = jQuery('#beruang-edit-tx-modal');
 		var $editForm = jQuery('#beruang-edit-tx-form');
 		if ($editModal.length && $editForm.length) {
-			jQuery(document).on('click', '.beruang-edit-tx-btn', function () {
-				var id = jQuery(this).closest('.beruang-transaction-item').data('id');
+			jQuery(document).on('click', '.beruang-action-edit', function () {
+				var $item = jQuery(this).closest('.beruang-transaction-item');
+				if (!$item.length) return;
+				var id = $item.data('id');
 				if (!id) return;
 				request('beruang_get_transaction', { id: id }, 'GET').done(function (r) {
 					if (!r.success || !r.data || !r.data.transaction) return;
@@ -375,8 +380,10 @@
 					}
 				});
 			});
-			jQuery(document).on('click', '.beruang-delete-tx-btn', function () {
-				var id = jQuery(this).closest('.beruang-transaction-item').data('id');
+			jQuery(document).on('click', '.beruang-action-delete', function () {
+				var $item = jQuery(this).closest('.beruang-transaction-item');
+				if (!$item.length) return;
+				var id = $item.data('id');
 				if (!id || !confirm(i18n.confirm_delete_transaction || 'Delete this transaction?')) return;
 				request('beruang_delete_transaction', { id: id }).done(function (r) {
 					if (r.success) loadList();
@@ -489,6 +496,35 @@
 		var msgTpl = wp.template('beruang-message');
 		var budgetCardTpl = wp.template('beruang-budget-card');
 
+		jQuery(document).on('click', '.beruang-action-delete', function () {
+			var $btn = jQuery(this);
+			if (!$btn.closest('.beruang-budget-card').length) return;
+			var id = $btn.data('id');
+			if (!id || !confirm(i18n.confirm_delete || 'Delete this budget?')) return;
+			request('beruang_delete_budget', { id: id }).done(function (res) {
+				if (res.success) loadBudgets();
+			});
+		});
+		jQuery(document).on('click', '.beruang-action-edit', function () {
+			var $btn = jQuery(this);
+			if (!$btn.closest('.beruang-budget-card').length) return;
+			var id = $btn.data('id');
+			if (!id) return;
+			request('beruang_get_budget', { id: id }, 'GET').done(function (r) {
+				if (!r.success || !r.data || !r.data.budget) return;
+				var b = r.data.budget;
+				$form.find('[name="id"]').val(b.id);
+				$form.find('[name="name"]').val(b.name || '');
+				$form.find('[name="target_amount"]').val(b.target_amount || '');
+				$form.find('[name="type"]').val(b.type === 'yearly' ? 'yearly' : 'monthly');
+				$form.find('[name="category_ids[]"]').prop('checked', false);
+				(b.category_ids || []).forEach(function (cid) {
+					$form.find('[name="category_ids[]"][value="' + cid + '"]').prop('checked', true);
+				});
+				$modal.attr('hidden', false);
+			});
+		});
+
 		function loadBudgets() {
 			$list.html(msgTpl({ message: i18n.loading || 'Loading…' }));
 			request('beruang_get_budgets').done(function (r) {
@@ -516,31 +552,6 @@
 				});
 				if (!budgets.length) html = msgTpl({ message: i18n.no_budgets || 'No budgets.' });
 				$list.html(html);
-
-				jQuery('.beruang-budget-delete').on('click', function () {
-					var id = jQuery(this).data('id');
-					if (!id || !confirm(i18n.confirm_delete || 'Delete this budget?')) return;
-					request('beruang_delete_budget', { id: id }).done(function (res) {
-						if (res.success) loadBudgets();
-					});
-				});
-				jQuery('.beruang-budget-edit').on('click', function () {
-					var id = jQuery(this).data('id');
-					if (!id) return;
-					request('beruang_get_budget', { id: id }, 'GET').done(function (r) {
-						if (!r.success || !r.data || !r.data.budget) return;
-						var b = r.data.budget;
-						$form.find('[name="id"]').val(b.id);
-						$form.find('[name="name"]').val(b.name || '');
-						$form.find('[name="target_amount"]').val(b.target_amount || '');
-						$form.find('[name="type"]').val(b.type === 'yearly' ? 'yearly' : 'monthly');
-						$form.find('[name="category_ids[]"]').prop('checked', false);
-						(b.category_ids || []).forEach(function (cid) {
-							$form.find('[name="category_ids[]"][value="' + cid + '"]').prop('checked', true);
-						});
-						$modal.attr('hidden', false);
-					});
-				});
 			}).fail(function () {
 				$list.html(msgTpl({ message: i18n.error || 'Error' }));
 			});

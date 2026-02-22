@@ -458,31 +458,32 @@
 	color: #1d2327;
 }
 
-.beruang-cat-edit-btn,
-.beruang-cat-delete-btn {
-	padding: 0.2em 0.5em;
+/* Edit/Delete action buttons - shared across list, categories, budget */
+.beruang-action-edit,
+.beruang-action-delete {
+	padding: 0.25em 0.6em;
 	font-size: 0.85em;
-	border-radius: 3px;
+	border-radius: 4px;
 	cursor: pointer;
 }
 
-.beruang-cat-edit-btn {
+.beruang-action-edit {
 	background: #2271b1;
 	color: #fff;
 	border: none;
 }
 
-.beruang-cat-edit-btn:hover {
+.beruang-action-edit:hover {
 	background: #135e96;
 }
 
-.beruang-cat-delete-btn {
+.beruang-action-delete {
 	background: #f0f0f1;
 	color: #1d2327;
 	border: 1px solid #8c8f94;
 }
 
-.beruang-cat-delete-btn:hover {
+.beruang-action-delete:hover {
 	background: #d63638;
 	color: #fff;
 	border-color: #d63638;
@@ -600,6 +601,11 @@
 	color: #1d2327;
 }
 
+.beruang-tx-actions {
+	display: inline-flex;
+	gap: 0.5em;
+}
+
 .beruang-transaction-item {
 	display: grid;
 	grid-template-columns: 1fr auto auto;
@@ -611,26 +617,6 @@
 	color: #1d2327;
 }
 
-.beruang-tx-actions .beruang-edit-tx-btn,
-.beruang-tx-actions .beruang-delete-tx-btn {
-	padding: 0.25em 0.5em;
-	font-size: 0.85em;
-	background: #f0f0f1;
-	border: 1px solid #8c8f94;
-	border-radius: 3px;
-	cursor: pointer;
-	color: #1d2327;
-}
-
-.beruang-tx-actions .beruang-edit-tx-btn:hover {
-	background: #e0e0e0;
-}
-
-.beruang-tx-actions .beruang-delete-tx-btn:hover {
-	background: #d63638;
-	color: #fff;
-	border-color: #d63638;
-}
 
 .beruang-transaction-item:last-child {
 	border-bottom: none;
@@ -728,37 +714,6 @@
 	margin-top: 0.5em;
 }
 
-.beruang-budget-actions .beruang-budget-edit,
-.beruang-budget-actions .beruang-budget-delete {
-	padding: 0.25em 0.5em;
-	font-size: 0.9em;
-}
-
-.beruang-budget-actions .beruang-budget-delete {
-	background: #f0f0f1;
-	color: #1d2327;
-	border: 1px solid #8c8f94;
-	border-radius: 3px;
-	cursor: pointer;
-}
-
-.beruang-budget-actions .beruang-budget-delete:hover {
-	background: #d63638;
-	color: #fff;
-	border-color: #d63638;
-}
-
-.beruang-budget-actions .beruang-budget-edit {
-	background: #2271b1;
-	color: #fff;
-	border: none;
-	border-radius: 3px;
-	cursor: pointer;
-}
-
-.beruang-budget-actions .beruang-budget-edit:hover {
-	background: #135e96;
-}
 
 .beruang-budget-progress-wrap {
 	height: 8px;
