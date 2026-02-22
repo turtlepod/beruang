@@ -44,7 +44,7 @@ function enqueue_front_scripts() {
 		'beruang-front',
 		BERUANG_PLUGIN_URL . 'assets/css/beruang-front.css',
 		array(),
-		BERUANG_VERSION
+		filemtime( BERUANG_PLUGIN_DIR . 'assets/css/beruang-front.css' )
 	);
 	$deps = array( 'jquery', 'wp-util' );
 	if ( has_shortcode( $post->post_content ?? '', 'beruang-graph' ) ) {

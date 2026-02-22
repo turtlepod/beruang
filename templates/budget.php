@@ -19,8 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="beruang-budget-list" id="beruang-budget-list">
 		<p class="beruang-loading"><?php esc_html_e( 'Loading…', 'beruang' ); ?></p>
 	</div>
-	<div class="beruang-budget-modal" id="beruang-budget-modal" hidden>
-		<div class="beruang-budget-modal-inner">
+	<div class="beruang-budget-modal beruang-modal" id="beruang-budget-modal" hidden>
+		<div class="beruang-modal-dialog">
+			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>">×</button>
+			<div class="beruang-budget-modal-inner">
 			<h4><?php esc_html_e( 'Add / Edit budget', 'beruang' ); ?></h4>
 			<form id="beruang-budget-form">
 				<input type="hidden" name="id" value="" />
@@ -56,6 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<button type="button" class="beruang-budget-modal-close"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
 				</div>
 			</form>
+			</div>
 		</div>
 	</div>
 </div>

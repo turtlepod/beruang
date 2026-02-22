@@ -18,6 +18,11 @@
 		});
 	}
 
+	// Modal x close (dismiss without saving)
+	jQuery(document).on('click', '.beruang-modal-close-x', function () {
+		jQuery(this).closest('.beruang-modal').attr('hidden', true);
+	});
+
 	// --- Form ---
 	jQuery(function () {
 		var $form = jQuery('#beruang-transaction-form');
@@ -189,43 +194,46 @@
 				$calcDisplay.val($amountInput.val() || '0');
 				$calcModal.attr('hidden', false);
 			});
-			$calcModal.find('.beruang-calc-close').on('click', function () {
+			$calcModal.find('.beruang-calc-insert-close').on('click', function () {
 				$amountInput.val($calcDisplay.val());
 				$calcModal.attr('hidden', true);
 			});
 			$calcModal.on('click', function (e) {
 				if (e.target === $calcModal[0]) $calcModal.attr('hidden', true);
 			});
-			// Minimal calc: 0-9, 00, 000, ., +, -, *, /, =
+			// Calc: 4x4 grid (7-9/÷, 4-6/×, 1-3/-, 0/000/./+), bottom row: Insert & Close, =
 			var calcVal = '0';
 			var calcOp = null;
 			var calcPrev = null;
 			function updateDisplay() { $calcDisplay.val(calcVal); }
+			function doEquals() {
+				if (calcOp && calcPrev !== null) {
+					var a = parseFloat(calcPrev);
+					var bNum = parseFloat(calcVal);
+					var op = calcOp === '\u00f7' ? '/' : (calcOp === '\u00d7' ? '*' : calcOp);
+					if (op === '+') calcVal = String(a + bNum);
+					else if (op === '-') calcVal = String(a - bNum);
+					else if (op === '*') calcVal = String(a * bNum);
+					else if (op === '/') calcVal = bNum !== 0 ? String(a / bNum) : '0';
+					calcOp = null;
+					calcPrev = null;
+				}
+				updateDisplay();
+			}
 			var btns = [
-				['7','8','9','/'],
-				['4','5','6','*'],
+				['7','8','9','\u00f7'],
+				['4','5','6','\u00d7'],
 				['1','2','3','-'],
-				['0','00','000','.'],
-				['=','+','-','*']
+				['0','000','.','+']
 			];
 			var $container = $calcModal.find('.beruang-calc-buttons');
 			$container.empty();
 			btns.forEach(function (row) {
 				row.forEach(function (key) {
-					var b = jQuery('<button type="button">').text(key);
+					var isOp = key === '+' || key === '-' || key === '*' || key === '/' || key === '\u00f7' || key === '\u00d7';
+					var b = jQuery('<button type="button">').text(key).toggleClass('beruang-calc-op', isOp);
 					b.on('click', function () {
-						if (key === '=') {
-							if (calcOp && calcPrev !== null) {
-								var a = parseFloat(calcPrev);
-								var bNum = parseFloat(calcVal);
-								if (calcOp === '+') calcVal = String(a + bNum);
-								else if (calcOp === '-') calcVal = String(a - bNum);
-								else if (calcOp === '*') calcVal = String(a * bNum);
-								else if (calcOp === '/') calcVal = bNum !== 0 ? String(a / bNum) : '0';
-								calcOp = null;
-								calcPrev = null;
-							}
-						} else if (key === '+' || key === '-' || key === '*' || key === '/') {
+						if (key === '+' || key === '-' || key === '*' || key === '/' || key === '\u00f7' || key === '\u00d7') {
 							calcPrev = calcVal;
 							calcOp = key;
 							calcVal = '0';
@@ -238,6 +246,7 @@
 					$container.append(b);
 				});
 			});
+			$calcModal.find('.beruang-calc-equals').on('click', doEquals);
 		}
 	});
 

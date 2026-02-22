@@ -35,8 +35,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="beruang-list-accordion" id="beruang-list-accordion" data-month="<?php echo esc_attr( $month ); ?>" data-year="<?php echo esc_attr( $year ); ?>">
 		<p class="beruang-loading"><?php esc_html_e( 'Loading…', 'beruang' ); ?></p>
 	</div>
-	<div class="beruang-edit-tx-modal" id="beruang-edit-tx-modal" hidden>
-		<div class="beruang-edit-tx-modal-inner">
+	<div class="beruang-edit-tx-modal beruang-modal" id="beruang-edit-tx-modal" hidden>
+		<div class="beruang-modal-dialog">
+			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>">×</button>
+			<div class="beruang-edit-tx-modal-inner">
 			<h4><?php esc_html_e( 'Edit transaction', 'beruang' ); ?></h4>
 			<form id="beruang-edit-tx-form">
 				<input type="hidden" name="id" id="beruang-edit-tx-id" value="" />
@@ -81,6 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<button type="button" class="beruang-edit-tx-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
 				</div>
 			</form>
+			</div>
 		</div>
 	</div>
 </div>
