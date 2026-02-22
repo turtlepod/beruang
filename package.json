@@ -1,6 +1,6 @@
 {
   "name": "beruang",
-  "version": "1.0.0",
+  "version": "0.1.0-beta",
   "private": true,
   "description": "Track money, transactions, and budgets. Per-user data with shortcodes and admin pages.",
   "license": "GPL-2.0-or-later",
@@ -11,11 +11,10 @@
   "scripts": {
     "prepare": "husky",
     "lint": "composer run lint",
-    "lint-php": "composer run lint"
+    "lint-php": "composer run lint",
+    "zip": "version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang.$version.zip beruang -x '*/.git/*' -x '*node_modules*' -x '*/vendor/*' -x '*/example-plugin/*'"
   },
   "lint-staged": {
-    "*.php": [
-      "./vendor/bin/phpcs -s --runtime-set testVersion 7.4-"
-    ]
+    "*.php": ["./vendor/bin/phpcs -s --runtime-set testVersion 7.4-"]
   }
 }

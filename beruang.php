@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Beruang
+ * Plugin Name:       Beruang Budget
  * Description:       Track money, transactions, and budgets. Per-user data with shortcodes and admin pages.
  * Version:           0.1.0-beta
  * Requires at least: 5.9

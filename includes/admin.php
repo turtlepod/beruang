@@ -51,8 +51,8 @@ function admin_enqueue_styles( $hook ) {
  */
 function admin_register_menu() {
 	add_menu_page(
-		__( 'Beruang', 'beruang' ),
-		__( 'Beruang', 'beruang' ),
+		__( 'Beruang Budget', 'beruang' ),
+		__( 'Beruang Budget', 'beruang' ),
 		ADMIN_CAPABILITY,
 		ADMIN_SLUG,
 		__NAMESPACE__ . '\admin_page_settings',
@@ -167,7 +167,7 @@ function admin_page_settings() {
 	settings_errors( 'beruang_import' );
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'Beruang Settings', 'beruang' ); ?></h1>
+		<h1><?php esc_html_e( 'Beruang Budget Settings', 'beruang' ); ?></h1>
 		<form method="post" action="options.php">
 			<?php settings_fields( 'beruang_settings' ); ?>
 			<table class="form-table">

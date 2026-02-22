@@ -1,4 +1,4 @@
-# Beruang
+# Beruang Budget
 
 WordPress plugin for per-user money, transaction, and budget tracking.
 
@@ -15,7 +15,7 @@ WordPress plugin for per-user money, transaction, and budget tracking.
 
 ## Admin
 
-- **Beruang** (top-level menu)
+- **Beruang Budget** (top-level menu)
   - **Settings** – Currency (default IDR), decimal/thousands separators, export/import JSON
   - **Transactions** – List all transactions (filter by user)
   - **Categories** – List/manage categories (add, delete; filter by user)

@@ -1,4 +1,4 @@
-=== Beruang ===
+=== Beruang Budget ===
 Contributors: beruang
 Tags: budget, finance, transactions, expense, income, personal finance
 Requires at least: 5.9
@@ -12,7 +12,7 @@ Track money, transactions, and budgets. Per-user data with shortcodes and admin 
 
 == Description ==
 
-Beruang is a WordPress plugin for per-user money, transaction, and budget tracking. All data is scoped by logged-in user. Use shortcodes on front-end pages to add transactions, view lists, display charts, and manage budgets.
+Beruang Budget is a WordPress plugin for per-user money, transaction, and budget tracking. All data is scoped by logged-in user. Use shortcodes on front-end pages to add transactions, view lists, display charts, and manage budgets.
 
 = Features =
 
