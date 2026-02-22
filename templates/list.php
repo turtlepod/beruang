@@ -78,9 +78,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<option value="income"><?php esc_html_e( 'Income', 'beruang' ); ?></option>
 					</select>
 				</div>
-				<div class="beruang-form-row">
-					<button type="submit" class="beruang-submit"><?php esc_html_e( 'Update', 'beruang' ); ?></button>
-					<button type="button" class="beruang-edit-tx-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+				<div class="beruang-form-row beruang-modal-actions">
+					<button type="submit" class="beruang-submit beruang-modal-save"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
+					<button type="button" class="beruang-modal-cancel beruang-edit-tx-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
 				</div>
 			</form>
 			</div>
