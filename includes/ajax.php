@@ -94,7 +94,7 @@ function ajax_get_transactions() {
 	if ( '' !== $category_id && null !== $category_id ) {
 		$category_id = absint( $category_id );
 	}
-	$page   = isset( $_GET['page'] ) ? max( 1, absint( $_GET['page'] ) ) : 1;
+	$page = isset( $_GET['page'] ) ? max( 1, absint( $_GET['page'] ) ) : 1;
 	if ( $category_id > 0 && ! DB::get_category_for_user( $user_id, $category_id ) ) {
 		$category_id = '';
 	}

@@ -121,7 +121,7 @@ function shortcode_render_budget( $atts ) { // phpcs:ignore Generic.CodeAnalysis
 			'currency'   => get_option( 'beruang_currency', 'IDR' ),
 			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
 			'year'       => (int) current_time( 'Y' ),
-			'month'       => (int) current_time( 'n' ),
+			'month'      => (int) current_time( 'n' ),
 		)
 	);
 	return ob_get_clean();

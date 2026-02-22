@@ -15,6 +15,6 @@
     "zip": "version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang.$version.zip beruang -x '*/.git/*' -x '*node_modules*' -x '*/vendor/*' -x '*/example-plugin/*'"
   },
   "lint-staged": {
-    "*.php": ["./vendor/bin/phpcs -s --runtime-set testVersion 7.4-"]
+    "*.php": ["./vendor/bin/phpcs -s --runtime-set testVersion 7.4- --runtime-set ignore_warnings_on_exit 0"]
   }
 }
