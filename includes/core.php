@@ -73,6 +73,8 @@ function enqueue_front_scripts() {
 			'ajax_url'      => admin_url( 'admin-ajax.php' ),
 			'nonce'         => wp_create_nonce( 'beruang_ajax' ),
 			'currency'      => get_option( 'beruang_currency', 'IDR' ),
+			'date_format'   => get_option( 'date_format', 'F j, Y' ),
+			'locale'        => str_replace( '_', '-', get_locale() ),
 			'decimal_sep'   => get_option( 'beruang_decimal_sep', ',' ),
 			'thousands_sep' => get_option( 'beruang_thousands_sep', '.' ),
 			'i18n'          => array(
