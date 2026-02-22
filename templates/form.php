@@ -43,12 +43,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</span>
 		</div>
 		<div class="beruang-form-row beruang-amount-row">
-			<label for="beruang-amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label>
+			<label for="beruang-amount"><?php esc_html_e( 'Amount', 'beruang' ); ?> <span class="beruang-label-currency">(<?php echo esc_html( $currency ); ?>)</span></label>
 			<span class="beruang-amount-wrap">
 				<input type="number" id="beruang-amount" name="amount" step="0.01" min="0" value="" required placeholder="0" />
 				<button type="button" class="beruang-calc-btn" title="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'calc' ); ?></button>
 			</span>
-			<span class="beruang-currency-label"><?php echo esc_html( $currency ); ?></span>
 		</div>
 		<div class="beruang-form-row beruang-type-row">
 			<label><?php esc_html_e( 'Type', 'beruang' ); ?></label>
