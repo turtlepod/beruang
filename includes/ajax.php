@@ -84,7 +84,6 @@ function ajax_save_transaction() {
  */
 function ajax_get_transactions() {
 	$user_id     = ajax_auth();
-	$month       = isset( $_GET['month'] ) ? absint( $_GET['month'] ) : (int) current_time( 'n' );
 	$year        = isset( $_GET['year'] ) ? absint( $_GET['year'] ) : (int) current_time( 'Y' );
 	$search      = isset( $_GET['search'] ) ? sanitize_text_field( wp_unslash( $_GET['search'] ) ) : '';
 	$category_id = isset( $_GET['category_id'] ) ? sanitize_text_field( wp_unslash( $_GET['category_id'] ) ) : '';
@@ -92,17 +91,14 @@ function ajax_get_transactions() {
 		$category_id = absint( $category_id );
 	}
 	$page   = isset( $_GET['page'] ) ? max( 1, absint( $_GET['page'] ) ) : 1;
-	$result = DB::get_transactions(
-		$user_id,
-		array(
-			'month'       => $month,
-			'year'        => $year,
-			'search'      => $search,
-			'category_id' => $category_id,
-			'page'        => $page,
-			'per_page'    => 50,
-		)
+	$args   = array(
+		'year'        => $year,
+		'search'      => $search,
+		'category_id' => $category_id,
+		'page'        => $page,
+		'per_page'    => 9999,
 	);
+	$result = DB::get_transactions( $user_id, $args );
 	wp_send_json_success( $result );
 }
 

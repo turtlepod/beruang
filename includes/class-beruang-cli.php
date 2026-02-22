@@ -291,19 +291,24 @@ class CLI {
 		$all = ! empty( $assoc_args['all'] );
 		if ( $all ) {
 			global $wpdb;
-			$tx_table   = DB::table_transaction();
+			$tx_table     = DB::table_transaction();
 			$budget_table = DB::table_budget();
-			$bc_table    = DB::table_budget_category();
-			$cat_table   = DB::table_category();
-			$user_ids    = $wpdb->get_col( "SELECT DISTINCT user_id FROM $tx_table UNION SELECT DISTINCT user_id FROM $budget_table UNION SELECT DISTINCT user_id FROM $cat_table" );
-			$user_ids    = array_filter( array_map( 'absint', $user_ids ) );
+			$bc_table     = DB::table_budget_category();
+			$cat_table    = DB::table_category();
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names from API, no user input.
+			$user_ids = $wpdb->get_col( "SELECT DISTINCT user_id FROM $tx_table UNION SELECT DISTINCT user_id FROM $budget_table UNION SELECT DISTINCT user_id FROM $cat_table" );
+			$user_ids = array_filter( array_map( 'absint', $user_ids ) );
 			if ( empty( $user_ids ) ) {
 				\WP_CLI::success( 'No data to reset.' );
 				return;
 			}
-			$total = array( 'transactions' => 0, 'budgets' => 0, 'categories' => 0 );
+			$total = array(
+				'transactions' => 0,
+				'budgets'      => 0,
+				'categories'   => 0,
+			);
 			foreach ( $user_ids as $uid ) {
-				$r = DB::reset_user_data( $uid );
+				$r                      = DB::reset_user_data( $uid );
 				$total['transactions'] += $r['transactions'];
 				$total['budgets']      += $r['budgets'];
 				$total['categories']   += $r['categories'];

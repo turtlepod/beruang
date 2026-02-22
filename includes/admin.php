@@ -31,6 +31,8 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\admin_setup' );
 
 /**
  * Enqueue admin styles when on Beruang admin pages.
+ *
+ * @param string $hook Current admin page hook.
  */
 function admin_enqueue_styles( $hook ) {
 	if ( strpos( $hook, 'beruang' ) === false ) {
@@ -206,15 +208,15 @@ function admin_handle_export() {
 	$transactions = DB::get_transactions( $user_id, array( 'per_page' => 99999 ) );
 	$budgets      = DB::get_budgets( $user_id );
 	$data         = array(
-		'version'       => 1,
-		'exported'      => current_time( 'c' ),
-		'user_id'       => $user_id,
-		'user_login'    => $user ? $user->user_login : '',
-		'user_email'    => $user ? $user->user_email : '',
-		'display_name'  => $user ? $user->display_name : '',
-		'categories'    => $categories,
-		'transactions'   => $transactions['items'],
-		'budgets'       => $budgets,
+		'version'      => 1,
+		'exported'     => current_time( 'c' ),
+		'user_id'      => $user_id,
+		'user_login'   => $user ? $user->user_login : '',
+		'user_email'   => $user ? $user->user_email : '',
+		'display_name' => $user ? $user->display_name : '',
+		'categories'   => $categories,
+		'transactions' => $transactions['items'],
+		'budgets'      => $budgets,
 	);
 	header( 'Content-Type: application/json; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename="beruang-export-' . gmdate( 'Y-m-d' ) . '.json"' );
@@ -259,21 +261,25 @@ function admin_handle_export_csv() {
 	foreach ( $items as $row ) {
 		$cat_id   = isset( $row['category_id'] ) ? (int) $row['category_id'] : 0;
 		$cat_name = $cat_id && isset( $cat_names[ $cat_id ] ) ? $cat_names[ $cat_id ] : '';
-		fputcsv( $output, array(
-			$row['id'] ?? '',
-			$row['user_id'] ?? '',
-			$user_login,
-			$user_email,
-			$display_name,
-			$row['date'] ?? '',
-			$row['time'] ?? '',
-			$row['description'] ?? '',
-			$row['category_id'] ?? '',
-			$cat_name,
-			$row['amount'] ?? '',
-			$row['type'] ?? '',
-		) );
+		fputcsv(
+			$output,
+			array(
+				$row['id'] ?? '',
+				$row['user_id'] ?? '',
+				$user_login,
+				$user_email,
+				$display_name,
+				$row['date'] ?? '',
+				$row['time'] ?? '',
+				$row['description'] ?? '',
+				$row['category_id'] ?? '',
+				$cat_name,
+				$row['amount'] ?? '',
+				$row['type'] ?? '',
+			)
+		);
 	}
+	// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- php://output stream, no filesystem path.
 	fclose( $output );
 	exit;
 }

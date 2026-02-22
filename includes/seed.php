@@ -21,7 +21,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 function seed_dummy_data( $user_id, $tx_count = 1000 ) {
 	$user_id = absint( $user_id );
 	if ( ! $user_id || ! get_userdata( $user_id ) ) {
-		return array( 'categories' => 0, 'budgets' => 0, 'transactions' => 0 );
+		return array(
+			'categories'   => 0,
+			'budgets'      => 0,
+			'transactions' => 0,
+		);
 	}
 	$descriptions = array(
 		'Groceries at supermarket',
@@ -71,21 +75,53 @@ function seed_dummy_data( $user_id, $tx_count = 1000 ) {
 		if ( isset( $cats_by_name[ $name ] ) ) {
 			$cat_ids[] = $cats_by_name[ $name ];
 		} else {
-			$id = DB::save_category( $user_id, array( 'name' => $name, 'parent_id' => 0, 'sort_order' => 0 ), 0 );
+			$id = DB::save_category(
+				$user_id,
+				array(
+					'name'       => $name,
+					'parent_id'  => 0,
+					'sort_order' => 0,
+				),
+				0
+			);
 			if ( $id ) {
-				$cat_ids[]     = $id;
+				$cat_ids[]             = $id;
 				$cats_by_name[ $name ] = $id;
 			}
 		}
 	}
 	if ( empty( $cat_ids ) ) {
-		return array( 'categories' => 0, 'budgets' => 0, 'transactions' => 0 );
+		return array(
+			'categories'   => 0,
+			'budgets'      => 0,
+			'transactions' => 0,
+		);
 	}
-	$budget_data  = array(
-		array( 'name' => 'Food', 'target_amount' => 2000000, 'type' => 'monthly', 'cats' => array( 'Food', 'Groceries' ) ),
-		array( 'name' => 'Transport', 'target_amount' => 500000, 'type' => 'monthly', 'cats' => array( 'Transport' ) ),
-		array( 'name' => 'Utilities', 'target_amount' => 800000, 'type' => 'monthly', 'cats' => array( 'Utilities' ) ),
-		array( 'name' => 'Entertainment', 'target_amount' => 500000, 'type' => 'monthly', 'cats' => array( 'Entertainment' ) ),
+	$budget_data = array(
+		array(
+			'name'          => 'Food',
+			'target_amount' => 2000000,
+			'type'          => 'monthly',
+			'cats'          => array( 'Food', 'Groceries' ),
+		),
+		array(
+			'name'          => 'Transport',
+			'target_amount' => 500000,
+			'type'          => 'monthly',
+			'cats'          => array( 'Transport' ),
+		),
+		array(
+			'name'          => 'Utilities',
+			'target_amount' => 800000,
+			'type'          => 'monthly',
+			'cats'          => array( 'Utilities' ),
+		),
+		array(
+			'name'          => 'Entertainment',
+			'target_amount' => 500000,
+			'type'          => 'monthly',
+			'cats'          => array( 'Entertainment' ),
+		),
 	);
 	foreach ( $budget_data as $b ) {
 		$cat_ids_for_budget = array();
@@ -94,40 +130,47 @@ function seed_dummy_data( $user_id, $tx_count = 1000 ) {
 				$cat_ids_for_budget[] = $cats_by_name[ $cname ];
 			}
 		}
-		DB::save_budget( $user_id, array(
-			'name'          => $b['name'],
-			'target_amount' => $b['target_amount'],
-			'type'          => $b['type'],
-			'category_ids'  => $cat_ids_for_budget,
-		), 0 );
+		DB::save_budget(
+			$user_id,
+			array(
+				'name'          => $b['name'],
+				'target_amount' => $b['target_amount'],
+				'type'          => $b['type'],
+				'category_ids'  => $cat_ids_for_budget,
+			),
+			0
+		);
 	}
 	$start_date = strtotime( '-12 months' );
 	$end_date   = time();
 	$inserted   = 0;
 	for ( $i = 0; $i < $tx_count; $i++ ) {
-		$date_ts   = $start_date + (int) ( ( $end_date - $start_date ) * ( mt_rand( 0, 10000 ) / 10000 ) );
+		$date_ts   = $start_date + (int) ( ( $end_date - $start_date ) * ( wp_rand( 0, 10000 ) / 10000 ) );
 		$date      = gmdate( 'Y-m-d', $date_ts );
-		$time      = sprintf( '%02d:%02d:00', mt_rand( 6, 22 ), mt_rand( 0, 59 ) );
+		$time      = sprintf( '%02d:%02d:00', wp_rand( 6, 22 ), wp_rand( 0, 59 ) );
 		$desc      = $descriptions[ array_rand( $descriptions ) ];
-		$is_income = in_array( $desc, array( 'Salary', 'Freelance payment', 'Dividend', 'Refund', 'Transfer received', 'Gift' ), true ) || mt_rand( 1, 20 ) === 1;
-		$amount    = $is_income ? mt_rand( 500000, 15000000 ) / 100 : mt_rand( 5000, 500000 ) / 100;
+		$is_income = in_array( $desc, array( 'Salary', 'Freelance payment', 'Dividend', 'Refund', 'Transfer received', 'Gift' ), true ) || wp_rand( 1, 20 ) === 1;
+		$amount    = $is_income ? wp_rand( 500000, 15000000 ) / 100 : wp_rand( 5000, 500000 ) / 100;
 		$cat_id    = $cat_ids[ array_rand( $cat_ids ) ];
 		$type      = $is_income ? 'income' : 'expense';
-		$ok        = DB::insert_transaction( $user_id, array(
-			'date'        => $date,
-			'time'        => $time,
-			'description' => $desc . ' #' . ( $i + 1 ),
-			'category_id' => $cat_id,
-			'amount'      => round( $amount, 2 ),
-			'type'        => $type,
-		) );
+		$ok        = DB::insert_transaction(
+			$user_id,
+			array(
+				'date'        => $date,
+				'time'        => $time,
+				'description' => $desc . ' #' . ( $i + 1 ),
+				'category_id' => $cat_id,
+				'amount'      => round( $amount, 2 ),
+				'type'        => $type,
+			)
+		);
 		if ( $ok ) {
-			$inserted++;
+			++$inserted;
 		}
 	}
 	return array(
-		'categories'    => count( $cat_ids ),
-		'budgets'       => count( $budget_data ),
-		'transactions'  => $inserted,
+		'categories'   => count( $cat_ids ),
+		'budgets'      => count( $budget_data ),
+		'transactions' => $inserted,
 	);
 }

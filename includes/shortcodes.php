@@ -78,7 +78,6 @@ function shortcode_render_list( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 		'list.php',
 		array(
 			'year'       => (int) current_time( 'Y' ),
-			'month'      => (int) current_time( 'n' ),
 			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
 		)
 	);

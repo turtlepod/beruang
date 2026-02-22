@@ -271,18 +271,15 @@
 
 		var msgTpl = wp.template('beruang-message');
 		var txItemTpl = wp.template('beruang-transaction-item');
-		var accordionTpl = wp.template('beruang-accordion-group');
+		var accordionMonthTpl = wp.template('beruang-accordion-month');
 
 		function loadList() {
-			var $monthSel = $listWrap.find('.beruang-filter-month');
 			var $yearSel = $listWrap.find('.beruang-filter-year');
-			var month = $monthSel.length ? parseInt($monthSel.val(), 10) : $accordion.data('month');
 			var year = $yearSel.length ? parseInt($yearSel.val(), 10) : $accordion.data('year');
 			var search = $listWrap.find('.beruang-filter-search').val() || '';
 			var categoryId = $listWrap.find('.beruang-filter-category').val() || '';
 			$accordion.html(msgTpl({ message: i18n.loading || 'Loading…' }));
 			request('beruang_get_transactions', {
-				month: month,
 				year: year,
 				search: search,
 				category_id: categoryId,
@@ -293,23 +290,37 @@
 					return;
 				}
 				var items = r.data.items;
-				var byDate = {};
+				var byMonth = {};
 				items.forEach(function (tx) {
-					var d = tx.date;
-					if (!byDate[d]) byDate[d] = [];
-					byDate[d].push(tx);
+					var d = String(tx.date || '').trim();
+					var parts = d.split('-');
+					var monthKey = parts.length === 3 ? parts[0] + '-' + String(parseInt(parts[1], 10)).padStart(2, '0') : d;
+					if (!byMonth[monthKey]) byMonth[monthKey] = [];
+					byMonth[monthKey].push(tx);
 				});
+				var monthKeys = Object.keys(byMonth).sort().reverse();
+				var now = new Date();
+				var currentMonthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+				var hasCurrentMonth = monthKeys.indexOf(currentMonthKey) !== -1;
 				var html = '';
-				var dates = Object.keys(byDate).sort().reverse();
-				dates.forEach(function (date) {
-					var dayItems = byDate[date];
-					var dayTotal = 0;
-					dayItems.forEach(function (tx) {
+				monthKeys.forEach(function (monthKey, idx) {
+					var monthItems = byMonth[monthKey];
+					var monthTotal = 0;
+					monthItems.forEach(function (tx) {
 						var amt = parseFloat(tx.amount);
-						dayTotal += tx.type === 'income' ? amt : -amt;
+						monthTotal += tx.type === 'income' ? amt : -amt;
 					});
+					var monthParts = monthKey.split('-');
+					var monthLabel = monthKey;
+					if (monthParts.length === 2) {
+						var y = parseInt(monthParts[0], 10);
+						var m = parseInt(monthParts[1], 10);
+						var tmpDate = new Date(Date.UTC(y, m - 1, 1));
+						var locale = beruang.locale || 'en-US';
+						monthLabel = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(tmpDate);
+					}
 					var itemsHtml = '';
-					dayItems.forEach(function (tx) {
+					monthItems.forEach(function (tx) {
 						itemsHtml += txItemTpl({
 							id: tx.id,
 							description: tx.description || '—',
@@ -319,14 +330,27 @@
 							deleteLabel: i18n.delete || 'Delete'
 						});
 					});
-					html += accordionTpl({
-						date: formatWpDate(date, beruang.date_format || 'F j, Y'),
-						dayTotal: formatNum(dayTotal),
-						itemsHtml: itemsHtml
+					var expanded = monthKey === currentMonthKey || (!hasCurrentMonth && idx === 0);
+					html += accordionMonthTpl({
+						monthKey: monthKey,
+						monthLabel: monthLabel,
+						monthTotal: formatNum(monthTotal),
+						itemsHtml: itemsHtml,
+						monthClass: expanded ? ' is-open' : '',
+						expandedAttr: expanded ? 'true' : 'false'
 					});
 				});
-				if (!dates.length) html = msgTpl({ message: i18n.no_transactions || 'No transactions.' });
+				if (!monthKeys.length) html = msgTpl({ message: i18n.no_transactions || 'No transactions.' });
 				$accordion.html(html);
+				$accordion.find('.beruang-accordion-month-head').on('click keydown', function (e) {
+					if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+					if (e.type === 'keydown') e.preventDefault();
+					var $head = jQuery(this);
+					var $month = $head.closest('.beruang-accordion-month');
+					var isOpen = $month.hasClass('is-open');
+					$month.toggleClass('is-open', !isOpen);
+					$head.attr('aria-expanded', !isOpen);
+				});
 			}).fail(function () {
 				$accordion.html(msgTpl({ message: i18n.error || 'Error' }));
 			});
@@ -334,7 +358,6 @@
 
 		jQuery('.beruang-filter-apply').on('click', loadList);
 		jQuery('.beruang-filter-reset').on('click', function () {
-			$listWrap.find('.beruang-filter-month').val($accordion.data('month'));
 			$listWrap.find('.beruang-filter-year').val($accordion.data('year'));
 			$listWrap.find('.beruang-filter-search').val('');
 			$listWrap.find('.beruang-filter-category').val('');

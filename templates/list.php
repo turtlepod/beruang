@@ -4,7 +4,6 @@
  *
  * @package Beruang
  * @var int   $year       Current year.
- * @var int   $month      Current month.
  * @var array $categories Flat categories from DB.
  */
 
@@ -18,19 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<button type="button" class="beruang-filter-btn" title="<?php esc_attr_e( 'Filter', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'filter', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 	</div>
 	<div class="beruang-list-filters" id="beruang-list-filters" hidden>
-		<select class="beruang-filter-month" aria-label="<?php esc_attr_e( 'Month', 'beruang' ); ?>">
-			<?php
-			for ( $m = 1; $m <= 12; $m++ ) {
-				$month_name = date_i18n( 'F', strtotime( "2000-$m-01" ) );
-				printf( '<option value="%d"%s>%s</option>', $m, selected( $month, $m, false ), esc_html( $month_name ) );
-			}
-			?>
-		</select>
 		<select class="beruang-filter-year" aria-label="<?php esc_attr_e( 'Year', 'beruang' ); ?>">
 			<?php
 			$current_year = (int) current_time( 'Y' );
 			for ( $y = $current_year; $y >= $current_year - 10; $y-- ) {
-				printf( '<option value="%d"%s>%d</option>', $y, selected( $year, $y, false ), $y );
+				printf( '<option value="%s"%s>%s</option>', esc_attr( (string) $y ), selected( $year, $y, false ), esc_html( (string) $y ) );
 			}
 			?>
 		</select>
@@ -49,7 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<button type="button" class="beruang-filter-apply"><?php esc_html_e( 'Apply', 'beruang' ); ?></button>
 		<button type="button" class="beruang-filter-reset"><?php esc_html_e( 'Reset', 'beruang' ); ?></button>
 	</div>
-	<div class="beruang-list-accordion" id="beruang-list-accordion" data-month="<?php echo esc_attr( $month ); ?>" data-year="<?php echo esc_attr( $year ); ?>">
+	<div class="beruang-list-accordion" id="beruang-list-accordion" data-year="<?php echo esc_attr( $year ); ?>">
 		<p class="beruang-loading"><?php esc_html_e( 'Loading…', 'beruang' ); ?></p>
 	</div>
 	<div class="beruang-edit-tx-modal beruang-modal" id="beruang-edit-tx-modal" hidden>

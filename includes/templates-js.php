@@ -49,6 +49,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </script>
 
+<script type="text/html" id="tmpl-beruang-accordion-month">
+	<div class="beruang-accordion-month{{ data.monthClass }}" data-month-key="{{ data.monthKey }}">
+		<div class="beruang-accordion-month-head" role="button" tabindex="0" aria-expanded="{{ data.expandedAttr }}">
+			<span>{{ data.monthLabel }}</span>
+			<span class="beruang-accordion-month-total"><span class="beruang-accordion-toggle" aria-hidden="true"></span>{{ data.monthTotal }}</span>
+		</div>
+		<div class="beruang-accordion-month-body">{{{ data.itemsHtml }}}</div>
+	</div>
+</script>
+
 <script type="text/html" id="tmpl-beruang-budget-card">
 	<div class="beruang-budget-card" data-id="{{ data.id }}">
 		<h4>{{ data.name }} <small>({{ data.typeLabel }})</small></h4>

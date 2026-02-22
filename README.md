@@ -47,3 +47,9 @@ Use on pages where users are logged in.
 ## Text domain
 
 `beruang`. Place translations in `languages/`.
+
+## Development
+
+- **Lint**: `composer lint` or `npm run lint` – run PHPCS
+- **Fix**: `composer lint-fix` – auto-fix with PHPCBF
+- **Pre-commit hook**: Run `composer install && npm install` after clone. Husky + lint-staged runs PHPCS on staged `.php` files and blocks commits on lint errors.

@@ -621,6 +621,68 @@
 	color: #1d2327;
 }
 
+.beruang-accordion-month {
+	border-bottom: 1px solid #c3c4c7;
+}
+
+.beruang-accordion-month:last-child {
+	border-bottom: none;
+}
+
+.beruang-accordion-month-head {
+	padding: 0.85em 1em;
+	background: #e8eaed;
+	font-weight: 600;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	color: #1d2327;
+	cursor: pointer;
+	user-select: none;
+}
+
+.beruang-accordion-month-head:hover {
+	background: #dcdcde;
+}
+
+.beruang-accordion-month-total {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+}
+
+.beruang-accordion-toggle {
+	display: inline-block;
+	width: 0;
+	height: 0;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 6px solid currentColor;
+	transition: transform 0.2s ease;
+}
+
+.beruang-accordion-month.is-open .beruang-accordion-toggle {
+	transform: rotate(-180deg);
+}
+
+.beruang-accordion-month:not(.is-open) .beruang-accordion-month-body {
+	display: none;
+}
+
+.beruang-accordion-month-body {
+	padding: 0 1em 0.75em;
+	background: #fff;
+}
+
+.beruang-accordion-month-body .beruang-transaction-item {
+	border-bottom: 1px solid #e8e8e8;
+	padding: 0.5em 0;
+}
+
+.beruang-accordion-month-body .beruang-transaction-item:last-child {
+	border-bottom: none;
+}
+
 .beruang-accordion-group {
 	border-bottom: 1px solid #c3c4c7;
 }

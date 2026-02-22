@@ -537,7 +537,7 @@ class DB {
 		$bc_del  = 0;
 		if ( ! empty( $ids ) ) {
 			$placeholders = implode( ',', array_map( 'absint', $ids ) );
-			$bc_del      = self::wpdb()->query( "DELETE FROM $bc WHERE budget_id IN ($placeholders)" );
+			$bc_del       = self::wpdb()->query( "DELETE FROM $bc WHERE budget_id IN ($placeholders)" );
 		}
 		$bud_del = self::wpdb()->query( self::wpdb()->prepare( "DELETE FROM $budget WHERE user_id = %d", $user_id ) );
 		$cat     = self::table_category();
