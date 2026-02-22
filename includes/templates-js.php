@@ -33,8 +33,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/html" id="tmpl-beruang-transaction-item">
 	<div class="beruang-transaction-item" data-id="{{ data.id }}">
-		<span class="beruang-tx-date">{{ data.dateDisplay }}</span>
-		<span class="beruang-tx-time">{{ data.timeDisplay }}</span>
+		<span class="beruang-tx-datetime">
+			<span class="beruang-tx-date">{{ data.dateDisplay }}</span>
+			<span class="beruang-tx-time">{{ data.timeDisplay }}</span>
+		</span>
 		<span class="beruang-tx-desc">{{ data.description }}</span>
 		<span class="beruang-tx-amount {{ data.type }}">{{ data.amountDisplay }}</span>
 		<span class="beruang-tx-actions">
