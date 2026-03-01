@@ -59,7 +59,7 @@ function enqueue_front_scripts() {
 		array(),
 		filemtime( BERUANG_PLUGIN_DIR . 'assets/css/beruang-front.css' )
 	);
-	$deps = array( 'wp-util' );
+	$deps = array();
 	if ( has_shortcode( $post->post_content ?? '', 'beruang-graph' ) ) {
 		$chart_asset = BERUANG_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
 		wp_enqueue_script(
@@ -123,7 +123,7 @@ function enqueue_front_scripts() {
 }
 
 /**
- * Output wp.template script blocks in footer.
+ * Output Beruang JS template script blocks in footer.
  */
 function print_front_templates() {
 	$post = get_post( get_queried_object_id() );

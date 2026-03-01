@@ -6,6 +6,33 @@
 	var nonce = beruang.nonce || '';
 	var i18n = beruang.i18n || {};
 
+	function escapeHtml(str) {
+		return String(str)
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#039;');
+	}
+
+	function beruangTemplate(name) {
+		var script = document.getElementById('tmpl-' + name);
+		if (!script) return function () { return ''; };
+		var html = script.textContent || script.innerText || '';
+		return function (data) {
+			data = data || {};
+			return html
+				.replace(/\{\{\{\s*data\.(\w+)\s*\}\}\}/g, function (_, key) {
+					var val = data[key];
+					return val !== undefined && val !== null ? String(val) : '';
+				})
+				.replace(/\{\{\s*data\.(\w+)\s*\}\}/g, function (_, key) {
+					var val = data[key];
+					return escapeHtml(val !== undefined && val !== null ? val : '');
+				});
+		};
+	}
+
 	function request(action, data, method) {
 		data = data || {};
 		data.action = action;
@@ -108,9 +135,9 @@
 		var catSubmitBtn = catForm && catForm.querySelector('.beruang-cat-submit-add');
 		var catCancelBtn = catForm && catForm.querySelector('.beruang-cat-cancel-edit');
 		var mainCategorySelect = document.getElementById('beruang-category');
-		var optionTpl = wp.template('beruang-option');
-		var catItemTpl = wp.template('beruang-cat-item');
-		var catEmptyTpl = wp.template('beruang-cat-empty');
+		var optionTpl = beruangTemplate('beruang-option');
+		var catItemTpl = beruangTemplate('beruang-cat-item');
+		var catEmptyTpl = beruangTemplate('beruang-cat-empty');
 
 		function buildCategoryOptions(categories, excludeId) {
 			var opts = optionTpl({ value: '0', label: '—' });
@@ -333,9 +360,9 @@
 			});
 		}
 
-		var msgTpl = wp.template('beruang-message');
-		var txItemTpl = wp.template('beruang-transaction-item');
-		var accordionMonthTpl = wp.template('beruang-accordion-month');
+		var msgTpl = beruangTemplate('beruang-message');
+		var txItemTpl = beruangTemplate('beruang-transaction-item');
+		var accordionMonthTpl = beruangTemplate('beruang-accordion-month');
 
 		function loadList() {
 			var year = yearSel ? parseInt(yearSel.value, 10) : parseInt(accordion.dataset.year, 10);
@@ -685,8 +712,8 @@
 			});
 		}
 
-		var msgTpl = wp.template('beruang-message');
-		var budgetCardTpl = wp.template('beruang-budget-card');
+		var msgTpl = beruangTemplate('beruang-message');
+		var budgetCardTpl = beruangTemplate('beruang-budget-card');
 
 		document.addEventListener('click', function (e) {
 			var deleteBtn = e.target.closest('.beruang-action-delete');
