@@ -4,7 +4,7 @@ Tags: budget, finance, transactions, expense, income, personal finance
 Requires at least: 5.9
 Tested up to: 6.8
 Stable tag: 0.1.0-beta
-Requires PHP: 7.4
+Requires PHP: 8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,8 @@ Beruang Budget is a WordPress plugin for per-user money, transaction, and budget
 1. Upload the `beruang` folder to `wp-content/plugins/`.
 2. Activate the plugin in **Plugins**.
 3. Tables are created on activation: `beruang_category`, `beruang_transaction`, `beruang_budget`, `beruang_budget_category`.
+
+Run `npm install && npm run build` in the plugin directory before use. The plugin loads built assets from `dist/`.
 
 = Shortcodes =
 
