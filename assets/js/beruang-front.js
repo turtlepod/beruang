@@ -30,6 +30,22 @@
 
 		var $typeField = jQuery('#beruang-type');
 		var $message = $form.find('.beruang-form-message');
+		var $dateInput = $form.find('#beruang-date');
+		var $timeInput = $form.find('#beruang-time');
+
+		function setCurrentDateTime() {
+			var now = new Date();
+			var y = now.getFullYear();
+			var m = String(now.getMonth() + 1).padStart(2, '0');
+			var d = String(now.getDate()).padStart(2, '0');
+			var h = String(now.getHours()).padStart(2, '0');
+			var i = String(now.getMinutes()).padStart(2, '0');
+			if ($dateInput.length) $dateInput.val(y + '-' + m + '-' + d);
+			if ($timeInput.length) $timeInput.val(h + ':' + i);
+		}
+
+		// On initial load: use client-side date/time so cached pages stay accurate
+		setCurrentDateTime();
 
 		jQuery('.beruang-type-btn').on('click', function () {
 			var t = jQuery(this).data('type');
@@ -52,6 +68,10 @@
 			request('beruang_save_transaction', data).done(function (r) {
 				if (r.success) {
 					$message.text(i18n.saved || 'Saved.').css('color', '#00a32a');
+					setCurrentDateTime();
+					$form.find('[name="category_id"]').val('0');
+					$typeField.val('expense');
+					jQuery('.beruang-type-btn').removeClass('active').filter('[data-type="expense"]').addClass('active');
 					$form.find('[name="description"]').val('');
 					$form.find('[name="amount"]').val('');
 				} else {
