@@ -307,8 +307,8 @@
 			var calcVal = '0';
 			var calcOp = null;
 			var calcPrev = null;
-			function updateDisplay() { calcDisplay.value = calcVal; }
-			function doEquals() {
+			var updateDisplay = function () { calcDisplay.value = calcVal; };
+			var doEquals = function () {
 				if (calcOp && calcPrev !== null) {
 					var a = parseFloat(calcPrev);
 					var bNum = parseFloat(calcVal);
@@ -568,40 +568,6 @@
 		}
 
 		loadList();
-	}
-
-	function formatWpDate(dateStr, format) {
-		if (!dateStr || !format) return dateStr || '';
-		var parts = String(dateStr).split('-');
-		if (parts.length !== 3) return dateStr;
-		var y = parseInt(parts[0], 10);
-		var m = parseInt(parts[1], 10) - 1;
-		var d = parseInt(parts[2], 10);
-		var date = new Date(y, m, d);
-		if (isNaN(date.getTime())) return dateStr;
-		var locale = beruang.locale || 'en-US';
-		var intlOpts = { timeZone: 'UTC' };
-		var day = date.getDate();
-		var month = date.getMonth();
-		var year = date.getFullYear();
-		var dayOfWeek = date.getDay();
-		var ord = ['th', 'st', 'nd', 'rd'];
-		var suff = ord[day % 10 > 3 ? 0 : ((day % 100) - (day % 10) === 10 ? 0 : day % 10)];
-		var F = new Intl.DateTimeFormat(locale, { month: 'long', ...intlOpts }).format(date);
-		var M = new Intl.DateTimeFormat(locale, { month: 'short', ...intlOpts }).format(date);
-		var l = new Intl.DateTimeFormat(locale, { weekday: 'long', ...intlOpts }).format(date);
-		var D = new Intl.DateTimeFormat(locale, { weekday: 'short', ...intlOpts }).format(date);
-		var tokens = {
-			F: F, M: M, l: l, D: D,
-			Y: String(year),
-			y: String(year).slice(-2),
-			n: String(month + 1),
-			m: String(month + 1).padStart(2, '0'),
-			j: String(day),
-			d: String(day).padStart(2, '0'),
-			S: suff
-		};
-		return format.replace(/(F|M|l|D|Y|y|n|m|j|d|S)/g, function (m) { return tokens[m] || m; });
 	}
 
 	function formatNum(n) {

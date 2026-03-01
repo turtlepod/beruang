@@ -114,13 +114,13 @@
 	cursor: pointer;
 }
 
-.beruang-manage-categories-btn .beruang-icon {
-	flex-shrink: 0;
-}
-
 .beruang-icon {
 	display: inline-block;
 	vertical-align: middle;
+}
+
+.beruang-manage-categories-btn .beruang-icon {
+	flex-shrink: 0;
 }
 
 .beruang-calc-btn .beruang-icon {
@@ -137,8 +137,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	max-width: 20em;
-	row-gap: 0.25em;
-	column-gap: 0.5em;
+	gap: 0.25em 0.5em;
 }
 
 .beruang-amount-row label {
@@ -152,10 +151,6 @@
 	flex: 1;
 	min-width: 0;
 	gap: 0.5em;
-}
-
-.beruang-amount-row .beruang-currency-label {
-	font-size: 0.9em;
 }
 
 .beruang-amount-wrap input {
@@ -189,6 +184,10 @@
 	color: #1d2327;
 	opacity: 0.8;
 	line-height: 2.5em;
+}
+
+.beruang-amount-row .beruang-currency-label {
+	font-size: 0.9em;
 }
 
 .beruang-type-toggle {
@@ -237,10 +236,6 @@
 	max-width: 20em;
 }
 
-.beruang-submit-row .beruang-submit {
-	width: 100%;
-}
-
 .beruang-submit {
 	padding: 0.5em 1.2em;
 	height: 2.5em;
@@ -250,6 +245,10 @@
 	border-radius: 4px;
 	cursor: pointer;
 	line-height: 1.4;
+}
+
+.beruang-submit-row .beruang-submit {
+	width: 100%;
 }
 
 .beruang-submit:hover {
@@ -264,7 +263,7 @@
 .beruang-calc-modal {
 	position: fixed;
 	inset: 0;
-	background: rgba(0,0,0,0.4);
+	background: rgb(0 0 0 / 40%);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -402,7 +401,7 @@
 .beruang-categories-modal {
 	position: fixed;
 	inset: 0;
-	background: rgba(0,0,0,0.4);
+	background: rgb(0 0 0 / 40%);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -657,7 +656,7 @@
 	height: 0;
 	border-left: 5px solid transparent;
 	border-right: 5px solid transparent;
-	border-top: 6px solid currentColor;
+	border-top: 6px solid currentcolor;
 	transition: transform 0.2s ease;
 }
 
@@ -665,13 +664,28 @@
 	transform: rotate(-180deg);
 }
 
+.beruang-accordion-month-body {
+	padding: 0 1em 0.75em;
+	background: #fff;
+}
+
 .beruang-accordion-month:not(.is-open) .beruang-accordion-month-body {
 	display: none;
 }
 
-.beruang-accordion-month-body {
-	padding: 0 1em 0.75em;
-	background: #fff;
+.beruang-transaction-item {
+	display: grid;
+	grid-template-columns: 5em 4em 1fr auto auto;
+	gap: 0.5em 1em;
+	padding: 0.5em 0;
+	border-bottom: 1px solid #eee;
+	font-size: 0.95em;
+	align-items: center;
+	color: #1d2327;
+}
+
+.beruang-transaction-item:last-child {
+	border-bottom: none;
 }
 
 .beruang-accordion-month-body .beruang-transaction-item {
@@ -715,23 +729,8 @@
 	gap: 0.5em;
 }
 
-.beruang-transaction-item {
-	display: grid;
-	grid-template-columns: 5em 4em 1fr auto auto;
-	gap: 0.5em 1em;
-	padding: 0.5em 0;
-	border-bottom: 1px solid #eee;
-	font-size: 0.95em;
-	align-items: center;
-	color: #1d2327;
-}
-
 .beruang-tx-datetime {
 	display: contents;
-}
-
-.beruang-transaction-item:last-child {
-	border-bottom: none;
 }
 
 .beruang-tx-date {
@@ -938,7 +937,7 @@
 .beruang-budget-modal {
 	position: fixed;
 	inset: 0;
-	background: rgba(0,0,0,0.4);
+	background: rgb(0 0 0 / 40%);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -954,7 +953,7 @@
 .beruang-edit-tx-modal {
 	position: fixed;
 	inset: 0;
-	background: rgba(0,0,0,0.4);
+	background: rgb(0 0 0 / 40%);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1051,7 +1050,7 @@
 }
 
 /* Responsive */
-@media (max-width: 600px) {
+@media (width <= 600px) {
 	.beruang-form-wrapper .beruang-form {
 		max-width: 100%;
 	}
