@@ -125,7 +125,8 @@ function rest_register_routes() {
 				'id' => array(
 					'required'          => true,
 					'validate_callback' => function ( $v ) {
-								return is_numeric( $v ) && $v > 0; },
+						return is_numeric( $v ) && $v > 0;
+					},
 				),
 			),
 		)
@@ -141,7 +142,8 @@ function rest_register_routes() {
 				'id'          => array(
 					'required'          => true,
 					'validate_callback' => function ( $v ) {
-													return is_numeric( $v ) && $v > 0; },
+						return is_numeric( $v ) && $v > 0;
+					},
 				),
 				'date'        => array( 'type' => 'string' ),
 				'time'        => array( 'type' => 'string' ),
@@ -163,7 +165,8 @@ function rest_register_routes() {
 				'id' => array(
 					'required'          => true,
 					'validate_callback' => function ( $v ) {
-								return is_numeric( $v ) && $v > 0; },
+						return is_numeric( $v ) && $v > 0;
+					},
 				),
 			),
 		)
@@ -213,7 +216,8 @@ function rest_register_routes() {
 				'id' => array(
 					'required'          => true,
 					'validate_callback' => function ( $v ) {
-								return is_numeric( $v ) && $v > 0; },
+						return is_numeric( $v ) && $v > 0;
+					},
 				),
 			),
 		)
@@ -250,7 +254,8 @@ function rest_register_routes() {
 				'id' => array(
 					'required'          => true,
 					'validate_callback' => function ( $v ) {
-								return is_numeric( $v ) && $v > 0; },
+						return is_numeric( $v ) && $v > 0;
+					},
 				),
 			),
 		)
@@ -297,7 +302,8 @@ function rest_register_routes() {
 				'id' => array(
 					'required'          => true,
 					'validate_callback' => function ( $v ) {
-								return is_numeric( $v ) && $v > 0; },
+						return is_numeric( $v ) && $v > 0;
+					},
 				),
 			),
 		)
