@@ -3,7 +3,7 @@ Contributors: beruang
 Tags: budget, finance, transactions, expense, income, personal finance
 Requires at least: 5.9
 Tested up to: 6.8
-Stable tag: 0.1.0-beta
+Stable tag: 0.2.0-beta
 Requires PHP: 8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -46,6 +46,13 @@ Use on pages where users are logged in:
 * `[beruang-budget]` – List budgets with progress; add/edit budget modal
 
 == Changelog ==
+
+= 0.2.0-beta =
+* Use REST API instead of admin-ajax
+* Minify JS and CSS via 10up-toolkit
+* Add ESLint, stylelint, PHPCS
+* Reset form after submit
+* Convert to vanilla JavaScript (remove jQuery)
 
 = 0.1.0-beta =
 * Initial beta release
