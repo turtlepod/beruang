@@ -15,7 +15,7 @@ require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-db.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/icon-helpers.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/seed.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/admin.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/ajax.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/rest.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/manifest.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/shortcodes.php';
 
@@ -83,8 +83,8 @@ function enqueue_front_scripts() {
 		'beruang-front',
 		'beruangData',
 		array(
-			'ajax_url'      => admin_url( 'admin-ajax.php' ),
-			'nonce'         => wp_create_nonce( 'beruang_ajax' ),
+			'rest_url'      => get_rest_url( null, 'beruang/v1' ),
+			'rest_nonce'    => wp_create_nonce( 'wp_rest' ),
 			'currency'      => get_option( 'beruang_currency', 'IDR' ),
 			'date_format'   => get_option( 'date_format', 'F j, Y' ),
 			'locale'        => str_replace( '_', '-', get_locale() ),

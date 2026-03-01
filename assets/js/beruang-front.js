@@ -2,8 +2,8 @@
 	'use strict';
 
 	var beruang = window.beruangData || {};
-	var ajaxUrl = beruang.ajax_url || '';
-	var nonce = beruang.nonce || '';
+	var restUrl = beruang.rest_url || '';
+	var restNonce = beruang.rest_nonce || '';
 	var i18n = beruang.i18n || {};
 
 	function escapeHtml(str) {
@@ -33,22 +33,35 @@
 		};
 	}
 
-	function request(action, data, method) {
+	function request(method, path, data) {
 		data = data || {};
-		data.action = action;
-		data.nonce = nonce;
-		method = method || 'POST';
-		var params = new URLSearchParams(data).toString();
-		if (method === 'GET') {
-			return fetch(ajaxUrl + (ajaxUrl.indexOf('?') !== -1 ? '&' : '?') + params, {
-				method: 'GET'
-			}).then(function (r) { return r.json(); });
-		}
-		return fetch(ajaxUrl, {
+		var url = restUrl + path;
+		var opts = {
 			method: method,
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: params
-		}).then(function (r) { return r.json(); });
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': restNonce,
+			},
+		};
+		if (method === 'POST' || method === 'PUT') {
+			if (Object.keys(data).length) opts.body = JSON.stringify(data);
+		}
+		if (method === 'GET' && Object.keys(data).length) {
+			url += '?' + new URLSearchParams(data).toString();
+		}
+		return fetch(url, opts).then(function (r) {
+			if (!r.ok) {
+				return r.json().then(function (body) {
+					var msg = body && body.data && body.data.message ? body.data.message : (body && body.message) || 'Error';
+					return { success: false, data: { message: msg } };
+				}).catch(function () {
+					return { success: false, data: { message: 'Error' } };
+				});
+			}
+			return r.json();
+		}).catch(function () {
+			return { success: false, data: { message: 'Error' } };
+		});
 	}
 
 	// Modal x close (dismiss without saving)
@@ -103,7 +116,7 @@
 				amount: form.querySelector('[name="amount"]').value,
 				type: typeField.value,
 			};
-			request('beruang_save_transaction', data).then(function (r) {
+			request('POST', '/transactions', data).then(function (r) {
 				if (r.success) {
 					message.textContent = i18n.saved || 'Saved.';
 					message.style.color = '#00a32a';
@@ -161,7 +174,7 @@
 		}
 
 		function refreshCategoriesInModal(excludeId, selectedParentId) {
-			request('beruang_get_categories').then(function (r) {
+			request('GET', '/categories').then(function (r) {
 				if (!r.success || !r.data || !r.data.categories) return;
 				var cats = r.data.categories;
 				catParent.innerHTML = buildCategoryOptions(cats, excludeId);
@@ -219,7 +232,7 @@
 				var id = catEditId.value;
 				var name = catName.value;
 				var parentId = catParent.value || '0';
-				request('beruang_save_category', { id: id || 0, name: name, parent_id: parentId }).then(function (r) {
+				request('POST', '/categories', { id: id || 0, name: name, parent_id: parentId }).then(function (r) {
 					if (r.success) {
 						catEditId.value = '';
 						catName.value = '';
@@ -266,7 +279,7 @@
 			if (!li) return;
 			var id = li.dataset.id;
 			if (!id || !confirm(i18n.confirm_delete_category || 'Delete this category?')) return;
-			request('beruang_delete_category', { id: id }).then(function (r) {
+			request('DELETE', '/categories/' + id).then(function (r) {
 				if (r.success) refreshCategoriesInModal();
 			});
 		});
@@ -369,12 +382,12 @@
 			var search = searchEl ? searchEl.value : '';
 			var categoryId = categoryEl ? categoryEl.value : '';
 			accordion.innerHTML = msgTpl({ message: i18n.loading || 'Loading…' });
-			request('beruang_get_transactions', {
+			request('GET', '/transactions', {
 				year: year,
 				search: search,
 				category_id: categoryId,
 				page: 1
-			}, 'GET').then(function (r) {
+			}).then(function (r) {
 				if (!r.success || !r.data || !r.data.items) {
 					accordion.innerHTML = msgTpl({ message: i18n.error || 'Error' });
 					return;
@@ -503,7 +516,7 @@
 				if (!item) return;
 				var id = item.dataset.id;
 				if (!id) return;
-				request('beruang_get_transaction', { id: id }, 'GET').then(function (r) {
+				request('GET', '/transactions/' + id).then(function (r) {
 					if (!r.success || !r.data || !r.data.transaction) return;
 					var t = r.data.transaction;
 					document.getElementById('beruang-edit-tx-id').value = t.id;
@@ -524,7 +537,7 @@
 				if (!item) return;
 				var id = item.dataset.id;
 				if (!id || !confirm(i18n.confirm_delete_transaction || 'Delete this transaction?')) return;
-				request('beruang_delete_transaction', { id: id }).then(function (r) {
+				request('DELETE', '/transactions/' + id).then(function (r) {
 					if (r.success) loadList();
 				});
 			});
@@ -545,7 +558,7 @@
 					amount: document.getElementById('beruang-edit-tx-amount').value,
 					type: document.getElementById('beruang-edit-tx-type').value
 				};
-				request('beruang_update_transaction', data).then(function (r) {
+				request('PUT', '/transactions/' + data.id, data).then(function (r) {
 					if (r.success) {
 						editModal.hidden = true;
 						loadList();
@@ -621,7 +634,7 @@
 			var groupEl = document.querySelector('.beruang-graph-group');
 			var year = yearEl ? parseInt(yearEl.value, 10) : new Date().getFullYear();
 			var groupBy = groupEl ? groupEl.value : 'month';
-			request('beruang_get_graph_data', { year: year, group_by: groupBy }, 'GET').then(function (r) {
+			request('GET', '/graph', { year: year, group_by: groupBy }).then(function (r) {
 				if (!r.success || !r.data || !r.data.data) return;
 				renderChart(r.data.data, groupBy, year);
 			});
@@ -722,7 +735,7 @@
 			if (!card) return;
 			var id = deleteBtn.dataset.id;
 			if (!id || !confirm(i18n.confirm_delete || 'Delete this budget?')) return;
-			request('beruang_delete_budget', { id: id }).then(function (res) {
+			request('DELETE', '/budgets/' + id).then(function (res) {
 				if (res.success) loadBudgets();
 			});
 		});
@@ -733,7 +746,7 @@
 			if (!card) return;
 			var id = editBtn.dataset.id;
 			if (!id) return;
-			request('beruang_get_budget', { id: id }, 'GET').then(function (r) {
+			request('GET', '/budgets/' + id).then(function (r) {
 				if (!r.success || !r.data || !r.data.budget) return;
 				var b = r.data.budget;
 				form.querySelector('[name="id"]').value = b.id;
@@ -755,7 +768,7 @@
 			var year = yearSel ? parseInt(yearSel.value, 10) : parseInt(list.dataset.year, 10);
 			var month = monthSel ? parseInt(monthSel.value, 10) : parseInt(list.dataset.month, 10);
 			list.innerHTML = msgTpl({ message: i18n.loading || 'Loading…' });
-			request('beruang_get_budgets', { year: year, month: month }).then(function (r) {
+			request('GET', '/budgets', { year: year, month: month }).then(function (r) {
 				if (!r.success || !r.data || !r.data.budgets) {
 					list.innerHTML = msgTpl({ message: i18n.error || 'Error' });
 					return;
@@ -825,7 +838,7 @@
 			var type = form.querySelector('[name="type"]').value;
 			var catIds = [];
 			form.querySelectorAll('[name="category_ids[]"]:checked').forEach(function (cb) { catIds.push(cb.value); });
-			request('beruang_save_budget', {
+			request('POST', '/budgets', {
 				id: id || 0,
 				name: name,
 				target_amount: target,
