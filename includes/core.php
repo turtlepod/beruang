@@ -59,7 +59,7 @@ function enqueue_front_scripts() {
 		array(),
 		filemtime( BERUANG_PLUGIN_DIR . 'assets/css/beruang-front.css' )
 	);
-	$deps = array( 'jquery', 'wp-util' );
+	$deps = array( 'wp-util' );
 	if ( has_shortcode( $post->post_content ?? '', 'beruang-graph' ) ) {
 		$chart_asset = BERUANG_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
 		wp_enqueue_script(
