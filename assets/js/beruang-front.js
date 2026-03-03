@@ -297,7 +297,8 @@
 			var insertCloseBtn = calcModal.querySelector('.beruang-calc-insert-close');
 			if (insertCloseBtn) {
 				insertCloseBtn.addEventListener('click', function () {
-					amountInput.value = calcDisplay.value;
+					doEquals();
+					amountInput.value = calcVal;
 					calcModal.hidden = true;
 				});
 			}
@@ -307,7 +308,20 @@
 			var calcVal = '0';
 			var calcOp = null;
 			var calcPrev = null;
-			var updateDisplay = function () { calcDisplay.value = calcVal; };
+			var updateDisplay = function () {
+				if (calcOp && calcPrev !== null) {
+					var second = calcVal === '0' ? '' : calcVal;
+					calcDisplay.value = calcPrev + ' ' + calcOp + (second ? ' ' + second : '');
+				} else {
+					calcDisplay.value = calcVal;
+				}
+			};
+			var doClear = function () {
+				calcVal = '0';
+				calcOp = null;
+				calcPrev = null;
+				updateDisplay();
+			};
 			var doEquals = function () {
 				if (calcOp && calcPrev !== null) {
 					var a = parseFloat(calcPrev);
@@ -321,7 +335,7 @@
 					calcPrev = null;
 				}
 				updateDisplay();
-			}
+			};
 			var btns = [
 				['7','8','9','\u00f7'],
 				['4','5','6','\u00d7'],
@@ -342,15 +356,18 @@
 							calcPrev = calcVal;
 							calcOp = key;
 							calcVal = '0';
+							updateDisplay();
 						} else {
 							if (calcVal === '0' && key !== '.') calcVal = key;
 							else calcVal += key;
+							updateDisplay();
 						}
-						updateDisplay();
 					});
 					container.appendChild(b);
 				});
 			});
+			var clearBtn = calcModal.querySelector('.beruang-calc-clear');
+			if (clearBtn) clearBtn.addEventListener('click', doClear);
 			var equalsBtn = calcModal.querySelector('.beruang-calc-equals');
 			if (equalsBtn) equalsBtn.addEventListener('click', doEquals);
 		}

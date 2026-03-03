@@ -361,13 +361,14 @@
 }
 
 .beruang-calc-bottom {
-	display: flex;
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr 1fr;
 	gap: 0.35em;
 	margin-top: 0.75em;
 }
 
 .beruang-calc-insert-close {
-	flex: 3 1 0;
+	grid-column: span 2;
 	padding: 0.5em;
 	background: #f0f0f1;
 	color: #1d2327;
@@ -382,8 +383,21 @@
 	color: #1d2327;
 }
 
+.beruang-calc-clear {
+	padding: 0.5em;
+	background: #e67e22;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.beruang-calc-clear:hover {
+	background: #d35400;
+	color: #fff;
+}
+
 .beruang-calc-equals {
-	flex: 1 1 0;
 	padding: 0.5em 1em;
 	background: #007017;
 	color: #fff;
