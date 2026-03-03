@@ -69,6 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="beruang-calc-buttons"></div>
 			<div class="beruang-calc-bottom">
 				<button type="button" class="beruang-calc-insert-close"><?php esc_html_e( 'Insert & Close', 'beruang' ); ?></button>
+				<button type="button" class="beruang-calc-clear" aria-label="<?php esc_attr_e( 'Clear', 'beruang' ); ?>">C</button>
 				<button type="button" class="beruang-calc-equals">=</button>
 			</div>
 		</div>

@@ -1,7 +1,8 @@
 <?php
 /**
- * JavaScript templates for wp.template (Underscore.js style).
+ * JavaScript templates for Beruang frontend.
  *
+ * Uses {{ data.key }} for escaped output and {{{ data.key }}} for raw HTML.
  * Output in wp_footer when Beruang shortcodes are present.
  *
  * @package Beruang
