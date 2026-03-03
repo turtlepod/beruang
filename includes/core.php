@@ -53,18 +53,25 @@ function enqueue_front_scripts() {
 		return;
 	}
 
+	$front_css_dist   = BERUANG_PLUGIN_DIR . 'dist/css/front-style.css';
 	$front_css_asset  = BERUANG_PLUGIN_DIR . 'dist/css/front-style.asset.php';
 	$front_style_deps = array();
 	$front_style_ver  = BERUANG_VERSION;
-	if ( file_exists( $front_css_asset ) ) {
-		$front_style_asset = include $front_css_asset;
-		$front_style_deps  = $front_style_asset['dependencies'] ?? array();
-		$front_style_ver   = $front_style_asset['version'] ?? $front_style_ver;
+	if ( file_exists( $front_css_dist ) ) {
+		if ( file_exists( $front_css_asset ) ) {
+			$front_style_asset = include $front_css_asset;
+			$front_style_deps  = $front_style_asset['dependencies'] ?? array();
+			$front_style_ver   = $front_style_asset['version'] ?? $front_style_ver;
+		}
+		$front_css_url = BERUANG_PLUGIN_URL . 'dist/css/front-style.css';
+	} else {
+		$front_css_url   = BERUANG_PLUGIN_URL . 'assets/css/beruang-front.css';
+		$front_style_ver = (string) filemtime( BERUANG_PLUGIN_DIR . 'assets/css/beruang-front.css' );
 	}
 
 	wp_enqueue_style(
 		'beruang-front',
-		BERUANG_PLUGIN_URL . 'dist/css/front-style.css',
+		$front_css_url,
 		$front_style_deps,
 		$front_style_ver
 	);
@@ -80,18 +87,25 @@ function enqueue_front_scripts() {
 		);
 		$deps[] = 'chartjs';
 	}
+	$front_js_dist  = BERUANG_PLUGIN_DIR . 'dist/js/front.js';
 	$front_js_asset = BERUANG_PLUGIN_DIR . 'dist/js/front.asset.php';
 	$front_js_deps  = $deps;
 	$front_js_ver   = BERUANG_VERSION;
-	if ( file_exists( $front_js_asset ) ) {
-		$front_js_asset_data = include $front_js_asset;
-		$front_js_deps       = array_merge( $front_js_asset_data['dependencies'] ?? array(), $deps );
-		$front_js_ver        = $front_js_asset_data['version'] ?? $front_js_ver;
+	if ( file_exists( $front_js_dist ) ) {
+		if ( file_exists( $front_js_asset ) ) {
+			$front_js_asset_data = include $front_js_asset;
+			$front_js_deps       = array_merge( $front_js_asset_data['dependencies'] ?? array(), $deps );
+			$front_js_ver        = $front_js_asset_data['version'] ?? $front_js_ver;
+		}
+		$front_js_url = BERUANG_PLUGIN_URL . 'dist/js/front.js';
+	} else {
+		$front_js_url = BERUANG_PLUGIN_URL . 'assets/js/beruang-front.js';
+		$front_js_ver = (string) filemtime( BERUANG_PLUGIN_DIR . 'assets/js/beruang-front.js' );
 	}
 
 	wp_enqueue_script(
 		'beruang-front',
-		BERUANG_PLUGIN_URL . 'dist/js/front.js',
+		$front_js_url,
 		$front_js_deps,
 		$front_js_ver,
 		true

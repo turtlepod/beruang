@@ -377,97 +377,108 @@
 		var txItemTpl = beruangTemplate('beruang-transaction-item');
 		var accordionMonthTpl = beruangTemplate('beruang-accordion-month');
 
+		function renderList(items) {
+			var byMonth = {};
+			items.forEach(function (tx) {
+				var d = String(tx.date || '').trim();
+				var parts = d.split('-');
+				var monthKey = parts.length === 3 ? parts[0] + '-' + String(parseInt(parts[1], 10)).padStart(2, '0') : d;
+				if (!byMonth[monthKey]) byMonth[monthKey] = [];
+				byMonth[monthKey].push(tx);
+			});
+			var monthKeys = Object.keys(byMonth).sort().reverse();
+			var now = new Date();
+			var currentMonthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+			var hasCurrentMonth = monthKeys.indexOf(currentMonthKey) !== -1;
+			var html = '';
+			monthKeys.forEach(function (monthKey, idx) {
+				var monthItems = byMonth[monthKey];
+				var monthTotal = 0;
+				monthItems.forEach(function (tx) {
+					var amt = parseFloat(tx.amount);
+					monthTotal += tx.type === 'income' ? amt : -amt;
+				});
+				var monthParts = monthKey.split('-');
+				var monthLabel = monthKey;
+				if (monthParts.length === 2) {
+					var y = parseInt(monthParts[0], 10);
+					var m = parseInt(monthParts[1], 10);
+					var tmpDate = new Date(Date.UTC(y, m - 1, 1));
+					var locale = beruang.locale || 'en-US';
+					monthLabel = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(tmpDate);
+				}
+				var itemsHtml = '';
+				monthItems.forEach(function (tx) {
+					var dateDisplay = '—';
+					var timeDisplay = '—';
+					if (tx.date) {
+						var d = String(tx.date).trim();
+						var parts = d.split('-');
+						if (parts.length === 3) {
+							var y = parseInt(parts[0], 10);
+							var m = parseInt(parts[1], 10) - 1;
+							var day = parseInt(parts[2], 10);
+							var tmpDate = new Date(Date.UTC(y, m, day));
+							var locale = beruang.locale || 'en-US';
+							dateDisplay = new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', timeZone: 'UTC' }).format(tmpDate);
+						} else {
+							dateDisplay = d;
+						}
+					}
+					if (tx.time && String(tx.time).trim()) {
+						var t = String(tx.time).trim();
+						timeDisplay = t.substring(0, 5);
+					}
+					itemsHtml += txItemTpl({
+						id: tx.id,
+						dateDisplay: dateDisplay,
+						timeDisplay: timeDisplay,
+						description: tx.description || '—',
+						amountDisplay: (tx.type === 'income' ? '+' : '-') + formatNum(Math.abs(parseFloat(tx.amount))),
+						type: tx.type,
+						editLabel: i18n.edit || 'Edit',
+						deleteLabel: i18n.delete || 'Delete'
+					});
+				});
+				var expanded = monthKey === currentMonthKey || (!hasCurrentMonth && idx === 0);
+				html += accordionMonthTpl({
+					monthKey: monthKey,
+					monthLabel: monthLabel,
+					monthTotal: formatNum(monthTotal),
+					itemsHtml: itemsHtml,
+					monthClass: expanded ? ' is-open' : '',
+					expandedAttr: expanded ? 'true' : 'false'
+				});
+			});
+			if (!monthKeys.length) html = msgTpl({ message: i18n.no_transactions || 'No transactions.' });
+			accordion.innerHTML = html;
+		}
+
 		function loadList() {
 			var year = yearSel ? parseInt(yearSel.value, 10) : parseInt(accordion.dataset.year, 10);
 			var search = searchEl ? searchEl.value : '';
 			var categoryId = categoryEl ? categoryEl.value : '';
 			accordion.innerHTML = msgTpl({ message: i18n.loading || 'Loading…' });
-			request('GET', '/transactions', {
-				year: year,
-				search: search,
-				category_id: categoryId,
-				page: 1
-			}).then(function (r) {
-				if (!r.success || !r.data || !r.data.items) {
-					accordion.innerHTML = msgTpl({ message: i18n.error || 'Error' });
-					return;
-				}
-				var items = r.data.items;
-				var byMonth = {};
-				items.forEach(function (tx) {
-					var d = String(tx.date || '').trim();
-					var parts = d.split('-');
-					var monthKey = parts.length === 3 ? parts[0] + '-' + String(parseInt(parts[1], 10)).padStart(2, '0') : d;
-					if (!byMonth[monthKey]) byMonth[monthKey] = [];
-					byMonth[monthKey].push(tx);
-				});
-				var monthKeys = Object.keys(byMonth).sort().reverse();
-				var now = new Date();
-				var currentMonthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-				var hasCurrentMonth = monthKeys.indexOf(currentMonthKey) !== -1;
-				var html = '';
-				monthKeys.forEach(function (monthKey, idx) {
-					var monthItems = byMonth[monthKey];
-					var monthTotal = 0;
-					monthItems.forEach(function (tx) {
-						var amt = parseFloat(tx.amount);
-						monthTotal += tx.type === 'income' ? amt : -amt;
-					});
-					var monthParts = monthKey.split('-');
-					var monthLabel = monthKey;
-					if (monthParts.length === 2) {
-						var y = parseInt(monthParts[0], 10);
-						var m = parseInt(monthParts[1], 10);
-						var tmpDate = new Date(Date.UTC(y, m - 1, 1));
-						var locale = beruang.locale || 'en-US';
-						monthLabel = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(tmpDate);
+			var params = { year: year, search: search, category_id: categoryId, page: 1 };
+			var allItems = [];
+			function fetchPage(pageNum) {
+				params.page = pageNum;
+				return request('GET', '/transactions', params).then(function (r) {
+					if (!r.success || !r.data || !r.data.items) {
+						accordion.innerHTML = msgTpl({ message: i18n.error || 'Error' });
+						return null;
 					}
-					var itemsHtml = '';
-					monthItems.forEach(function (tx) {
-						var dateDisplay = '—';
-						var timeDisplay = '—';
-						if (tx.date) {
-							var d = String(tx.date).trim();
-							var parts = d.split('-');
-							if (parts.length === 3) {
-								var y = parseInt(parts[0], 10);
-								var m = parseInt(parts[1], 10) - 1;
-								var day = parseInt(parts[2], 10);
-								var tmpDate = new Date(Date.UTC(y, m, day));
-								var locale = beruang.locale || 'en-US';
-								dateDisplay = new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', timeZone: 'UTC' }).format(tmpDate);
-							} else {
-								dateDisplay = d;
-							}
-						}
-						if (tx.time && String(tx.time).trim()) {
-							var t = String(tx.time).trim();
-							timeDisplay = t.substring(0, 5);
-						}
-						itemsHtml += txItemTpl({
-							id: tx.id,
-							dateDisplay: dateDisplay,
-							timeDisplay: timeDisplay,
-							description: tx.description || '—',
-							amountDisplay: (tx.type === 'income' ? '+' : '-') + formatNum(Math.abs(parseFloat(tx.amount))),
-							type: tx.type,
-							editLabel: i18n.edit || 'Edit',
-							deleteLabel: i18n.delete || 'Delete'
-						});
-					});
-					var expanded = monthKey === currentMonthKey || (!hasCurrentMonth && idx === 0);
-					html += accordionMonthTpl({
-						monthKey: monthKey,
-						monthLabel: monthLabel,
-						monthTotal: formatNum(monthTotal),
-						itemsHtml: itemsHtml,
-						monthClass: expanded ? ' is-open' : '',
-						expandedAttr: expanded ? 'true' : 'false'
-					});
+					allItems = allItems.concat(r.data.items);
+					var total = r.data.total || 0;
+					var pages = r.data.pages || 1;
+					if (pageNum < pages && allItems.length < total) {
+						return fetchPage(pageNum + 1);
+					}
+					renderList(allItems);
+					return null;
 				});
-				if (!monthKeys.length) html = msgTpl({ message: i18n.no_transactions || 'No transactions.' });
-				accordion.innerHTML = html;
-			}).catch(function () {
+			}
+			fetchPage(1).catch(function () {
 				accordion.innerHTML = msgTpl({ message: i18n.error || 'Error' });
 			});
 		}

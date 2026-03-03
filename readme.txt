@@ -1,7 +1,7 @@
 === Beruang Budget ===
 Contributors: beruang
 Tags: budget, finance, transactions, expense, income, personal finance
-Requires at least: 5.9
+Requires at least: 6.0
 Tested up to: 6.8
 Stable tag: 0.2.0-beta
 Requires PHP: 8.2
@@ -25,7 +25,7 @@ Beruang Budget is a WordPress plugin for per-user money, transaction, and budget
 
 = Requirements =
 
-* WordPress 5.9+
+* WordPress 6.0+
 * Logged-in users (data is scoped by user)
 
 == Installation ==

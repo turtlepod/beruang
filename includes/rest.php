@@ -111,6 +111,10 @@ function rest_register_routes() {
 					'default' => 1,
 					'type'    => 'integer',
 				),
+				'per_page'    => array(
+					'default' => 100,
+					'type'    => 'integer',
+				),
 			),
 		)
 	);
@@ -400,18 +404,31 @@ function rest_get_transactions( $request ) {
 		$category_id = '';
 	}
 
+	$per_page = $request->get_param( 'per_page' ) ? absint( $request->get_param( 'per_page' ) ) : 100;
+	$per_page = min( max( 1, $per_page ), 500 );
+
 	$args   = array(
 		'year'        => $year,
 		'search'      => $search,
 		'category_id' => $category_id,
 		'page'        => $page,
-		'per_page'    => 9999,
+		'per_page'    => $per_page,
 	);
 	$result = DB::get_transactions( $user_id, $args );
+	$total  = (int) ( $result['total'] ?? 0 );
+	$pages  = $per_page > 0 ? (int) ceil( $total / $per_page ) : 0;
+
 	return rest_ensure_response(
 		array(
 			'success' => true,
-			'data'    => $result,
+			'data'    => array_merge(
+				$result,
+				array(
+					'pages'    => $pages,
+					'page'     => $page,
+					'per_page' => $per_page,
+				)
+			),
 		)
 	);
 }
@@ -603,18 +620,44 @@ function rest_get_budgets( $request ) {
 	$year    = $year > 0 ? $year : (int) current_time( 'Y' );
 	$month   = $month >= 1 && $month <= 12 ? $month : (int) current_time( 'n' );
 
+	$yearly_from  = sprintf( '%04d-01-01', $year );
+	$yearly_to    = sprintf( '%04d-12-31', $year );
+	$monthly_from = sprintf( '%04d-%02d-01', $year, $month );
+	$monthly_to   = gmdate( 'Y-m-t', strtotime( $monthly_from ) );
+
+	$groups      = array();
+	$group_spent = array();
 	foreach ( $budgets as &$b ) {
-		$cat_ids = ! empty( $b['category_ids'] ) ? $b['category_ids'] : array();
-		if ( 'yearly' === $b['type'] ) {
-			$date_from = sprintf( '%04d-01-01', $year );
-			$date_to   = sprintf( '%04d-12-31', $year );
-		} else {
-			$date_from = sprintf( '%04d-%02d-01', $year, $month );
-			$date_to   = gmdate( 'Y-m-t', strtotime( $date_from ) );
+		$cat_ids = ! empty( $b['category_ids'] ) && is_array( $b['category_ids'] ) ? $b['category_ids'] : array();
+		sort( $cat_ids );
+		$type     = isset( $b['type'] ) ? $b['type'] : 'monthly';
+		$group_id = $type . '|' . implode( ',', $cat_ids );
+		if ( ! isset( $groups[ $group_id ] ) ) {
+			$groups[ $group_id ] = array(
+				'type'    => $type,
+				'cat_ids' => $cat_ids,
+			);
 		}
-		$b['spent']    = DB::sum_expenses( $user_id, $date_from, $date_to, $cat_ids );
-		$b['progress'] = (float) $b['target_amount'] > 0 ? min( 100, ( $b['spent'] / (float) $b['target_amount'] ) * 100 ) : 0; // phpcs:ignore WordPress.PHP.YodaConditions.NotYoda
 	}
+	unset( $b );
+
+	foreach ( $groups as $group_id => $group ) {
+		$date_from                = 'yearly' === $group['type'] ? $yearly_from : $monthly_from;
+		$date_to                  = 'yearly' === $group['type'] ? $yearly_to : $monthly_to;
+		$group_spent[ $group_id ] = DB::sum_expenses( $user_id, $date_from, $date_to, $group['cat_ids'] );
+	}
+
+	foreach ( $budgets as &$b ) {
+		$cat_ids = isset( $b['category_ids'] ) && is_array( $b['category_ids'] ) ? $b['category_ids'] : array();
+		sort( $cat_ids );
+		$type          = isset( $b['type'] ) ? $b['type'] : 'monthly';
+		$group_id      = $type . '|' . implode( ',', $cat_ids );
+		$spent         = isset( $group_spent[ $group_id ] ) ? $group_spent[ $group_id ] : 0;
+		$b['spent']    = $spent;
+		$b['progress'] = (float) $b['target_amount'] > 0 ? min( 100, ( $spent / (float) $b['target_amount'] ) * 100 ) : 0; // phpcs:ignore WordPress.PHP.YodaConditions.NotYoda
+	}
+	unset( $b );
+
 	return rest_ensure_response(
 		array(
 			'success' => true,

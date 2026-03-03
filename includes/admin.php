@@ -38,18 +38,25 @@ function admin_enqueue_styles( $hook ) {
 	if ( strpos( $hook, 'beruang' ) === false ) {
 		return;
 	}
+	$admin_css_dist  = BERUANG_PLUGIN_DIR . 'dist/css/admin-style.css';
 	$admin_css_asset = BERUANG_PLUGIN_DIR . 'dist/css/admin-style.asset.php';
 	$deps            = array();
 	$ver             = BERUANG_VERSION;
-	if ( file_exists( $admin_css_asset ) ) {
-		$asset = include $admin_css_asset;
-		$deps  = $asset['dependencies'] ?? array();
-		$ver   = $asset['version'] ?? $ver;
+	if ( file_exists( $admin_css_dist ) ) {
+		if ( file_exists( $admin_css_asset ) ) {
+			$asset = include $admin_css_asset;
+			$deps  = $asset['dependencies'] ?? array();
+			$ver   = $asset['version'] ?? $ver;
+		}
+		$admin_css_url = BERUANG_PLUGIN_URL . 'dist/css/admin-style.css';
+	} else {
+		$admin_css_url = BERUANG_PLUGIN_URL . 'assets/css/beruang-admin.css';
+		$ver           = (string) filemtime( BERUANG_PLUGIN_DIR . 'assets/css/beruang-admin.css' );
 	}
 
 	wp_enqueue_style(
 		'beruang-admin',
-		BERUANG_PLUGIN_URL . 'dist/css/admin-style.css',
+		$admin_css_url,
 		$deps,
 		$ver
 	);
