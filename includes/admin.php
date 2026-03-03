@@ -47,6 +47,8 @@ function admin_enqueue_styles( $hook ) {
 			$asset = include $admin_css_asset;
 			$deps  = $asset['dependencies'] ?? array();
 			$ver   = $asset['version'] ?? $ver;
+		} else {
+			$ver = (string) filemtime( $admin_css_dist );
 		}
 		$admin_css_url = BERUANG_PLUGIN_URL . 'dist/css/admin-style.css';
 	} else {

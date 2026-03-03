@@ -83,6 +83,7 @@ function rest_register_routes() {
 				'type'        => array(
 					'default' => 'expense',
 					'enum'    => array( 'expense', 'income' ),
+					'type'    => 'string',
 				),
 			),
 		)
@@ -287,6 +288,7 @@ function rest_register_routes() {
 				'type'          => array(
 					'default' => 'monthly',
 					'enum'    => array( 'monthly', 'yearly' ),
+					'type'    => 'string',
 				),
 				'category_ids'  => array(
 					'default' => array(),
@@ -329,6 +331,7 @@ function rest_register_routes() {
 				'group_by' => array(
 					'default' => 'month',
 					'enum'    => array( 'month', 'category' ),
+					'type'    => 'string',
 				),
 				'month'    => array(
 					'default' => 0,

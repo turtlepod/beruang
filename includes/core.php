@@ -96,6 +96,8 @@ function enqueue_front_scripts() {
 			$front_js_asset_data = include $front_js_asset;
 			$front_js_deps       = array_merge( $front_js_asset_data['dependencies'] ?? array(), $deps );
 			$front_js_ver        = $front_js_asset_data['version'] ?? $front_js_ver;
+		} else {
+			$front_js_ver = (string) filemtime( $front_js_dist );
 		}
 		$front_js_url = BERUANG_PLUGIN_URL . 'dist/js/front.js';
 	} else {

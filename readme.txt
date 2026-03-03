@@ -34,7 +34,7 @@ Beruang Budget is a WordPress plugin for per-user money, transaction, and budget
 2. Activate the plugin in **Plugins**.
 3. Tables are created on activation: `beruang_category`, `beruang_transaction`, `beruang_budget`, `beruang_budget_category`.
 
-Run `npm install && npm run build` in the plugin directory before use. The plugin loads built assets from `dist/`.
+Run `npm install && npm run build` in the plugin directory before use. The plugin loads built assets from `dist/` for best performance; if `dist/` is missing (for example in development), it falls back to loading unbuilt assets from `assets/`, which are functional but not minified.
 
 = Shortcodes =
 
