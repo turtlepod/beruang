@@ -1,13 +1,19 @@
 <?php
 /**
- * Plugin Name:       Beruang Budget
- * Description:       Track money, transactions, and budgets. Per-user data with shortcodes and admin pages.
- * Version:           0.1.0-beta
- * Requires at least: 5.9
- * Author:            Beruang
- * Text Domain:       beruang
- * Domain Path:       /languages
+ * Plugin Name: Beruang Budget
+ * Description: Track money, transactions, and budgets.
+ * Plugin URI: https://beruang.web.id/
+ * Version: 0.2.0-beta
+ * Requires at least: 6.0
+ * Requires PHP: 8.2
+ * Author: David Chandra Purnama
+ * Author URI: https://turtlepod.xyz/
+ * License: GPLv2 or later
+ * Text Domain: beruang
+ * Domain Path: /languages/
  *
+ * @author David Chandra Purnama <turtlepod.xyz@gmail.com>
+ * @copyright Copyright (c) 2026, David Chandra Purnama
  * @package Beruang
  */
 
@@ -17,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BERUANG_VERSION', '0.1.0-beta' );
+define( 'BERUANG_VERSION', '0.2.0-beta' );
 define( 'BERUANG_PLUGIN_FILE', __FILE__ );
 define( 'BERUANG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BERUANG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

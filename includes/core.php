@@ -15,7 +15,7 @@ require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-db.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/icon-helpers.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/seed.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/admin.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/ajax.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/rest.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/manifest.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/shortcodes.php';
 
@@ -53,13 +53,29 @@ function enqueue_front_scripts() {
 		return;
 	}
 
+	$front_css_dist   = BERUANG_PLUGIN_DIR . 'dist/css/front-style.css';
+	$front_css_asset  = BERUANG_PLUGIN_DIR . 'dist/css/front-style.asset.php';
+	$front_style_deps = array();
+	$front_style_ver  = BERUANG_VERSION;
+	if ( file_exists( $front_css_dist ) ) {
+		if ( file_exists( $front_css_asset ) ) {
+			$front_style_asset = include $front_css_asset;
+			$front_style_deps  = $front_style_asset['dependencies'] ?? array();
+			$front_style_ver   = $front_style_asset['version'] ?? $front_style_ver;
+		}
+		$front_css_url = BERUANG_PLUGIN_URL . 'dist/css/front-style.css';
+	} else {
+		$front_css_url   = BERUANG_PLUGIN_URL . 'assets/css/beruang-front.css';
+		$front_style_ver = (string) filemtime( BERUANG_PLUGIN_DIR . 'assets/css/beruang-front.css' );
+	}
+
 	wp_enqueue_style(
 		'beruang-front',
-		BERUANG_PLUGIN_URL . 'assets/css/beruang-front.css',
-		array(),
-		filemtime( BERUANG_PLUGIN_DIR . 'assets/css/beruang-front.css' )
+		$front_css_url,
+		$front_style_deps,
+		$front_style_ver
 	);
-	$deps = array( 'jquery', 'wp-util' );
+	$deps = array();
 	if ( has_shortcode( $post->post_content ?? '', 'beruang-graph' ) ) {
 		$chart_asset = BERUANG_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
 		wp_enqueue_script(
@@ -71,11 +87,27 @@ function enqueue_front_scripts() {
 		);
 		$deps[] = 'chartjs';
 	}
+	$front_js_dist  = BERUANG_PLUGIN_DIR . 'dist/js/front.js';
+	$front_js_asset = BERUANG_PLUGIN_DIR . 'dist/js/front.asset.php';
+	$front_js_deps  = $deps;
+	$front_js_ver   = BERUANG_VERSION;
+	if ( file_exists( $front_js_dist ) ) {
+		if ( file_exists( $front_js_asset ) ) {
+			$front_js_asset_data = include $front_js_asset;
+			$front_js_deps       = array_merge( $front_js_asset_data['dependencies'] ?? array(), $deps );
+			$front_js_ver        = $front_js_asset_data['version'] ?? $front_js_ver;
+		}
+		$front_js_url = BERUANG_PLUGIN_URL . 'dist/js/front.js';
+	} else {
+		$front_js_url = BERUANG_PLUGIN_URL . 'assets/js/beruang-front.js';
+		$front_js_ver = (string) filemtime( BERUANG_PLUGIN_DIR . 'assets/js/beruang-front.js' );
+	}
+
 	wp_enqueue_script(
 		'beruang-front',
-		BERUANG_PLUGIN_URL . 'assets/js/beruang-front.js',
-		$deps,
-		BERUANG_VERSION,
+		$front_js_url,
+		$front_js_deps,
+		$front_js_ver,
 		true
 	);
 	add_action( 'wp_footer', __NAMESPACE__ . '\print_front_templates', 5 );
@@ -83,8 +115,8 @@ function enqueue_front_scripts() {
 		'beruang-front',
 		'beruangData',
 		array(
-			'ajax_url'      => admin_url( 'admin-ajax.php' ),
-			'nonce'         => wp_create_nonce( 'beruang_ajax' ),
+			'rest_url'      => get_rest_url( null, 'beruang/v1' ),
+			'rest_nonce'    => wp_create_nonce( 'wp_rest' ),
 			'currency'      => get_option( 'beruang_currency', 'IDR' ),
 			'date_format'   => get_option( 'date_format', 'F j, Y' ),
 			'locale'        => str_replace( '_', '-', get_locale() ),
@@ -123,7 +155,7 @@ function enqueue_front_scripts() {
 }
 
 /**
- * Output wp.template script blocks in footer.
+ * Output Beruang JS template script blocks in footer.
  */
 function print_front_templates() {
 	$post = get_post( get_queried_object_id() );

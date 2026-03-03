@@ -14,7 +14,7 @@
 	margin-right: 0.5em;
 }
 
-@media screen and (max-width: 782px) {
+@media screen and (width <= 782px) {
 	.beruang-admin-filter label {
 		display: block;
 		margin-bottom: 0.5em;
