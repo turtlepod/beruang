@@ -1,6 +1,6 @@
 {
   "name": "beruang",
-  "version": "0.2.0-beta",
+  "version": "0.2.1-beta",
   "private": true,
   "description": "Track money, transactions, and budgets. Per-user data with shortcodes and admin pages.",
   "license": "GPL-2.0-or-later",
@@ -27,7 +27,7 @@
     "lint-fix": "npm run lint-fix-js && npm run lint-fix-css",
     "lint-fix-js": "eslint --fix \"assets/js/*.js\"",
     "lint-fix-css": "stylelint --fix \"assets/css/*.css\"",
-    "zip": "npm run build && version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang.$version.zip beruang -x '*/.git/*' -x '*node_modules*' -x '*/vendor/*'",
+    "zip": "npm run build && version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang.$version.zip beruang -x '*/.?*' -x '*node_modules*' -x '*/vendor/*'",
     "clean-dist": "rm -rf ./dist"
   },
   "10up-toolkit": {

@@ -26,8 +26,24 @@ function admin_setup() {
 	add_action( 'admin_menu', __NAMESPACE__ . '\admin_register_menu' );
 	add_action( 'admin_init', __NAMESPACE__ . '\admin_register_settings' );
 	add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\admin_enqueue_styles' );
+	add_action( 'admin_notices', __NAMESPACE__ . '\admin_notice_dist_missing' );
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\admin_setup' );
+
+/**
+ * Show admin notice when dist/ is missing.
+ */
+function admin_notice_dist_missing() {
+	if ( ! current_user_can( ADMIN_CAPABILITY ) || beruang_dist_exists() ) {
+		return;
+	}
+	$message = sprintf(
+		/* translators: %s: npm build command */
+		__( 'Beruang: Built assets are missing. Run %s in the plugin directory.', 'beruang' ),
+		'<code>npm install && npm run build</code>'
+	);
+	echo '<div class="notice notice-warning"><p>' . wp_kses_post( $message ) . '</p></div>';
+}
 
 /**
  * Enqueue admin styles when on Beruang admin pages.
@@ -38,25 +54,24 @@ function admin_enqueue_styles( $hook ) {
 	if ( strpos( $hook, 'beruang' ) === false ) {
 		return;
 	}
+	if ( ! beruang_dist_exists() ) {
+		return;
+	}
 	$admin_css_dist  = BERUANG_PLUGIN_DIR . 'dist/css/admin-style.css';
 	$admin_css_asset = BERUANG_PLUGIN_DIR . 'dist/css/admin-style.asset.php';
-	$deps            = array();
-	$ver             = BERUANG_VERSION;
-	if ( file_exists( $admin_css_dist ) ) {
-		if ( file_exists( $admin_css_asset ) ) {
-			$asset = include $admin_css_asset;
-			$deps  = $asset['dependencies'] ?? array();
-			$ver   = $asset['version'] ?? $ver;
-		}
-		$admin_css_url = BERUANG_PLUGIN_URL . 'dist/css/admin-style.css';
-	} else {
-		$admin_css_url = BERUANG_PLUGIN_URL . 'assets/css/beruang-admin.css';
-		$ver           = (string) filemtime( BERUANG_PLUGIN_DIR . 'assets/css/beruang-admin.css' );
+	if ( ! file_exists( $admin_css_dist ) ) {
+		return;
 	}
-
+	$deps = array();
+	$ver  = BERUANG_VERSION;
+	if ( file_exists( $admin_css_asset ) ) {
+		$asset = include $admin_css_asset;
+		$deps  = $asset['dependencies'] ?? array();
+		$ver   = $asset['version'] ?? $ver;
+	}
 	wp_enqueue_style(
 		'beruang-admin',
-		$admin_css_url,
+		BERUANG_PLUGIN_URL . 'dist/css/admin-style.css',
 		$deps,
 		$ver
 	);
