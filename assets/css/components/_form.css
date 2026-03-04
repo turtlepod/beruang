@@ -263,3 +263,48 @@
 .beruang-form-message {
 	color: var(--br-text);
 }
+
+/* Form loading state */
+.beruang-form,
+#beruang-edit-tx-form,
+.beruang-categories-form {
+	position: relative;
+}
+
+.beruang-form.is-loading,
+#beruang-edit-tx-form.is-loading,
+.beruang-categories-form.is-loading {
+	opacity: 0.6;
+	pointer-events: none;
+	transition: opacity 0.2s ease;
+}
+
+.beruang-form-loading {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgb(255 255 255 / 40%);
+	border-radius: var(--br-radius-sm, 4px);
+	z-index: 10;
+}
+
+.beruang-form-loading[hidden] {
+	display: none;
+}
+
+.beruang-form-spinner {
+	width: 28px;
+	height: 28px;
+	border: 2px solid var(--br-border, #ccc);
+	border-top-color: var(--br-primary, #0073aa);
+	border-radius: 50%;
+	animation: beruang-spin 0.6s linear infinite;
+}
+
+@keyframes beruang-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}

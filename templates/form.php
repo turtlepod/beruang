@@ -95,6 +95,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="beruang-form-row">
 					<button type="submit" class="beruang-submit beruang-cat-submit-add"><?php esc_html_e( 'Add category', 'beruang' ); ?></button>
 					<button type="button" class="beruang-cat-cancel-edit" style="display:none;"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+					<span class="beruang-form-message" aria-live="polite"></span>
 				</div>
 			</form>
 			<div class="beruang-categories-list-wrap">

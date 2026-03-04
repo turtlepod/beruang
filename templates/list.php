@@ -90,6 +90,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="beruang-form-row beruang-modal-actions">
 					<button type="submit" class="beruang-submit beruang-modal-save"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
 					<button type="button" class="beruang-modal-cancel beruang-edit-tx-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+					<span class="beruang-form-message" aria-live="polite"></span>
 				</div>
 			</form>
 			</div>

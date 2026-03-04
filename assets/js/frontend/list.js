@@ -7,7 +7,7 @@
 'use strict';
 
 import { i18n, beruangData, getDecimalPlaces } from './config.js';
-import { request, beruangTemplate, formatNum } from './utils.js';
+import { request, beruangTemplate, formatNum, setFormLoading } from './utils.js';
 
 export function initList() {
 	const accordion = document.getElementById( 'beruang-list-accordion' );
@@ -242,8 +242,10 @@ export function initList() {
 		editModal.addEventListener( 'click', function ( e ) {
 			if ( e.target === editModal ) editModal.hidden = true;
 		} );
+		const editMessage = editForm.querySelector( '.beruang-form-message' );
 		editForm.addEventListener( 'submit', function ( e ) {
 			e.preventDefault();
+			editMessage.textContent = '';
 			const amountEl = document.getElementById( 'beruang-edit-tx-amount' );
 			const data = {
 				id: document.getElementById( 'beruang-edit-tx-id' ).value,
@@ -257,11 +259,21 @@ export function initList() {
 				amount: parseFloat( amountEl.value ) || 0,
 				type: document.getElementById( 'beruang-edit-tx-type' ).value,
 			};
+			setFormLoading( editForm, true );
 			request( 'PUT', '/transactions/' + data.id, data ).then( function ( r ) {
 				if ( r.success ) {
 					editModal.hidden = true;
 					loadList();
+				} else {
+					editMessage.textContent =
+						( r.data && r.data.message ) || i18n.error || 'Error';
+					editMessage.style.color = '#d63638';
 				}
+			} ).catch( function () {
+				editMessage.textContent = i18n.error || 'Error';
+				editMessage.style.color = '#d63638';
+			} ).finally( function () {
+				setFormLoading( editForm, false );
 			} );
 		} );
 	}

@@ -74,6 +74,32 @@ export function request( method, path, data ) {
 		} );
 }
 
+/**
+ * Show or hide loading state on a form (opacity + spinner overlay).
+ *
+ * @param {HTMLFormElement} form  Form element.
+ * @param {boolean}        loading Whether loading.
+ */
+export function setFormLoading( form, loading ) {
+	if ( ! form ) return;
+	let overlay = form.querySelector( '.beruang-form-loading' );
+	if ( loading ) {
+		form.classList.add( 'is-loading' );
+		if ( ! overlay ) {
+			overlay = document.createElement( 'div' );
+			overlay.className = 'beruang-form-loading';
+			overlay.setAttribute( 'aria-hidden', 'true' );
+			overlay.innerHTML =
+				'<span class="beruang-form-spinner" aria-hidden="true"></span>';
+			form.appendChild( overlay );
+		}
+		overlay.hidden = false;
+	} else {
+		form.classList.remove( 'is-loading' );
+		if ( overlay ) overlay.hidden = true;
+	}
+}
+
 export function formatNum( n ) {
 	const dec = beruangData.decimal_sep || ',';
 	const thou = beruangData.thousands_sep || '.';

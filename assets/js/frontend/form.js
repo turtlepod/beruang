@@ -7,7 +7,7 @@
 'use strict';
 
 import { i18n, getDecimalPlaces } from './config.js';
-import { request, beruangTemplate } from './utils.js';
+import { request, beruangTemplate, setFormLoading } from './utils.js';
 
 export function initForm() {
 	const form = document.getElementById( 'beruang-transaction-form' );
@@ -45,6 +45,7 @@ export function initForm() {
 	form.addEventListener( 'submit', function ( e ) {
 		e.preventDefault();
 		message.textContent = '';
+		setFormLoading( form, true );
 		const data = {
 			date: form.querySelector( '[name="date"]' ).value,
 			time: form.querySelector( '[name="time"]' ).value || null,
@@ -77,6 +78,8 @@ export function initForm() {
 		} ).catch( function () {
 			message.textContent = i18n.error || 'Error';
 			message.style.color = '#d63638';
+		} ).finally( function () {
+			setFormLoading( form, false );
 		} );
 	} );
 
@@ -181,11 +184,14 @@ export function initForm() {
 	}
 
 	if ( catForm ) {
+		const catMessage = catForm.querySelector( '.beruang-form-message' );
 		catForm.addEventListener( 'submit', function ( e ) {
 			e.preventDefault();
+			catMessage.textContent = '';
 			const id = catEditId.value;
 			const name = catName.value;
 			const parentId = catParent.value || '0';
+			setFormLoading( catForm, true );
 			request( 'POST', '/categories', {
 				id: id || 0,
 				name,
@@ -198,7 +204,16 @@ export function initForm() {
 					catSubmitBtn.textContent = i18n.add_category || 'Add category';
 					catCancelBtn.style.display = 'none';
 					refreshCategoriesInModal();
+				} else {
+					catMessage.textContent =
+						( r.data && r.data.message ) || i18n.error || 'Error';
+					catMessage.style.color = '#d63638';
 				}
+			} ).catch( function () {
+				catMessage.textContent = i18n.error || 'Error';
+				catMessage.style.color = '#d63638';
+			} ).finally( function () {
+				setFormLoading( catForm, false );
 			} );
 		} );
 	}
