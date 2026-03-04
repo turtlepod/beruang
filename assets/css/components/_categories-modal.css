@@ -67,6 +67,32 @@
 	margin-bottom: 0.75em;
 }
 
+.beruang-categories-form .beruang-form-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5em;
+}
+
+.beruang-cat-cancel-edit {
+	padding: 0.5em 1em;
+	height: var(--br-control-height);
+	background: var(--br-bg-muted) !important;
+	color: var(--br-text) !important;
+	border: 1px solid var(--br-border) !important;
+	border-radius: var(--br-radius-sm);
+	cursor: pointer;
+	line-height: 1.4;
+	font-family: inherit;
+	font-size: inherit;
+
+	&:hover {
+		background: var(--br-bg-hover) !important;
+		color: var(--br-text) !important;
+		border-color: var(--br-border-hover) !important;
+	}
+}
+
 .beruang-categories-list-wrap {
 	margin: 1em 0;
 	border: 1px solid var(--br-border-alt);
