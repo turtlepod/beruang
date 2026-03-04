@@ -1070,14 +1070,13 @@
 	}
 
 	.beruang-datetime-wrap {
-		flex-direction: column;
-		align-items: stretch;
+		flex-wrap: nowrap;
 	}
 
 	.beruang-datetime-wrap input[type="date"],
 	.beruang-datetime-wrap input[type="time"] {
 		min-width: 0;
-		max-width: 100%;
+		max-width: none;
 	}
 
 	.beruang-form-row input[type="text"],
