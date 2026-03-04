@@ -48,7 +48,8 @@ Use on pages where users are logged in:
 == Changelog ==
 
 = 0.3.0-beta =
-* Version bump
+* Restructure assets.
+* Loading screen & error message.
 
 = 0.2.0-beta =
 * Use REST API instead of admin-ajax
