@@ -3,10 +3,11 @@
  * Template for [beruang-form] shortcode.
  *
  * @package Beruang
- * @var string $today      Default date (Y-m-d).
- * @var string $time       Default time (H:i).
- * @var string $currency   Currency code.
- * @var array  $categories Flat categories from DB.
+ * @var string $today       Default date (Y-m-d).
+ * @var string $time        Default time (H:i).
+ * @var string $currency    Currency code.
+ * @var array  $categories  Flat categories from DB.
+ * @var string $amount_step Step attribute for amount input (e.g. '0.01').
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,7 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="beruang-form-row beruang-amount-row">
 			<label for="beruang-amount"><?php esc_html_e( 'Amount', 'beruang' ); ?> <span class="beruang-label-currency">(<?php echo esc_html( $currency ); ?>)</span></label>
 			<span class="beruang-amount-wrap">
-				<input type="number" id="beruang-amount" name="amount" step="0.01" min="0" value="" required placeholder="0" />
+				<input type="number" id="beruang-amount" name="amount" step="<?php echo esc_attr( $amount_step ?? '0.01' ); ?>" min="0" value="" required placeholder="0" />
 				<button type="button" class="beruang-calc-btn" title="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'calc' ); ?></button>
 			</span>
 		</div>

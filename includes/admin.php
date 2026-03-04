@@ -137,6 +137,18 @@ function admin_register_settings() {
 	);
 	register_setting(
 		'beruang_settings',
+		'beruang_decimal_places',
+		array(
+			'type'              => 'integer',
+			'default'           => 2,
+			'sanitize_callback' => function ( $v ) {
+				$v = absint( $v );
+				return $v <= 4 ? $v : 2;
+			},
+		)
+	);
+	register_setting(
+		'beruang_settings',
 		'beruang_pwa_enabled',
 		array(
 			'type'              => 'boolean',
@@ -191,6 +203,7 @@ function admin_page_settings() {
 	$currency        = get_option( 'beruang_currency', 'IDR' );
 	$decimal_sep     = get_option( 'beruang_decimal_sep', ',' );
 	$thousands_sep   = get_option( 'beruang_thousands_sep', '.' );
+	$decimal_places  = (int) get_option( 'beruang_decimal_places', 2 );
 	$pwa_enabled     = (bool) get_option( 'beruang_pwa_enabled', false );
 	$pwa_app_name    = get_option( 'beruang_pwa_app_name', '' );
 	$pwa_short_name  = get_option( 'beruang_pwa_short_name', '' );
@@ -204,7 +217,7 @@ function admin_page_settings() {
 			<table class="form-table">
 				<tr>
 					<th scope="row"><label for="beruang_currency"><?php esc_html_e( 'Currency', 'beruang' ); ?></label></th>
-					<td><input type="text" id="beruang_currency" name="beruang_currency" value="<?php echo esc_attr( $currency ); ?>" class="regular-text" /></td>
+					<td><input type="text" id="beruang_currency" name="beruang_currency" value="<?php echo esc_attr( $currency ); ?>" /></td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="beruang_decimal_sep"><?php esc_html_e( 'Decimal separator', 'beruang' ); ?></label></th>
@@ -213,6 +226,19 @@ function admin_page_settings() {
 				<tr>
 					<th scope="row"><label for="beruang_thousands_sep"><?php esc_html_e( 'Thousands separator', 'beruang' ); ?></label></th>
 					<td><input type="text" id="beruang_thousands_sep" name="beruang_thousands_sep" value="<?php echo esc_attr( $thousands_sep ); ?>" maxlength="2" /></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="beruang_decimal_places"><?php esc_html_e( 'Decimal places', 'beruang' ); ?></label></th>
+					<td>
+						<select id="beruang_decimal_places" name="beruang_decimal_places">
+							<option value="0" <?php selected( $decimal_places, 0 ); ?>><?php esc_html_e( 'None (integers only)', 'beruang' ); ?></option>
+							<option value="1" <?php selected( $decimal_places, 1 ); ?>>1</option>
+							<option value="2" <?php selected( $decimal_places, 2 ); ?>>2</option>
+							<option value="3" <?php selected( $decimal_places, 3 ); ?>>3</option>
+							<option value="4" <?php selected( $decimal_places, 4 ); ?>>4</option>
+						</select>
+						<p class="description"><?php esc_html_e( 'Number of digits after the decimal in amount fields.', 'beruang' ); ?></p>
+					</td>
 				</tr>
 			</table>
 			<h2><?php esc_html_e( 'Web app', 'beruang' ); ?></h2>
@@ -854,7 +880,7 @@ function admin_page_transactions() {
 							}
 							?>
 						</select></td></tr>
-						<tr><th scope="row"><label for="beruang_edit_amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label></th><td><input type="number" id="beruang_edit_amount" name="beruang_amount" step="0.01" min="0" value="<?php echo esc_attr( $edit_row['amount'] ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
+						<tr><th scope="row"><label for="beruang_edit_amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label></th><td><input type="number" id="beruang_edit_amount" name="beruang_amount" step="<?php echo esc_attr( shortcode_amount_step() ); ?>" min="0" value="<?php echo esc_attr( shortcode_format_amount_input_value( $edit_row['amount'] ) ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
 						<tr><th scope="row"><label for="beruang_edit_type"><?php esc_html_e( 'Type', 'beruang' ); ?></label></th>
 						<td><select id="beruang_edit_type" name="beruang_type">
 							<option value="expense" <?php selected( $edit_row['type'], 'expense' ); ?>><?php esc_html_e( 'Expense', 'beruang' ); ?></option>
@@ -1094,7 +1120,7 @@ function admin_page_budgets() {
 				<input type="hidden" name="beruang_budget_user_id" value="<?php echo (int) $edit_row['user_id']; ?>" />
 				<table class="form-table">
 					<tr><th scope="row"><label for="beruang_edit_budget_name"><?php esc_html_e( 'Name', 'beruang' ); ?></label></th><td><input type="text" id="beruang_edit_budget_name" name="beruang_budget_name" value="<?php echo esc_attr( $edit_row['name'] ); ?>" class="regular-text" required /></td></tr>
-					<tr><th scope="row"><label for="beruang_edit_budget_target"><?php esc_html_e( 'Target', 'beruang' ); ?></label></th><td><input type="number" id="beruang_edit_budget_target" name="beruang_budget_target" step="0.01" min="0" value="<?php echo esc_attr( $edit_row['target_amount'] ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
+					<tr><th scope="row"><label for="beruang_edit_budget_target"><?php esc_html_e( 'Target', 'beruang' ); ?></label></th><td><input type="number" id="beruang_edit_budget_target" name="beruang_budget_target" step="<?php echo esc_attr( shortcode_amount_step() ); ?>" min="0" value="<?php echo esc_attr( shortcode_format_amount_input_value( $edit_row['target_amount'] ) ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
 					<tr><th scope="row"><label for="beruang_edit_budget_type"><?php esc_html_e( 'Type', 'beruang' ); ?></label></th><td><select id="beruang_edit_budget_type" name="beruang_budget_type"><option value="monthly" <?php selected( $edit_row['type'], 'monthly' ); ?>><?php esc_html_e( 'Monthly', 'beruang' ); ?></option><option value="yearly" <?php selected( $edit_row['type'], 'yearly' ); ?>><?php esc_html_e( 'Yearly', 'beruang' ); ?></option></select></td></tr>
 					<tr><th scope="row"><?php esc_html_e( 'Categories', 'beruang' ); ?></th><td><fieldset>
 						<?php

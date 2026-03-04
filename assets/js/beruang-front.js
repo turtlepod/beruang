@@ -6,6 +6,11 @@
 	var restNonce = beruang.rest_nonce || '';
 	var i18n = beruang.i18n || {};
 
+	function getDecimalPlaces() {
+		var p = parseInt(beruang.decimal_places, 10);
+		return (p >= 0 && p <= 4) ? p : 2;
+	}
+
 	function escapeHtml(str) {
 		return String(str)
 			.replace(/&/g, '&amp;')
@@ -298,7 +303,9 @@
 			if (insertCloseBtn) {
 				insertCloseBtn.addEventListener('click', function () {
 					doEquals();
-					amountInput.value = calcVal;
+					var places = getDecimalPlaces();
+					var num = parseFloat(calcVal) || 0;
+					amountInput.value = places === 0 ? String(Math.round(num)) : num.toFixed(places);
 					calcModal.hidden = true;
 				});
 			}
@@ -547,12 +554,15 @@
 				request('GET', '/transactions/' + id).then(function (r) {
 					if (!r.success || !r.data || !r.data.transaction) return;
 					var t = r.data.transaction;
+					var places = getDecimalPlaces();
+					var amt = parseFloat(t.amount) || 0;
+					var amtStr = places === 0 ? String(Math.round(amt)) : amt.toFixed(places);
 					document.getElementById('beruang-edit-tx-id').value = t.id;
 					document.getElementById('beruang-edit-tx-date').value = t.date || '';
 					document.getElementById('beruang-edit-tx-time').value = t.time || '';
 					document.getElementById('beruang-edit-tx-description').value = t.description || '';
 					document.getElementById('beruang-edit-tx-category').value = t.category_id || '0';
-					document.getElementById('beruang-edit-tx-amount').value = t.amount;
+					document.getElementById('beruang-edit-tx-amount').value = amtStr;
 					document.getElementById('beruang-edit-tx-type').value = t.type === 'income' ? 'income' : 'expense';
 					editModal.hidden = false;
 				});
@@ -577,13 +587,14 @@
 			});
 			editForm.addEventListener('submit', function (e) {
 				e.preventDefault();
+				var amountEl = document.getElementById('beruang-edit-tx-amount');
 				var data = {
 					id: document.getElementById('beruang-edit-tx-id').value,
 					date: document.getElementById('beruang-edit-tx-date').value,
-					time: document.getElementById('beruang-edit-tx-time').value || null,
+					time: document.getElementById('beruang-edit-tx-time').value || '',
 					description: document.getElementById('beruang-edit-tx-description').value,
-					category_id: document.getElementById('beruang-edit-tx-category').value || 0,
-					amount: document.getElementById('beruang-edit-tx-amount').value,
+					category_id: parseInt(document.getElementById('beruang-edit-tx-category').value, 10) || 0,
+					amount: parseFloat(amountEl.value) || 0,
 					type: document.getElementById('beruang-edit-tx-type').value
 				};
 				request('PUT', '/transactions/' + data.id, data).then(function (r) {
@@ -601,7 +612,8 @@
 	function formatNum(n) {
 		var dec = beruang.decimal_sep || ',';
 		var thou = beruang.thousands_sep || '.';
-		var s = Number(n).toFixed(dec === '.' ? 2 : 0);
+		var places = getDecimalPlaces();
+		var s = Number(n).toFixed(places);
 		var parts = s.split('.');
 		parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thou);
 		return parts.join(dec) + ' ' + (beruang.currency || 'IDR');

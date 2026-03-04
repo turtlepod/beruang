@@ -117,14 +117,15 @@ function enqueue_front_scripts() {
 			'beruang-front',
 			'beruangData',
 			array(
-				'rest_url'      => get_rest_url( null, 'beruang/v1' ),
-				'rest_nonce'    => wp_create_nonce( 'wp_rest' ),
-				'currency'      => get_option( 'beruang_currency', 'IDR' ),
-				'date_format'   => get_option( 'date_format', 'F j, Y' ),
-				'locale'        => str_replace( '_', '-', get_locale() ),
-				'decimal_sep'   => get_option( 'beruang_decimal_sep', ',' ),
-				'thousands_sep' => get_option( 'beruang_thousands_sep', '.' ),
-				'i18n'          => array(
+				'rest_url'       => get_rest_url( null, 'beruang/v1' ),
+				'rest_nonce'     => wp_create_nonce( 'wp_rest' ),
+				'currency'       => get_option( 'beruang_currency', 'IDR' ),
+				'date_format'    => get_option( 'date_format', 'F j, Y' ),
+				'locale'         => str_replace( '_', '-', get_locale() ),
+				'decimal_sep'    => get_option( 'beruang_decimal_sep', ',' ),
+				'thousands_sep'  => get_option( 'beruang_thousands_sep', '.' ),
+				'decimal_places' => (int) get_option( 'beruang_decimal_places', 2 ),
+				'i18n'           => array(
 					'uncategorized'              => __( 'Uncategorized', 'beruang' ),
 					'expense'                    => __( 'Expense', 'beruang' ),
 					'income'                     => __( 'Income', 'beruang' ),

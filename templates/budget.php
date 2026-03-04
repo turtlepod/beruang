@@ -3,10 +3,11 @@
  * Template for [beruang-budget] shortcode.
  *
  * @package Beruang
- * @var string $currency   Currency code.
- * @var array  $categories Flat categories from DB.
- * @var int    $year       Current year for filter.
- * @var int    $month      Current month for filter.
+ * @var string $currency    Currency code.
+ * @var array  $categories  Flat categories from DB.
+ * @var int    $year        Current year for filter.
+ * @var int    $month       Current month for filter.
+ * @var string $amount_step Step attribute for amount input (e.g. '0.01').
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -70,7 +71,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<div class="beruang-form-row">
 					<label for="beruang-budget-target"><?php esc_html_e( 'Target', 'beruang' ); ?></label>
-					<input type="number" id="beruang-budget-target" name="target_amount" step="0.01" min="0" required /> <?php echo esc_html( $currency ); ?>
+					<input type="number" id="beruang-budget-target" name="target_amount" step="<?php echo esc_attr( $amount_step ?? '0.01' ); ?>" min="0" required /> <?php echo esc_html( $currency ); ?>
 				</div>
 				<div class="beruang-form-row">
 					<label><?php esc_html_e( 'Type', 'beruang' ); ?></label>

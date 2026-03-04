@@ -54,10 +54,11 @@ function shortcode_render_form( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 	shortcode_load_template(
 		'form.php',
 		array(
-			'today'      => current_time( 'Y-m-d' ),
-			'time'       => current_time( 'H:i' ),
-			'currency'   => get_option( 'beruang_currency', 'IDR' ),
-			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
+			'today'       => current_time( 'Y-m-d' ),
+			'time'        => current_time( 'H:i' ),
+			'currency'    => get_option( 'beruang_currency', 'IDR' ),
+			'categories'  => DB::get_categories_flat( get_current_user_id(), true ),
+			'amount_step' => shortcode_amount_step(),
 		)
 	);
 	return ob_get_clean();
@@ -77,8 +78,9 @@ function shortcode_render_list( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 	shortcode_load_template(
 		'list.php',
 		array(
-			'year'       => (int) current_time( 'Y' ),
-			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
+			'year'        => (int) current_time( 'Y' ),
+			'categories'  => DB::get_categories_flat( get_current_user_id(), true ),
+			'amount_step' => shortcode_amount_step(),
 		)
 	);
 	return ob_get_clean();
@@ -118,13 +120,36 @@ function shortcode_render_budget( $atts ) { // phpcs:ignore Generic.CodeAnalysis
 	shortcode_load_template(
 		'budget.php',
 		array(
-			'currency'   => get_option( 'beruang_currency', 'IDR' ),
-			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
-			'year'       => (int) current_time( 'Y' ),
-			'month'      => (int) current_time( 'n' ),
+			'currency'    => get_option( 'beruang_currency', 'IDR' ),
+			'categories'  => DB::get_categories_flat( get_current_user_id(), true ),
+			'year'        => (int) current_time( 'Y' ),
+			'month'       => (int) current_time( 'n' ),
+			'amount_step' => shortcode_amount_step(),
 		)
 	);
 	return ob_get_clean();
+}
+
+/**
+ * Get HTML step attribute for amount inputs based on decimal places setting.
+ *
+ * @return string
+ */
+function shortcode_amount_step() {
+	$places = (int) get_option( 'beruang_decimal_places', 2 );
+	return 0 === $places ? '1' : '0.' . str_repeat( '0', $places - 1 ) . '1';
+}
+
+/**
+ * Format amount for display in amount input value (respects decimal places setting).
+ *
+ * @param float|string $amount Amount from DB.
+ * @return string
+ */
+function shortcode_format_amount_input_value( $amount ) {
+	$places = (int) get_option( 'beruang_decimal_places', 2 );
+	$num    = (float) $amount;
+	return 0 === $places ? (string) (int) round( $num ) : number_format( $num, $places, '.', '' );
 }
 
 /**
@@ -135,11 +160,12 @@ function shortcode_render_budget( $atts ) { // phpcs:ignore Generic.CodeAnalysis
  * @return string
  */
 function shortcode_format_amount( $amount, $currency = '' ) {
-	$dec  = get_option( 'beruang_decimal_sep', ',' );
-	$thou = get_option( 'beruang_thousands_sep', '.' );
+	$dec    = get_option( 'beruang_decimal_sep', ',' );
+	$thou   = get_option( 'beruang_thousands_sep', '.' );
+	$places = (int) get_option( 'beruang_decimal_places', 2 );
 	if ( '' === $currency ) {
 		$currency = get_option( 'beruang_currency', 'IDR' );
 	}
-	$formatted = number_format( (float) $amount, '.' === $dec ? 2 : 0, $dec, $thou );
+	$formatted = number_format( (float) $amount, $places, $dec, $thou );
 	return $formatted . ' ' . $currency;
 }

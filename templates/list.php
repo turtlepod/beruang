@@ -3,8 +3,9 @@
  * Template for [beruang-list] shortcode.
  *
  * @package Beruang
- * @var int   $year       Current year.
- * @var array $categories Flat categories from DB.
+ * @var int    $year        Current year.
+ * @var array  $categories  Flat categories from DB.
+ * @var string $amount_step Step attribute for amount input (e.g. '0.01').
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -77,7 +78,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<div class="beruang-form-row">
 					<label for="beruang-edit-tx-amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label>
-					<input type="number" id="beruang-edit-tx-amount" name="amount" step="0.01" min="0" required />
+					<input type="number" id="beruang-edit-tx-amount" name="amount" step="<?php echo esc_attr( $amount_step ?? '0.01' ); ?>" min="0" required />
 				</div>
 				<div class="beruang-form-row">
 					<label><?php esc_html_e( 'Type', 'beruang' ); ?></label>
