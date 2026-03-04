@@ -4,12 +4,51 @@
 	box-sizing: border-box;
 	max-width: 100%;
 	color: #1d2327;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-size: 16px;
+	line-height: 1.5;
 }
 
 .beruang *,
 .beruang *::before,
 .beruang *::after {
 	box-sizing: inherit;
+}
+
+/* Theme isolation: reset form elements to prevent theme overrides from breaking layout and appearance */
+.beruang-form-wrapper input,
+.beruang-form-wrapper select,
+.beruang-form-wrapper button,
+.beruang-categories-modal-inner input,
+.beruang-categories-modal-inner select,
+.beruang-categories-modal-inner button,
+.beruang-budget-modal-inner input,
+.beruang-budget-modal-inner select,
+.beruang-budget-modal-inner button,
+.beruang-edit-tx-modal-inner input,
+.beruang-edit-tx-modal-inner select,
+.beruang-edit-tx-modal-inner button {
+	appearance: none;
+	margin: 0;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+/* Dropdown arrow: use full shorthand so theme rules cannot partially override */
+.beruang-form-wrapper select,
+.beruang-categories-modal-inner select,
+.beruang-budget-modal-inner select,
+.beruang-edit-tx-modal-inner select {
+	background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231d2327' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 0.6em center/12px 12px !important;
+}
+
+.beruang-form-wrapper button,
+.beruang-categories-modal-inner button,
+.beruang-budget-modal-inner button,
+.beruang-edit-tx-modal-inner button {
+	cursor: pointer;
+	overflow: visible;
 }
 
 .beruang-login-required {
@@ -30,16 +69,17 @@
 	margin-right: auto;
 }
 
-.beruang-form-row {
+.beruang-form-wrapper .beruang-form-row {
 	margin-bottom: 1em;
 }
 
 /* Consistent controls width and input height across all rows */
-.beruang-form-row label {
+.beruang-form-wrapper .beruang-form-row label {
 	display: block;
 	margin-bottom: 0.25em;
 	font-weight: 600;
 	color: #1d2327;
+	font-size: inherit;
 }
 
 .beruang-form-row label .beruang-label-currency {
@@ -48,20 +88,46 @@
 	opacity: 0.8;
 }
 
-.beruang-form-row input[type="text"],
-.beruang-form-row input[type="number"],
-.beruang-form-row input[type="date"],
-.beruang-form-row input[type="time"],
-.beruang-form-row select {
+.beruang-form-wrapper .beruang-form-row input[type="text"],
+.beruang-form-wrapper .beruang-form-row input[type="number"],
+.beruang-form-wrapper .beruang-form-row input[type="date"],
+.beruang-form-wrapper .beruang-form-row input[type="time"] {
 	width: 100%;
 	max-width: 20em;
 	padding: 0.5em 0.6em;
 	height: 2.5em;
-	background: #fff;
-	color: #1d2327;
-	border: 1px solid #8c8f94;
+	background: #fff !important;
+	color: #1d2327 !important;
+	border: 1px solid #8c8f94 !important;
 	border-radius: 4px;
 	line-height: 1.4;
+	font-weight: 400;
+	box-shadow: none;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.beruang-form-wrapper .beruang-form-row select {
+	width: 100%;
+	max-width: 20em;
+	padding: 0.5em 0.6em;
+	padding-right: 2em;
+	height: 2.5em;
+	background-color: #fff !important;
+	color: #1d2327 !important;
+	border: 1px solid #8c8f94 !important;
+	border-radius: 4px;
+	line-height: 1.4;
+	font-weight: 400;
+	box-shadow: none;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.beruang-form-wrapper .beruang-form-row input:focus,
+.beruang-form-wrapper .beruang-form-row select:focus {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+	border-color: #2271b1 !important;
+	box-shadow: 0 0 0 1px #2271b1;
 }
 
 .beruang-datetime-wrap {
@@ -91,14 +157,14 @@
 	width: 100%;
 }
 
-.beruang-category-wrap select {
+.beruang-form-wrapper .beruang-category-wrap select {
 	flex: 1;
 	min-width: 0;
-	background: #fff;
-	color: #1d2327;
+	background: #fff !important;
+	color: #1d2327 !important;
 }
 
-.beruang-manage-categories-btn {
+.beruang-form-wrapper .beruang-manage-categories-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -107,9 +173,9 @@
 	height: 2.5em;
 	padding: 0;
 	font-size: 1em;
-	background: #f0f0f1;
-	color: #1d2327;
-	border: 1px solid #8c8f94;
+	background: #f0f0f1 !important;
+	color: #1d2327 !important;
+	border: 1px solid #8c8f94 !important;
 	border-radius: 4px;
 	cursor: pointer;
 }
@@ -127,10 +193,10 @@
 	color: inherit;
 }
 
-.beruang-manage-categories-btn:hover {
-	background: #dcdcde;
-	color: #1d2327;
-	border-color: #787c82;
+.beruang-form-wrapper .beruang-manage-categories-btn:hover {
+	background: #dcdcde !important;
+	color: #1d2327 !important;
+	border-color: #787c82 !important;
 }
 
 .beruang-amount-row {
@@ -153,14 +219,14 @@
 	gap: 0.5em;
 }
 
-.beruang-amount-wrap input {
+.beruang-form-wrapper .beruang-amount-wrap input {
 	flex: 1;
 	min-width: 6em;
-	background: #fff;
-	color: #1d2327;
+	background: #fff !important;
+	color: #1d2327 !important;
 }
 
-.beruang-calc-btn {
+.beruang-form-wrapper .beruang-calc-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -168,15 +234,16 @@
 	width: 2.5em;
 	height: 2.5em;
 	padding: 0;
-	background: #2271b1;
-	color: #fff;
-	border: none;
+	background: #2271b1 !important;
+	color: #fff !important;
+	border: none !important;
 	border-radius: 4px;
 	cursor: pointer;
 }
 
-.beruang-calc-btn:hover {
-	background: #135e96;
+.beruang-form-wrapper .beruang-calc-btn:hover {
+	background: #135e96 !important;
+	color: #fff !important;
 }
 
 .beruang-currency-label {
@@ -197,38 +264,39 @@
 	width: 100%;
 }
 
-.beruang-type-btn {
+.beruang-form-wrapper .beruang-type-btn {
 	flex: 1;
 	padding: 0.5em 1em;
 	height: 2.5em;
-	border: 1px solid #8c8f94;
-	background: #f6f7f7;
-	color: #1d2327;
+	border: 1px solid #8c8f94 !important;
+	background: #f6f7f7 !important;
+	color: #1d2327 !important;
 	cursor: pointer;
 	line-height: 1.4;
+	font-weight: 500;
 }
 
-.beruang-type-btn:first-child {
+.beruang-form-wrapper .beruang-type-btn:first-child {
 	border-radius: 4px 0 0 4px;
 }
 
-.beruang-type-btn:last-child {
+.beruang-form-wrapper .beruang-type-btn:last-child {
 	border-radius: 0 4px 4px 0;
 }
 
-.beruang-type-btn:hover:not(.active) {
-	background: #e8e8e8;
-	color: #1d2327;
-	border-color: #787c82;
+.beruang-form-wrapper .beruang-type-btn:hover:not(.active) {
+	background: #e8e8e8 !important;
+	color: #1d2327 !important;
+	border-color: #787c82 !important;
 }
 
-.beruang-type-btn.active {
-	background: #2271b1;
-	color: #fff;
-	border-color: #2271b1;
+.beruang-form-wrapper .beruang-type-btn.active {
+	background: #2271b1 !important;
+	color: #fff !important;
+	border-color: #2271b1 !important;
 }
 
-.beruang-submit-row {
+.beruang-form-wrapper .beruang-submit-row {
 	display: flex;
 	align-items: center;
 	gap: 0.5em;
@@ -236,23 +304,25 @@
 	max-width: 20em;
 }
 
-.beruang-submit {
+.beruang-form-wrapper .beruang-submit {
 	padding: 0.5em 1.2em;
 	height: 2.5em;
-	background: #2271b1;
-	color: #fff;
-	border: none;
+	background: #2271b1 !important;
+	color: #fff !important;
+	border: none !important;
 	border-radius: 4px;
 	cursor: pointer;
 	line-height: 1.4;
+	font-weight: 600;
 }
 
-.beruang-submit-row .beruang-submit {
+.beruang-form-wrapper .beruang-submit-row .beruang-submit {
 	width: 100%;
 }
 
-.beruang-submit:hover {
-	background: #135e96;
+.beruang-form-wrapper .beruang-submit:hover {
+	background: #135e96 !important;
+	color: #fff !important;
 }
 
 .beruang-form-message {
@@ -443,8 +513,44 @@
 	color: #1d2327;
 }
 
-.beruang-categories-form .beruang-form-row {
+.beruang-categories-form .beruang-form-row,
+.beruang-budget-modal-inner .beruang-form-row,
+.beruang-edit-tx-modal-inner .beruang-form-row {
 	margin-bottom: 0.75em;
+}
+
+.beruang-categories-modal-inner input[type="text"],
+.beruang-categories-modal-inner input[type="number"],
+.beruang-budget-modal-inner input[type="text"],
+.beruang-budget-modal-inner input[type="number"],
+.beruang-edit-tx-modal-inner input[type="text"],
+.beruang-edit-tx-modal-inner input[type="number"],
+.beruang-edit-tx-modal-inner input[type="date"],
+.beruang-edit-tx-modal-inner input[type="time"] {
+	width: 100%;
+	padding: 0.5em 0.6em;
+	height: 2.5em;
+	background: #fff !important;
+	color: #1d2327 !important;
+	border: 1px solid #8c8f94 !important;
+	border-radius: 4px;
+	font-family: inherit;
+	font-size: inherit;
+}
+
+.beruang-categories-modal-inner select,
+.beruang-budget-modal-inner select,
+.beruang-edit-tx-modal-inner select {
+	width: 100%;
+	padding: 0.5em 0.6em;
+	padding-right: 2em;
+	height: 2.5em;
+	background-color: #fff !important;
+	color: #1d2327 !important;
+	border: 1px solid #8c8f94 !important;
+	border-radius: 4px;
+	font-family: inherit;
+	font-size: inherit;
 }
 
 .beruang-categories-list-wrap {
@@ -557,17 +663,17 @@
 
 .beruang-filter-btn {
 	padding: 0.4em 0.8em;
-	background: #f0f0f1;
-	border: 1px solid #8c8f94;
+	background: #f0f0f1 !important;
+	border: 1px solid #8c8f94 !important;
 	border-radius: 4px;
 	cursor: pointer;
-	color: #1d2327;
+	color: #1d2327 !important;
 }
 
 .beruang-filter-btn:hover {
-	background: #dcdcde;
-	color: #1d2327;
-	border-color: #787c82;
+	background: #dcdcde !important;
+	color: #1d2327 !important;
+	border-color: #787c82 !important;
 }
 
 .beruang-list-filters {
@@ -586,44 +692,75 @@
 }
 
 .beruang-list-filters input[type="text"],
-.beruang-list-filters select {
+.beruang-graph-filters input[type="text"],
+.beruang-budget-filters input[type="text"] {
 	padding: 0.4em;
-	border: 1px solid #8c8f94;
+	border: 1px solid #8c8f94 !important;
 	border-radius: 4px;
-	background: #fff;
-	color: #1d2327;
+	background: #fff !important;
+	color: #1d2327 !important;
+	appearance: none;
+	font-family: inherit;
+	font-size: inherit;
 }
 
-.beruang-list-filters input[type="text"]:focus{
-	background: #fff;
+.beruang-list-filters select,
+.beruang-graph-filters select,
+.beruang-budget-filters select {
+	padding: 0.4em;
+	padding-right: 1.75em;
+	border: 1px solid #8c8f94 !important;
+	border-radius: 4px;
+	background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231d2327' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 0.5em center/10px 10px !important;
+	color: #1d2327 !important;
+	appearance: none;
+	font-family: inherit;
+	font-size: inherit;
+}
+
+.beruang-list-filters input[type="text"]:focus,
+.beruang-graph-filters input[type="text"]:focus,
+.beruang-budget-filters input[type="text"]:focus {
+	background: #fff !important;
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+.beruang-list-filters select:focus,
+.beruang-graph-filters select:focus,
+.beruang-budget-filters select:focus {
+	background-color: #fff !important;
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
 }
 
 .beruang-filter-apply {
 	padding: 0.4em 0.8em;
-	background: #2271b1;
-	color: #fff;
-	border: none;
+	background: #2271b1 !important;
+	color: #fff !important;
+	border: none !important;
 	border-radius: 4px;
 	cursor: pointer;
 }
 
 .beruang-filter-apply:hover {
-	background: #135e96;
+	background: #135e96 !important;
+	color: #fff !important;
 }
 
 .beruang-filter-reset {
 	padding: 0.4em 0.8em;
-	background: #f0f0f1;
-	color: #1d2327;
-	border: 1px solid #8c8f94;
+	background: #f0f0f1 !important;
+	color: #1d2327 !important;
+	border: 1px solid #8c8f94 !important;
 	border-radius: 4px;
 	cursor: pointer;
 }
 
 .beruang-filter-reset:hover {
-	background: #dcdcde;
-	color: #1d2327;
-	border-color: #787c82;
+	background: #dcdcde !important;
+	color: #1d2327 !important;
+	border-color: #787c82 !important;
 }
 
 .beruang-list-accordion {
@@ -808,14 +945,6 @@
 	display: none !important;
 }
 
-.beruang-graph-filters select {
-	padding: 0.4em;
-	border: 1px solid #8c8f94;
-	border-radius: 4px;
-	background: #fff;
-	color: #1d2327;
-}
-
 .beruang-graph-canvas-wrap {
 	position: relative;
 	max-width: 100%;
@@ -869,14 +998,6 @@
 
 .beruang-budget-filters[hidden] {
 	display: none !important;
-}
-
-.beruang-budget-filters select {
-	padding: 0.4em;
-	border: 1px solid #8c8f94;
-	border-radius: 4px;
-	background: #fff;
-	color: #1d2327;
 }
 
 .beruang-budget-add {
@@ -993,6 +1114,12 @@
 .beruang-edit-tx-modal-inner h4 {
 	margin-top: 0;
 	color: #1d2327;
+}
+
+/* High-specificity override for Edit modal selects - prevents theme tiling/pattern issues */
+#beruang-edit-tx-modal select#beruang-edit-tx-category,
+#beruang-edit-tx-modal select#beruang-edit-tx-type {
+	background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231d2327' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 0.6em center/12px 12px !important;
 }
 
 .beruang-budget-modal-inner {
