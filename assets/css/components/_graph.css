@@ -1,0 +1,36 @@
+/**
+ * Beruang – graph/summary section.
+ */
+
+.beruang-graph-wrapper {
+	padding: 1em 0;
+}
+
+.beruang-graph-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 0.75em;
+}
+
+.beruang-graph-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+	margin-bottom: 1em;
+	padding: 0.75em;
+	background: var(--br-bg-subtle);
+	border-radius: var(--br-radius-sm);
+	color: var(--br-text);
+}
+
+.beruang-graph-canvas-wrap {
+	position: relative;
+	max-width: 100%;
+	min-height: 280px;
+
+	& canvas {
+		max-width: 100%;
+		height: auto;
+	}
+}

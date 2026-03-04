@@ -1,0 +1,48 @@
+/**
+ * Beruang – design tokens and base styles.
+ * Variables are scoped to .beruang for theme isolation.
+ */
+
+.beruang {
+	/* Colors */
+	--br-text: #1d2327;
+	--br-text-muted: #50575e;
+	--br-bg: #fff;
+	--br-bg-subtle: #f6f7f7;
+	--br-bg-muted: #f0f0f1;
+	--br-bg-hover: #e8e8e8;
+	--br-bg-hover-alt: #dcdcde;
+	--br-border: #8c8f94;
+	--br-border-alt: #c3c4c7;
+	--br-border-hover: #787c82;
+	--br-primary: #2271b1;
+	--br-primary-hover: #135e96;
+	--br-success: #00a32a;
+	--br-error: #d63638;
+	--br-warning: #e67e22;
+
+	/* Spacing & layout */
+	--br-radius-sm: 4px;
+	--br-radius-md: 8px;
+	--br-control-height: 2.5em;
+	--br-control-width: 20em;
+
+	/* Misc */
+	--br-overlay: rgb(0 0 0 / 40%);
+	--br-font: -apple-system, blinkmacsystemfont, "Segoe UI", roboto, oxygen-sans, ubuntu, cantarell, "Helvetica Neue", sans-serif;
+	--br-transition: 0.15s ease-in-out;
+	--br-dropdown-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231d2327' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+
+	box-sizing: border-box;
+	max-width: 100%;
+	color: var(--br-text);
+	font-family: var(--br-font);
+	font-size: 16px;
+	line-height: 1.5;
+
+	& *,
+	& *::before,
+	& *::after {
+		box-sizing: inherit;
+	}
+}

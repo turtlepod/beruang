@@ -5,5 +5,5 @@
 		"no-descending-specificity": null,
 		"property-no-vendor-prefix": null
 	},
-	"ignoreFiles": ["**/*.min.css"]
+	"ignoreFiles": ["**/*.min.css", "**/dist/**"]
 }

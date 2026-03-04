@@ -1,0 +1,42 @@
+/**
+ * Beruang – theme isolation and base components.
+ * Resets form elements to prevent theme overrides.
+ */
+
+/* Theme isolation: reset form elements */
+.beruang-form-wrapper,
+.beruang-categories-modal-inner,
+.beruang-budget-modal-inner,
+.beruang-edit-tx-modal-inner {
+	& input,
+	& select,
+	& button {
+		appearance: none;
+		margin: 0;
+		font-family: inherit;
+		font-size: inherit;
+		line-height: inherit;
+	}
+}
+
+.beruang-form-wrapper select,
+.beruang-categories-modal-inner select,
+.beruang-budget-modal-inner select,
+.beruang-edit-tx-modal-inner select {
+	background: var(--br-bg) var(--br-dropdown-arrow) no-repeat right 0.6em center / 12px 12px !important;
+}
+
+.beruang-form-wrapper button,
+.beruang-categories-modal-inner button,
+.beruang-budget-modal-inner button,
+.beruang-edit-tx-modal-inner button {
+	cursor: pointer;
+	overflow: visible;
+}
+
+.beruang-login-required {
+	padding: 1em;
+	background: var(--br-bg-muted);
+	border-left: 4px solid var(--br-error);
+	color: var(--br-text);
+}

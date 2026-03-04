@@ -3,7 +3,7 @@ Contributors: beruang
 Tags: budget, finance, transactions, expense, income, personal finance
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 0.2.1-beta
+Stable tag: 0.3.0-beta
 Requires PHP: 8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -47,7 +47,7 @@ Use on pages where users are logged in:
 
 == Changelog ==
 
-= 0.2.1-beta =
+= 0.3.0-beta =
 * Version bump
 
 = 0.2.0-beta =

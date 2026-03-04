@@ -1,0 +1,63 @@
+/**
+ * Beruang – responsive styles.
+ */
+
+@media (width <= 600px) {
+	.beruang-form-wrapper .beruang-form {
+		max-width: 100%;
+	}
+
+	.beruang-datetime-wrap {
+		flex-wrap: nowrap;
+
+		& input[type="date"],
+		& input[type="time"] {
+			min-width: 0;
+			max-width: none;
+		}
+	}
+
+	.beruang-form-row input[type="text"],
+	.beruang-form-row input[type="number"],
+	.beruang-form-row input[type="date"],
+	.beruang-form-row input[type="time"],
+	.beruang-form-row select {
+		max-width: 100%;
+	}
+
+	.beruang-datetime-wrap,
+	.beruang-category-wrap,
+	.beruang-amount-row,
+	.beruang-type-toggle,
+	.beruang-submit-row {
+		max-width: 100%;
+	}
+
+	.beruang-transaction-item {
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto auto auto;
+	}
+
+	.beruang-tx-datetime {
+		display: flex;
+		align-items: center;
+		gap: 0.35em;
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	.beruang-tx-amount {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.beruang-tx-desc {
+		grid-column: 1 / -1;
+		grid-row: 2;
+	}
+
+	.beruang-transaction-item .beruang-tx-actions {
+		grid-column: 1 / -1;
+		grid-row: 3;
+	}
+}
