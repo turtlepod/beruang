@@ -22,10 +22,10 @@
     "format-js": "10up-toolkit format-js",
     "lint": "npm run lint-php && npm run lint-js && npm run lint-css",
     "lint-php": "composer run lint",
-    "lint-js": "eslint \"assets/js/*.js\"",
+    "lint-js": "eslint \"assets/js/*.js\" \"assets/js/frontend/*.js\"",
     "lint-css": "stylelint \"assets/css/**/*.css\"",
     "lint-fix": "npm run lint-fix-js && npm run lint-fix-css",
-    "lint-fix-js": "eslint --fix \"assets/js/*.js\"",
+    "lint-fix-js": "eslint --fix \"assets/js/*.js\" \"assets/js/frontend/*.js\"",
     "lint-fix-css": "stylelint --fix \"assets/css/**/*.css\"",
     "zip": "npm run build && version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang.$version.zip beruang -x '*/.?*' -x '*node_modules*' -x '*/vendor/*'",
     "clean-dist": "rm -rf ./dist"
@@ -42,6 +42,9 @@
       "./vendor/bin/phpcs -s --runtime-set testVersion 8.2- --runtime-set ignore_warnings_on_exit 0"
     ],
     "assets/js/*.js": [
+      "eslint --fix"
+    ],
+    "assets/js/frontend/*.js": [
       "eslint --fix"
     ],
     "assets/css/**/*.css": [
