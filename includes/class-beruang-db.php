@@ -184,6 +184,14 @@ class DB {
 		foreach ( $all as $row ) {
 			$by_parent[ (int) $row['parent_id'] ][] = $row;
 		}
+		foreach ( $by_parent as $pid => $children ) {
+			usort(
+				$by_parent[ $pid ],
+				function ( $a, $b ) {
+					return strcasecmp( $a['name'] ?? '', $b['name'] ?? '' );
+				}
+			);
+		}
 		$out = array();
 		self::flatten_categories( 0, 0, $by_parent, $out );
 		return $out;
