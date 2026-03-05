@@ -880,7 +880,7 @@ function admin_page_transactions() {
 							}
 							?>
 						</select></td></tr>
-						<tr><th scope="row"><label for="beruang_edit_amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label></th><td><input type="number" id="beruang_edit_amount" name="beruang_amount" step="<?php echo esc_attr( shortcode_amount_step() ); ?>" min="0" value="<?php echo esc_attr( shortcode_format_amount_input_value( $edit_row['amount'] ) ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
+						<tr><th scope="row"><label for="beruang_edit_amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label></th><td><input type="number" id="beruang_edit_amount" name="beruang_amount" step="1" min="0" value="<?php echo esc_attr( shortcode_format_amount_input_value( $edit_row['amount'] ) ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
 						<tr><th scope="row"><label for="beruang_edit_type"><?php esc_html_e( 'Type', 'beruang' ); ?></label></th>
 						<td><select id="beruang_edit_type" name="beruang_type">
 							<option value="expense" <?php selected( $edit_row['type'], 'expense' ); ?>><?php esc_html_e( 'Expense', 'beruang' ); ?></option>
@@ -1120,7 +1120,7 @@ function admin_page_budgets() {
 				<input type="hidden" name="beruang_budget_user_id" value="<?php echo (int) $edit_row['user_id']; ?>" />
 				<table class="form-table">
 					<tr><th scope="row"><label for="beruang_edit_budget_name"><?php esc_html_e( 'Name', 'beruang' ); ?></label></th><td><input type="text" id="beruang_edit_budget_name" name="beruang_budget_name" value="<?php echo esc_attr( $edit_row['name'] ); ?>" class="regular-text" required /></td></tr>
-					<tr><th scope="row"><label for="beruang_edit_budget_target"><?php esc_html_e( 'Target', 'beruang' ); ?></label></th><td><input type="number" id="beruang_edit_budget_target" name="beruang_budget_target" step="<?php echo esc_attr( shortcode_amount_step() ); ?>" min="0" value="<?php echo esc_attr( shortcode_format_amount_input_value( $edit_row['target_amount'] ) ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
+					<tr><th scope="row"><label for="beruang_edit_budget_target"><?php esc_html_e( 'Target', 'beruang' ); ?></label></th><td><input type="number" id="beruang_edit_budget_target" name="beruang_budget_target" step="1" min="0" value="<?php echo esc_attr( shortcode_format_amount_input_value( $edit_row['target_amount'] ) ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
 					<tr><th scope="row"><label for="beruang_edit_budget_type"><?php esc_html_e( 'Type', 'beruang' ); ?></label></th><td><select id="beruang_edit_budget_type" name="beruang_budget_type"><option value="monthly" <?php selected( $edit_row['type'], 'monthly' ); ?>><?php esc_html_e( 'Monthly', 'beruang' ); ?></option><option value="yearly" <?php selected( $edit_row['type'], 'yearly' ); ?>><?php esc_html_e( 'Yearly', 'beruang' ); ?></option></select></td></tr>
 					<tr><th scope="row"><?php esc_html_e( 'Categories', 'beruang' ); ?></th><td><fieldset>
 						<?php

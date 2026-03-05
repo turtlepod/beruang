@@ -54,11 +54,10 @@ function shortcode_render_form( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 	shortcode_load_template(
 		'form.php',
 		array(
-			'today'       => current_time( 'Y-m-d' ),
-			'time'        => current_time( 'H:i' ),
-			'currency'    => get_option( 'beruang_currency', 'IDR' ),
-			'categories'  => DB::get_categories_flat( get_current_user_id(), true ),
-			'amount_step' => shortcode_amount_step(),
+			'today'      => current_time( 'Y-m-d' ),
+			'time'       => current_time( 'H:i' ),
+			'currency'   => get_option( 'beruang_currency', 'IDR' ),
+			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
 		)
 	);
 	return ob_get_clean();
@@ -78,12 +77,11 @@ function shortcode_render_list( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 	shortcode_load_template(
 		'list.php',
 		array(
-			'year'        => (int) current_time( 'Y' ),
-			'today'       => current_time( 'Y-m-d' ),
-			'time'        => current_time( 'H:i' ),
-			'currency'    => get_option( 'beruang_currency', 'IDR' ),
-			'categories'  => DB::get_categories_flat( get_current_user_id(), true ),
-			'amount_step' => shortcode_amount_step(),
+			'year'       => (int) current_time( 'Y' ),
+			'today'      => current_time( 'Y-m-d' ),
+			'time'       => current_time( 'H:i' ),
+			'currency'   => get_option( 'beruang_currency', 'IDR' ),
+			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
 		)
 	);
 	return ob_get_clean();
@@ -123,24 +121,13 @@ function shortcode_render_budget( $atts ) { // phpcs:ignore Generic.CodeAnalysis
 	shortcode_load_template(
 		'budget.php',
 		array(
-			'currency'    => get_option( 'beruang_currency', 'IDR' ),
-			'categories'  => DB::get_categories_flat( get_current_user_id(), true ),
-			'year'        => (int) current_time( 'Y' ),
-			'month'       => (int) current_time( 'n' ),
-			'amount_step' => shortcode_amount_step(),
+			'currency'   => get_option( 'beruang_currency', 'IDR' ),
+			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
+			'year'       => (int) current_time( 'Y' ),
+			'month'      => (int) current_time( 'n' ),
 		)
 	);
 	return ob_get_clean();
-}
-
-/**
- * Get HTML step attribute for amount inputs based on decimal places setting.
- *
- * @return string
- */
-function shortcode_amount_step() {
-	$places = (int) get_option( 'beruang_decimal_places', 2 );
-	return 0 === $places ? '1' : '0.' . str_repeat( '0', $places - 1 ) . '1';
 }
 
 /**

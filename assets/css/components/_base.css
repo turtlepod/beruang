@@ -4,6 +4,13 @@
  */
 
 /* Theme isolation: reset form elements */
+.beruang-form-wrapper label,
+.beruang-categories-modal-inner label,
+.beruang-budget-modal-inner label,
+.beruang-edit-tx-modal-inner label {
+	font-weight: bold;
+}
+
 .beruang-form-wrapper,
 .beruang-categories-modal-inner,
 .beruang-budget-modal-inner,

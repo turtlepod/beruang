@@ -7,7 +7,6 @@
  * @var array  $categories  Flat categories from DB.
  * @var int    $year        Current year for filter.
  * @var int    $month       Current month for filter.
- * @var string $amount_step Step attribute for amount input (e.g. '0.01').
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -70,8 +69,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<input type="text" id="beruang-budget-name" name="name" required />
 				</div>
 				<div class="beruang-form-row">
-					<label for="beruang-budget-target"><?php esc_html_e( 'Target', 'beruang' ); ?></label>
-					<input type="number" id="beruang-budget-target" name="target_amount" step="<?php echo esc_attr( $amount_step ?? '0.01' ); ?>" min="0" required /> <?php echo esc_html( $currency ); ?>
+					<label for="beruang-budget-target"><?php esc_html_e( 'Target', 'beruang' ); ?> <span class="beruang-label-currency">(<?php echo esc_html( $currency ); ?>)</span></label>
+					<input type="number" id="beruang-budget-target" name="target_amount" step="1" min="0" required />
 				</div>
 				<div class="beruang-form-row">
 					<label><?php esc_html_e( 'Type', 'beruang' ); ?></label>

@@ -7,7 +7,7 @@
 'use strict';
 
 import { i18n, editIcon, deleteIcon } from './config.js';
-import { request, beruangTemplate, formatNum } from './utils.js';
+import { request, beruangTemplate, formatNum, formatAmountForInput } from './utils.js';
 
 export function initBudget() {
 	const list = document.getElementById( 'beruang-budget-list' );
@@ -52,7 +52,7 @@ export function initBudget() {
 			const b = r.data.budget;
 			form.querySelector( '[name="id"]' ).value = b.id;
 			form.querySelector( '[name="name"]' ).value = b.name || '';
-			form.querySelector( '[name="target_amount"]' ).value = b.target_amount || '';
+			form.querySelector( '[name="target_amount"]' ).value = formatAmountForInput( b.target_amount ) || '';
 			form.querySelector( '[name="type"]' ).value =
 				b.type === 'yearly' ? 'yearly' : 'monthly';
 			form.querySelectorAll( '[name="category_ids[]"]' ).forEach( function ( cb ) {

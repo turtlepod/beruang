@@ -104,8 +104,26 @@ export function formatNum( n ) {
 	const dec = beruangData.decimal_sep || ',';
 	const thou = beruangData.thousands_sep || '.';
 	const places = getDecimalPlaces();
-	const s = Number( n ).toFixed( places );
+	const num = Number( n );
+	const s =
+		0 === places
+			? String( Math.round( num ) )
+			: num.toFixed( places );
 	const parts = s.split( '.' );
 	parts[ 0 ] = parts[ 0 ].replace( /\B(?=(\d{3})+(?!\d))/g, thou );
 	return parts.join( dec ) + ' ' + ( beruangData.currency || 'IDR' );
+}
+
+/**
+ * Format amount for HTML number input value (respects decimal places setting).
+ * Uses dot as decimal separator, no thousands separator.
+ *
+ * @param {number|string} n Amount value.
+ * @return {string}
+ */
+export function formatAmountForInput( n ) {
+	const places = getDecimalPlaces();
+	const num = Number( n );
+	if ( Number.isNaN( num ) ) return '';
+	return 0 === places ? String( Math.round( num ) ) : num.toFixed( places );
 }

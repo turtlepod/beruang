@@ -16,6 +16,8 @@ export const editIcon = beruang.edit_icon || '';
 export const deleteIcon = beruang.delete_icon || '';
 
 export function getDecimalPlaces() {
-	const p = parseInt( beruang.decimal_places, 10 );
-	return p >= 0 && p <= 4 ? p : 2;
+	const raw = beruang.decimal_places;
+	if ( raw === 0 || raw === '0' ) return 0;
+	const p = parseInt( raw, 10 );
+	return ! Number.isNaN( p ) && p >= 0 && p <= 4 ? p : 2;
 }

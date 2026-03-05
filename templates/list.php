@@ -8,7 +8,6 @@
  * @var string $time        Default time (H:i).
  * @var string $currency    Currency code.
  * @var array  $categories  Flat categories from DB.
- * @var string $amount_step Step attribute for amount input (e.g. '0.01').
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -63,7 +62,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 					'time'         => $time,
 					'currency'     => $currency,
 					'categories'   => $categories,
-					'amount_step'  => $amount_step,
 				)
 			);
 			?>
