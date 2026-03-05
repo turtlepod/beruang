@@ -210,7 +210,7 @@
 	& select {
 		flex: 1;
 		min-width: 0;
-		background: var(--br-bg) !important;
+		background: var(--br-bg) var(--br-dropdown-arrow) no-repeat right 0.6em center / 12px 12px !important;
 		color: var(--br-text) !important;
 	}
 }
