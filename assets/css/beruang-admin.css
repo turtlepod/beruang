@@ -4,7 +4,9 @@
  * @package Beruang
  */
 
-.beruang-budget_page_beruang-transactions #wpbody {
+.beruang-budget_page_beruang-transactions #wpbody,
+.beruang-budget_page_beruang-categories #wpbody,
+.beruang-budget_page_beruang-budgets #wpbody {
 	overflow-x: hidden !important;
 }
 
@@ -56,6 +58,34 @@
 }
 
 .beruang-transactions-table-wrap .wp-list-table .toggle-row {
+	display: none !important;
+}
+
+/* Categories table: allow Name column (3rd) to wrap for indented hierarchical names. */
+.beruang-categories-table-wrap .wp-list-table td.column-name {
+	white-space: normal;
+	min-width: 120px;
+	max-width: 220px;
+}
+
+.beruang-categories-table-wrap .wp-list-table .toggle-row {
+	display: none !important;
+}
+
+/* Budgets table: allow Name and Category IDs columns to wrap. */
+.beruang-budgets-table-wrap .wp-list-table td.column-name {
+	white-space: normal;
+	min-width: 120px;
+	max-width: 200px;
+}
+
+.beruang-budgets-table-wrap .wp-list-table td.column-category_ids {
+	white-space: normal;
+	min-width: 100px;
+	max-width: 180px;
+}
+
+.beruang-budgets-table-wrap .wp-list-table .toggle-row {
 	display: none !important;
 }
 
@@ -115,6 +145,124 @@
 	}
 
 	.beruang-transactions-table-wrap .tablenav.top .actions {
+		display: flex !important;
+		margin: 0;
+	}
+}
+
+/* Categories table: mobile layout – show all columns with horizontal scroll. */
+@media screen and (width <= 782px) {
+	#beruang-categories-filter .beruang-categories-table-wrap {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
+		margin-right: -12px;
+		margin-left: -10px;
+		padding-left: 10px;
+		width: calc(100% + 22px);
+	}
+
+	.beruang-categories-table-wrap .wp-list-table {
+		width: max-content;
+		min-width: 100%;
+		table-layout: auto;
+	}
+
+	.beruang-categories-table-wrap .wp-list-table th.column-primary ~ th,
+	.beruang-categories-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
+		display: table-cell !important;
+	}
+
+	.beruang-categories-table-wrap .wp-list-table thead th.column-primary {
+		width: auto !important;
+	}
+
+	.beruang-categories-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.check-column) {
+		position: static !important;
+		clear: none !important;
+		width: auto !important;
+	}
+
+	.beruang-categories-table-wrap .wp-list-table td.column-primary,
+	.beruang-categories-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
+		padding: 8px 10px !important;
+	}
+
+	.beruang-categories-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.column-primary)::before {
+		display: none !important;
+	}
+
+	.beruang-categories-table-wrap .wp-list-table tfoot {
+		display: none;
+	}
+
+	.beruang-categories-table-wrap .tablenav.top {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.beruang-categories-table-wrap .tablenav.top .actions {
+		display: flex !important;
+		margin: 0;
+	}
+}
+
+/* Budgets table: mobile layout – show all columns with horizontal scroll. */
+@media screen and (width <= 782px) {
+	#beruang-budgets-filter .beruang-budgets-table-wrap {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
+		margin-right: -12px;
+		margin-left: -10px;
+		padding-left: 10px;
+		width: calc(100% + 22px);
+	}
+
+	.beruang-budgets-table-wrap .wp-list-table {
+		width: max-content;
+		min-width: 100%;
+		table-layout: auto;
+	}
+
+	.beruang-budgets-table-wrap .wp-list-table th.column-primary ~ th,
+	.beruang-budgets-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
+		display: table-cell !important;
+	}
+
+	.beruang-budgets-table-wrap .wp-list-table thead th.column-primary {
+		width: auto !important;
+	}
+
+	.beruang-budgets-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.check-column) {
+		position: static !important;
+		clear: none !important;
+		width: auto !important;
+	}
+
+	.beruang-budgets-table-wrap .wp-list-table td.column-primary,
+	.beruang-budgets-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
+		padding: 8px 10px !important;
+	}
+
+	.beruang-budgets-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.column-primary)::before {
+		display: none !important;
+	}
+
+	.beruang-budgets-table-wrap .wp-list-table tfoot {
+		display: none;
+	}
+
+	.beruang-budgets-table-wrap .tablenav.top {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.beruang-budgets-table-wrap .tablenav.top .actions {
 		display: flex !important;
 		margin: 0;
 	}
