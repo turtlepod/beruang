@@ -171,15 +171,28 @@ export function initForm() {
 		} );
 	}
 
-	const catModalClose = catModal && catModal.querySelector( '.beruang-categories-modal-close' );
-	if ( catModalClose ) {
-		catModalClose.addEventListener( 'click', function () {
-			catModal.hidden = true;
-		} );
+	function closeCatModal() {
+		const catMsg = catForm && catForm.querySelector( '.beruang-form-message' );
+		if ( catMsg ) {
+			catMsg.textContent = '';
+			catMsg.style.color = '';
+		}
+		if ( catModal ) catModal.hidden = true;
 	}
+
+	const catModalClose = catModal && catModal.querySelector( '.beruang-categories-modal-close' );
+	if ( catModalClose ) catModalClose.addEventListener( 'click', closeCatModal );
 	if ( catModal ) {
 		catModal.addEventListener( 'click', function ( e ) {
-			if ( e.target === catModal ) catModal.hidden = true;
+			if ( e.target === catModal ) closeCatModal();
+		} );
+		const catCloseX = catModal.querySelector( '.beruang-modal-close-x' );
+		if ( catCloseX ) catCloseX.addEventListener( 'click', function () {
+			const catMsg = catForm && catForm.querySelector( '.beruang-form-message' );
+			if ( catMsg ) {
+				catMsg.textContent = '';
+				catMsg.style.color = '';
+			}
 		} );
 	}
 

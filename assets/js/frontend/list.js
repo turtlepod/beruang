@@ -234,15 +234,24 @@ export function initList() {
 			} );
 		} );
 
-		const editCancel = document.querySelector( '.beruang-edit-tx-cancel' );
-		if ( editCancel )
-			editCancel.addEventListener( 'click', function () {
-				editModal.hidden = true;
-			} );
-		editModal.addEventListener( 'click', function ( e ) {
-			if ( e.target === editModal ) editModal.hidden = true;
-		} );
 		const editMessage = editForm.querySelector( '.beruang-form-message' );
+
+		const closeEditModal = function () {
+			editMessage.textContent = '';
+			editMessage.style.color = '';
+			editModal.hidden = true;
+		};
+
+		const editCancel = document.querySelector( '.beruang-edit-tx-cancel' );
+		if ( editCancel ) editCancel.addEventListener( 'click', closeEditModal );
+		editModal.addEventListener( 'click', function ( e ) {
+			if ( e.target === editModal ) closeEditModal();
+		} );
+		const editCloseX = editModal.querySelector( '.beruang-modal-close-x' );
+		if ( editCloseX ) editCloseX.addEventListener( 'click', function () {
+			editMessage.textContent = '';
+			editMessage.style.color = '';
+		} );
 		editForm.addEventListener( 'submit', function ( e ) {
 			e.preventDefault();
 			editMessage.textContent = '';
@@ -262,7 +271,7 @@ export function initList() {
 			setFormLoading( editForm, true );
 			request( 'PUT', '/transactions/' + data.id, data ).then( function ( r ) {
 				if ( r.success ) {
-					editModal.hidden = true;
+					closeEditModal();
 					loadList();
 				} else {
 					editMessage.textContent =

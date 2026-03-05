@@ -493,6 +493,28 @@ function rest_update_transaction( $request ) {
 	if ( $cat_id > 0 && ! DB::get_category_for_user( $user_id, $cat_id ) ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang' ), 400 );
 	}
+
+	$existing_time       = isset( $existing['time'] ) && '' !== trim( (string) $existing['time'] ) ? $existing['time'] : null;
+	$existing_normalized = array(
+		'date'        => (string) ( $existing['date'] ?? '' ),
+		'time'        => $existing_time,
+		'description' => (string) ( $existing['description'] ?? '' ),
+		'category_id' => (int) ( $existing['category_id'] ?? 0 ),
+		'amount'      => (float) ( $existing['amount'] ?? 0 ),
+		'type'        => ( 'income' === ( $existing['type'] ?? '' ) ) ? 'income' : 'expense',
+	);
+	$data_normalized     = array(
+		'date'        => $data['date'],
+		'time'        => $data['time'],
+		'description' => $data['description'],
+		'category_id' => $data['category_id'],
+		'amount'      => $data['amount'],
+		'type'        => $data['type'],
+	);
+	if ( $existing_normalized === $data_normalized ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'No changes were made.', 'beruang' ), 400 );
+	}
+
 	$ok = DB::update_transaction( $id, $data );
 	if ( $ok ) {
 		return rest_ensure_response(

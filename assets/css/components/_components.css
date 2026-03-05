@@ -49,7 +49,14 @@
 /* Modal Save/Cancel buttons */
 .beruang-modal-actions {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 0.5em;
+	align-items: center;
+
+	& .beruang-form-message {
+		flex-basis: 100%;
+		order: 3;
+	}
 
 	& .beruang-modal-save,
 	& .beruang-modal-cancel {
