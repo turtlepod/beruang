@@ -103,6 +103,7 @@ class Transactions_List_Table extends \WP_List_Table {
 			'id'          => array( 'id', false ),
 			'user_id'     => array( 'user_id', false ),
 			'date'        => array( 'date', true ),
+			'category_id' => array( 'category_id', false ),
 			'amount'      => array( 'amount', false ),
 			'type'        => array( 'type', false ),
 		);
