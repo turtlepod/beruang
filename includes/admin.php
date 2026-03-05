@@ -27,8 +27,27 @@ function admin_setup() {
 	add_action( 'admin_init', __NAMESPACE__ . '\admin_register_settings' );
 	add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\admin_enqueue_styles' );
 	add_action( 'admin_notices', __NAMESPACE__ . '\admin_notice_dist_missing' );
+	add_filter( 'admin_body_class', __NAMESPACE__ . '\admin_body_class_table_pages' );
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\admin_setup' );
+
+/**
+ * Add beruang-admin-table body class on Transactions, Categories, and Budgets pages.
+ *
+ * @param string $classes Space-separated body classes.
+ * @return string
+ */
+function admin_body_class_table_pages( $classes ) {
+	$screen = get_current_screen();
+	if ( ! $screen || strpos( $screen->id, 'beruang' ) === false ) {
+		return $classes;
+	}
+	$table_pages = array( 'beruang_page_beruang-transactions', 'beruang_page_beruang-categories', 'beruang_page_beruang-budgets', 'beruang-budget_page_beruang-transactions', 'beruang-budget_page_beruang-categories', 'beruang-budget_page_beruang-budgets' );
+	if ( in_array( $screen->id, $table_pages, true ) ) {
+		$classes .= ' beruang-admin-table';
+	}
+	return $classes;
+}
 
 /**
  * Show admin notice when dist/ is missing.

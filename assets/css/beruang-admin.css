@@ -4,9 +4,8 @@
  * @package Beruang
  */
 
-.beruang-budget_page_beruang-transactions #wpbody,
-.beruang-budget_page_beruang-categories #wpbody,
-.beruang-budget_page_beruang-budgets #wpbody {
+/* Pages with list tables: Transactions, Categories, Budgets. */
+.beruang-admin-table #wpbody {
 	overflow-x: hidden !important;
 }
 
@@ -50,29 +49,21 @@
 	white-space: nowrap;
 }
 
-/* Transactions table: allow Description column (5th) to wrap for long text. */
+/* Transactions: Description column wraps. */
 .beruang-transactions-table-wrap .wp-list-table td:nth-child(5) {
 	white-space: normal;
 	min-width: 120px;
 	max-width: 220px;
 }
 
-.beruang-transactions-table-wrap .wp-list-table .toggle-row {
-	display: none !important;
-}
-
-/* Categories table: allow Name column (3rd) to wrap for indented hierarchical names. */
+/* Categories: Name column wraps for hierarchical indent. */
 .beruang-categories-table-wrap .wp-list-table td.column-name {
 	white-space: normal;
 	min-width: 120px;
 	max-width: 220px;
 }
 
-.beruang-categories-table-wrap .wp-list-table .toggle-row {
-	display: none !important;
-}
-
-/* Budgets table: allow Name and Category IDs columns to wrap. */
+/* Budgets: Name and Category IDs wrap. */
 .beruang-budgets-table-wrap .wp-list-table td.column-name {
 	white-space: normal;
 	min-width: 120px;
@@ -85,14 +76,14 @@
 	max-width: 180px;
 }
 
-.beruang-budgets-table-wrap .wp-list-table .toggle-row {
+/* Hide toggle row on all table pages. */
+.beruang-admin-table .beruang-admin-table-wrap .wp-list-table .toggle-row {
 	display: none !important;
 }
 
-/* Transactions table: mobile layout – show all columns with horizontal scroll. */
+/* Shared mobile layout – show all columns with horizontal scroll. */
 @media screen and (width <= 782px) {
-	/* Extend scroll to viewport edge; WordPress .wrap has margin-right: 12px, #wpcontent has padding-left: 10px. */
-	#beruang-transactions-filter .beruang-transactions-table-wrap {
+	.beruang-admin-table .beruang-admin-table-wrap {
 		overflow-x: auto;
 		-webkit-overflow-scrolling: touch;
 		box-sizing: border-box;
@@ -102,167 +93,48 @@
 		width: calc(100% + 22px);
 	}
 
-	.beruang-transactions-table-wrap .wp-list-table {
+	.beruang-admin-table .beruang-admin-table-wrap .wp-list-table {
 		width: max-content;
 		min-width: 100%;
 		table-layout: auto;
 	}
 
-	.beruang-transactions-table-wrap .wp-list-table th.column-primary ~ th,
-	.beruang-transactions-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
+	.beruang-admin-table .beruang-admin-table-wrap .wp-list-table th.column-primary ~ th,
+	.beruang-admin-table .beruang-admin-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
 		display: table-cell !important;
 	}
 
-	.beruang-transactions-table-wrap .wp-list-table thead th.column-primary {
+	.beruang-admin-table .beruang-admin-table-wrap .wp-list-table thead th.column-primary {
 		width: auto !important;
 	}
 
-	.beruang-transactions-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.check-column) {
+	.beruang-admin-table .beruang-admin-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.check-column) {
 		position: static !important;
 		clear: none !important;
 		width: auto !important;
 	}
 
-	.beruang-transactions-table-wrap .wp-list-table td.column-primary,
-	.beruang-transactions-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
+	.beruang-admin-table .beruang-admin-table-wrap .wp-list-table td.column-primary,
+	.beruang-admin-table .beruang-admin-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
 		padding: 8px 10px !important;
 	}
 
-	.beruang-transactions-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.column-primary)::before {
+	.beruang-admin-table .beruang-admin-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.column-primary)::before {
 		display: none !important;
 	}
 
-	.beruang-transactions-table-wrap .wp-list-table tfoot {
+	.beruang-admin-table .beruang-admin-table-wrap .wp-list-table tfoot {
 		display: none;
 	}
 
-	/* Show filter on mobile (WordPress hides .tablenav.top .actions) and center it. */
-	.beruang-transactions-table-wrap .tablenav.top {
+	.beruang-admin-table .beruang-admin-table-wrap .tablenav.top {
 		display: flex;
 		justify-content: center;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
-	.beruang-transactions-table-wrap .tablenav.top .actions {
-		display: flex !important;
-		margin: 0;
-	}
-}
-
-/* Categories table: mobile layout – show all columns with horizontal scroll. */
-@media screen and (width <= 782px) {
-	#beruang-categories-filter .beruang-categories-table-wrap {
-		overflow-x: auto;
-		-webkit-overflow-scrolling: touch;
-		box-sizing: border-box;
-		margin-right: -12px;
-		margin-left: -10px;
-		padding-left: 10px;
-		width: calc(100% + 22px);
-	}
-
-	.beruang-categories-table-wrap .wp-list-table {
-		width: max-content;
-		min-width: 100%;
-		table-layout: auto;
-	}
-
-	.beruang-categories-table-wrap .wp-list-table th.column-primary ~ th,
-	.beruang-categories-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
-		display: table-cell !important;
-	}
-
-	.beruang-categories-table-wrap .wp-list-table thead th.column-primary {
-		width: auto !important;
-	}
-
-	.beruang-categories-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.check-column) {
-		position: static !important;
-		clear: none !important;
-		width: auto !important;
-	}
-
-	.beruang-categories-table-wrap .wp-list-table td.column-primary,
-	.beruang-categories-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
-		padding: 8px 10px !important;
-	}
-
-	.beruang-categories-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.column-primary)::before {
-		display: none !important;
-	}
-
-	.beruang-categories-table-wrap .wp-list-table tfoot {
-		display: none;
-	}
-
-	.beruang-categories-table-wrap .tablenav.top {
-		display: flex;
-		justify-content: center;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.beruang-categories-table-wrap .tablenav.top .actions {
-		display: flex !important;
-		margin: 0;
-	}
-}
-
-/* Budgets table: mobile layout – show all columns with horizontal scroll. */
-@media screen and (width <= 782px) {
-	#beruang-budgets-filter .beruang-budgets-table-wrap {
-		overflow-x: auto;
-		-webkit-overflow-scrolling: touch;
-		box-sizing: border-box;
-		margin-right: -12px;
-		margin-left: -10px;
-		padding-left: 10px;
-		width: calc(100% + 22px);
-	}
-
-	.beruang-budgets-table-wrap .wp-list-table {
-		width: max-content;
-		min-width: 100%;
-		table-layout: auto;
-	}
-
-	.beruang-budgets-table-wrap .wp-list-table th.column-primary ~ th,
-	.beruang-budgets-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
-		display: table-cell !important;
-	}
-
-	.beruang-budgets-table-wrap .wp-list-table thead th.column-primary {
-		width: auto !important;
-	}
-
-	.beruang-budgets-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.check-column) {
-		position: static !important;
-		clear: none !important;
-		width: auto !important;
-	}
-
-	.beruang-budgets-table-wrap .wp-list-table td.column-primary,
-	.beruang-budgets-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
-		padding: 8px 10px !important;
-	}
-
-	.beruang-budgets-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.column-primary)::before {
-		display: none !important;
-	}
-
-	.beruang-budgets-table-wrap .wp-list-table tfoot {
-		display: none;
-	}
-
-	.beruang-budgets-table-wrap .tablenav.top {
-		display: flex;
-		justify-content: center;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.beruang-budgets-table-wrap .tablenav.top .actions {
+	.beruang-admin-table .beruang-admin-table-wrap .tablenav.top .actions {
 		display: flex !important;
 		margin: 0;
 	}
