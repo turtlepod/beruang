@@ -70,7 +70,8 @@
 		}
 	}
 
-	& .beruang-manage-categories-btn {
+	& .beruang-manage-categories-btn,
+	& .beruang-calc-btn {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -89,26 +90,6 @@
 			background: var(--br-bg-hover-alt) !important;
 			color: var(--br-text) !important;
 			border-color: var(--br-border-hover) !important;
-		}
-	}
-
-	& .beruang-calc-btn {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		flex-shrink: 0;
-		width: var(--br-control-height);
-		height: var(--br-control-height);
-		padding: 0;
-		background: var(--br-primary) !important;
-		color: var(--br-bg) !important;
-		border: none !important;
-		border-radius: var(--br-radius-sm);
-		cursor: pointer;
-
-		&:hover {
-			background: var(--br-primary-hover) !important;
-			color: var(--br-bg) !important;
 		}
 	}
 
