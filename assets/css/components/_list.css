@@ -259,7 +259,7 @@
 	grid-template-columns: 5em 4em 1fr auto auto;
 	gap: 0.5em 1em;
 	padding: 0.5em 0;
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid var(--br-divider);
 	font-size: 0.95em;
 	align-items: center;
 	color: var(--br-text);

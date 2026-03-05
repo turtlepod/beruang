@@ -169,15 +169,31 @@
 }
 
 .beruang-budget-categories-list {
-	display: flex;
-	flex-direction: column;
-	gap: 0.25em;
-	max-height: 12em;
+	margin: 0;
+	padding: 0.5em;
+	max-height: 14em;
 	overflow-y: auto;
+	border: 1px solid var(--br-border-alt);
+	border-radius: var(--br-radius-sm);
+	background: var(--br-bg);
 
 	& label {
-		display: block;
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+		padding: 0.8em 0;
+		margin: 0;
 		font-weight: normal;
 		color: var(--br-text);
+		border-bottom: 1px solid var(--br-divider);
+		cursor: pointer;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		& input[type="checkbox"] {
+			flex-shrink: 0;
+		}
 	}
 }

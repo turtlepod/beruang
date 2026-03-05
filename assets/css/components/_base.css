@@ -8,7 +8,7 @@
 .beruang-categories-modal-inner,
 .beruang-budget-modal-inner,
 .beruang-edit-tx-modal-inner {
-	& input,
+	& input:not([type="checkbox"], [type="radio"]),
 	& select,
 	& button {
 		appearance: none;
