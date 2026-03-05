@@ -7,7 +7,7 @@
 'use strict';
 
 import { i18n, beruangData, getDecimalPlaces, editIcon, deleteIcon } from './config.js';
-import { request, beruangTemplate, formatNum, setFormLoading } from './utils.js';
+import { request, beruangTemplate, formatNum } from './utils.js';
 
 export function initList() {
 	const accordion = document.getElementById( 'beruang-list-accordion' );
@@ -206,16 +206,25 @@ export function initList() {
 				const amt = parseFloat( t.amount ) || 0;
 				const amtStr =
 					places === 0 ? String( Math.round( amt ) ) : amt.toFixed( places );
-				document.getElementById( 'beruang-edit-tx-id' ).value = t.id;
-				document.getElementById( 'beruang-edit-tx-date' ).value = t.date || '';
-				document.getElementById( 'beruang-edit-tx-time' ).value = t.time || '';
-				document.getElementById( 'beruang-edit-tx-description' ).value =
-					t.description || '';
-				document.getElementById( 'beruang-edit-tx-category' ).value =
-					t.category_id || '0';
-				document.getElementById( 'beruang-edit-tx-amount' ).value = amtStr;
-				document.getElementById( 'beruang-edit-tx-type' ).value =
-					t.type === 'income' ? 'income' : 'expense';
+				const type = t.type === 'income' ? 'income' : 'expense';
+				const idEl = editForm.querySelector( '[name="id"]' );
+				const dateEl = editForm.querySelector( '[name="date"]' );
+				const timeEl = editForm.querySelector( '[name="time"]' );
+				const descEl = editForm.querySelector( '[name="description"]' );
+				const catEl = editForm.querySelector( '[name="category_id"]' );
+				const amtEl = editForm.querySelector( '[name="amount"]' );
+				const typeEl = editForm.querySelector( '[name="type"]' );
+				if ( idEl ) idEl.value = t.id;
+				if ( dateEl ) dateEl.value = t.date || '';
+				if ( timeEl ) timeEl.value = t.time || '';
+				if ( descEl ) descEl.value = t.description || '';
+				if ( catEl ) catEl.value = t.category_id || '0';
+				if ( amtEl ) amtEl.value = amtStr;
+				if ( typeEl ) typeEl.value = type;
+				editForm.querySelectorAll( '.beruang-type-btn' ).forEach( function ( btn ) {
+					btn.classList.remove( 'active' );
+					if ( btn.dataset.type === type ) btn.classList.add( 'active' );
+				} );
 				editModal.hidden = false;
 			} );
 		} );
@@ -239,8 +248,10 @@ export function initList() {
 		const editMessage = editForm.querySelector( '.beruang-form-message' );
 
 		const closeEditModal = function () {
-			editMessage.textContent = '';
-			editMessage.style.color = '';
+			if ( editMessage ) {
+				editMessage.textContent = '';
+				editMessage.style.color = '';
+			}
 			editModal.hidden = true;
 		};
 
@@ -251,42 +262,13 @@ export function initList() {
 		} );
 		const editCloseX = editModal.querySelector( '.beruang-modal-close-x' );
 		if ( editCloseX ) editCloseX.addEventListener( 'click', function () {
-			editMessage.textContent = '';
-			editMessage.style.color = '';
+			if ( editMessage ) {
+				editMessage.textContent = '';
+				editMessage.style.color = '';
+			}
 		} );
-		editForm.addEventListener( 'submit', function ( e ) {
-			e.preventDefault();
-			editMessage.textContent = '';
-			const amountEl = document.getElementById( 'beruang-edit-tx-amount' );
-			const data = {
-				id: document.getElementById( 'beruang-edit-tx-id' ).value,
-				date: document.getElementById( 'beruang-edit-tx-date' ).value,
-				time: document.getElementById( 'beruang-edit-tx-time' ).value || '',
-				description: document.getElementById( 'beruang-edit-tx-description' )
-					.value,
-				category_id:
-					parseInt( document.getElementById( 'beruang-edit-tx-category' ).value, 10 ) ||
-					0,
-				amount: parseFloat( amountEl.value ) || 0,
-				type: document.getElementById( 'beruang-edit-tx-type' ).value,
-			};
-			setFormLoading( editForm, true );
-			request( 'PUT', '/transactions/' + data.id, data ).then( function ( r ) {
-				if ( r.success ) {
-					closeEditModal();
-					loadList();
-				} else {
-					editMessage.textContent =
-						( r.data && r.data.message ) || i18n.error || 'Error';
-					editMessage.style.color = '#d63638';
-				}
-			} ).catch( function () {
-				editMessage.textContent = i18n.error || 'Error';
-				editMessage.style.color = '#d63638';
-			} ).finally( function () {
-				setFormLoading( editForm, false );
-			} );
-		} );
+
+		document.addEventListener( 'beruang-transaction-saved', loadList );
 	}
 
 	loadList();

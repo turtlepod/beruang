@@ -143,12 +143,25 @@
 			color: var(--br-bg) !important;
 			border-color: var(--br-primary) !important;
 		}
+
+		&[data-type="expense"].active {
+			background: var(--br-error) !important;
+			border-color: var(--br-error) !important;
+			color: #fff !important;
+		}
+
+		&[data-type="income"].active {
+			background: var(--br-success) !important;
+			border-color: var(--br-success) !important;
+			color: #fff !important;
+		}
 	}
 
 	& .beruang-submit-row {
 		display: flex;
 		align-items: center;
 		gap: 0.5em;
+		margin-top: 2em;
 		flex-wrap: wrap;
 		max-width: var(--br-control-width);
 

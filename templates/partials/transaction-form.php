@@ -1,0 +1,81 @@
+<?php
+/**
+ * Shared transaction form partial for add and edit.
+ *
+ * @package Beruang
+ * @var string $mode         'add' or 'edit'.
+ * @var string $form_id      Form element ID.
+ * @var string $field_prefix Prefix for input IDs (e.g. 'beruang' or 'beruang-edit-tx').
+ * @var string $today        Default date (Y-m-d).
+ * @var string $time         Default time (H:i).
+ * @var string $currency     Currency code.
+ * @var array  $categories   Flat categories from DB.
+ * @var string $amount_step  Step attribute for amount input (e.g. '0.01').
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+$is_edit = ( 'edit' === $mode );
+$date_id = $field_prefix . '-date';
+$time_id = $field_prefix . '-time';
+$desc_id = $field_prefix . '-description';
+$cat_id  = $field_prefix . '-category';
+$amt_id  = $field_prefix . '-amount';
+$type_id = $field_prefix . '-type';
+?>
+<form class="beruang-form beruang-transaction-form" id="<?php echo esc_attr( $form_id ); ?>" data-mode="<?php echo esc_attr( $mode ); ?>">
+	<?php if ( $is_edit ) : ?>
+		<input type="hidden" name="id" id="<?php echo esc_attr( $field_prefix ); ?>-id" value="" />
+	<?php endif; ?>
+	<div class="beruang-form-row beruang-datetime-row">
+		<label for="<?php echo esc_attr( $date_id ); ?>"><?php esc_html_e( 'Date', 'beruang' ); ?></label>
+		<span class="beruang-datetime-wrap">
+			<input type="date" id="<?php echo esc_attr( $date_id ); ?>" name="date" value="<?php echo esc_attr( $today ); ?>" required />
+			<input type="time" id="<?php echo esc_attr( $time_id ); ?>" name="time" value="<?php echo esc_attr( $time ); ?>" />
+		</span>
+	</div>
+	<div class="beruang-form-row">
+		<label for="<?php echo esc_attr( $desc_id ); ?>"><?php esc_html_e( 'Description', 'beruang' ); ?></label>
+		<input type="text" id="<?php echo esc_attr( $desc_id ); ?>" name="description" placeholder="<?php esc_attr_e( 'Meal, Gas, etc...', 'beruang' ); ?>" required />
+	</div>
+	<div class="beruang-form-row">
+		<label for="<?php echo esc_attr( $cat_id ); ?>"><?php esc_html_e( 'Category', 'beruang' ); ?></label>
+		<span class="beruang-category-wrap">
+			<select id="<?php echo esc_attr( $cat_id ); ?>" name="category_id">
+				<option value="0"><?php esc_html_e( 'Uncategorized', 'beruang' ); ?></option>
+				<?php
+				foreach ( $categories as $cat ) {
+					$depth  = (int) ( $cat['depth'] ?? 0 );
+					$indent = str_repeat( '— ', $depth );
+					echo '<option value="' . esc_attr( $cat['id'] ) . '">' . esc_html( $indent . $cat['name'] ) . '</option>';
+				}
+				?>
+			</select>
+			<button type="button" class="beruang-manage-categories-btn" title="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'list' ); ?></button>
+		</span>
+	</div>
+	<div class="beruang-form-row beruang-amount-row">
+		<label for="<?php echo esc_attr( $amt_id ); ?>"><?php esc_html_e( 'Amount', 'beruang' ); ?> <span class="beruang-label-currency">(<?php echo esc_html( $currency ); ?>)</span></label>
+		<span class="beruang-amount-wrap">
+			<input type="number" id="<?php echo esc_attr( $amt_id ); ?>" name="amount" step="<?php echo esc_attr( $amount_step ?? '0.01' ); ?>" min="0" value="" required placeholder="0" />
+			<button type="button" class="beruang-calc-btn" title="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'calc' ); ?></button>
+		</span>
+	</div>
+	<div class="beruang-form-row beruang-type-row">
+		<label><?php esc_html_e( 'Type', 'beruang' ); ?></label>
+		<div class="beruang-type-toggle">
+			<button type="button" class="beruang-type-btn active" data-type="expense"><?php esc_html_e( 'Expense', 'beruang' ); ?></button>
+			<button type="button" class="beruang-type-btn" data-type="income"><?php esc_html_e( 'Income', 'beruang' ); ?></button>
+		</div>
+		<input type="hidden" name="type" id="<?php echo esc_attr( $type_id ); ?>" value="expense" />
+	</div>
+	<div class="beruang-form-row beruang-submit-row<?php echo $is_edit ? ' beruang-modal-actions' : ''; ?>">
+		<button type="submit" class="beruang-submit<?php echo $is_edit ? ' beruang-modal-save' : ''; ?>"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
+		<?php if ( $is_edit ) : ?>
+			<button type="button" class="beruang-modal-cancel beruang-edit-tx-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+		<?php endif; ?>
+		<span class="beruang-form-message" aria-live="polite"></span>
+	</div>
+</form>

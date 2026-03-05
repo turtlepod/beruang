@@ -5,12 +5,13 @@
 .beruang-categories-modal {
 	position: fixed;
 	inset: 0;
-	background: var(--br-overlay);
+	background: var(--br-overlay, rgb(0 0 0 / 40%));
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	z-index: 100000;
+	z-index: 999999;
 	padding: 1em;
+	isolation: isolate;
 
 	&[hidden] {
 		display: none !important;
@@ -72,6 +73,23 @@
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 0.5em;
+}
+
+.beruang-categories-form .beruang-submit {
+	padding: 0.5em 1.2em;
+	height: var(--br-control-height);
+	background: var(--br-primary) !important;
+	color: var(--br-bg) !important;
+	border: none !important;
+	border-radius: var(--br-radius-sm);
+	cursor: pointer;
+	line-height: 1.4;
+	font-weight: 600;
+
+	&:hover {
+		background: var(--br-primary-hover) !important;
+		color: var(--br-bg) !important;
+	}
 }
 
 .beruang-cat-cancel-edit {
