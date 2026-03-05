@@ -18,10 +18,23 @@
 /* Edit/Delete action buttons */
 .beruang-action-edit,
 .beruang-action-delete {
-	padding: 0.25em 0.6em;
-	font-size: 0.85em;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--br-control-height);
+	height: var(--br-control-height);
+	padding: 0;
 	border-radius: var(--br-radius-sm);
 	cursor: pointer;
+}
+
+.beruang-action-edit .beruang-icon,
+.beruang-action-edit svg,
+.beruang-action-delete .beruang-icon,
+.beruang-action-delete svg {
+	width: 1em;
+	height: 1em;
+	color: inherit;
 }
 
 .beruang-action-edit {

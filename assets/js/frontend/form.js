@@ -6,7 +6,7 @@
 
 'use strict';
 
-import { i18n, getDecimalPlaces } from './config.js';
+import { i18n, getDecimalPlaces, editIcon, deleteIcon } from './config.js';
 import { request, beruangTemplate, setFormLoading } from './utils.js';
 
 export function initForm() {
@@ -144,6 +144,8 @@ export function initForm() {
 					displayName: indent + ( c.name || '' ),
 					editLabel: i18n.edit || 'Edit',
 					deleteLabel: i18n.delete || 'Delete',
+					editIcon,
+					deleteIcon,
 				} );
 			} );
 			catList.innerHTML =

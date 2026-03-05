@@ -153,6 +153,8 @@ function enqueue_front_scripts() {
 					'confirm_delete_transaction' => __( 'Delete this transaction?', 'beruang' ),
 					'no_categories'              => __( 'No categories yet.', 'beruang' ),
 				),
+				'edit_icon'      => beruang_get_icon( 'edit' ),
+				'delete_icon'    => beruang_get_icon( 'trash' ),
 			)
 		);
 	}

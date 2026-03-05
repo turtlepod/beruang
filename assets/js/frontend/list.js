@@ -6,7 +6,7 @@
 
 'use strict';
 
-import { i18n, beruangData, getDecimalPlaces } from './config.js';
+import { i18n, beruangData, getDecimalPlaces, editIcon, deleteIcon } from './config.js';
 import { request, beruangTemplate, formatNum, setFormLoading } from './utils.js';
 
 export function initList() {
@@ -104,6 +104,8 @@ export function initList() {
 					type: tx.type,
 					editLabel: i18n.edit || 'Edit',
 					deleteLabel: i18n.delete || 'Delete',
+					editIcon,
+					deleteIcon,
 				} );
 			} );
 			const expanded =
