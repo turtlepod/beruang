@@ -62,6 +62,6 @@ Use on pages where users are logged in:
 * Initial beta release
 * Transaction, category, and budget management
 * Shortcodes: form, list, graph, budget
-* Admin pages: Settings, Transactions, Categories, Budgets, Budget Categories
+* Admin pages: Settings, Transactions, Categories, Budgets
 * WP-CLI support
 * Export/import JSON

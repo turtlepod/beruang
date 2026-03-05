@@ -78,7 +78,7 @@ function admin_enqueue_styles( $hook ) {
 }
 
 /**
- * Register top-level Beruang menu and submenus (Settings, Transactions, Categories, Budgets, Budget Categories).
+ * Register top-level Beruang menu and submenus (Settings, Transactions, Categories, Budgets).
  */
 function admin_register_menu() {
 	add_menu_page(
@@ -94,7 +94,6 @@ function admin_register_menu() {
 	add_submenu_page( ADMIN_SLUG, __( 'Transactions', 'beruang' ), __( 'Transactions', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-transactions', __NAMESPACE__ . '\admin_page_transactions' );
 	add_submenu_page( ADMIN_SLUG, __( 'Categories', 'beruang' ), __( 'Categories', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-categories', __NAMESPACE__ . '\admin_page_categories' );
 	add_submenu_page( ADMIN_SLUG, __( 'Budgets', 'beruang' ), __( 'Budgets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-budgets', __NAMESPACE__ . '\admin_page_budgets' );
-	add_submenu_page( ADMIN_SLUG, __( 'Budget Categories', 'beruang' ), __( 'Budget Categories', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-budget-categories', __NAMESPACE__ . '\admin_page_budget_categories' );
 }
 
 /**
@@ -106,8 +105,6 @@ function admin_register_settings() {
 	add_action( 'admin_post_beruang_update_transaction', __NAMESPACE__ . '\admin_handle_update_transaction' );
 	add_action( 'admin_post_beruang_update_category', __NAMESPACE__ . '\admin_handle_update_category' );
 	add_action( 'admin_post_beruang_update_budget', __NAMESPACE__ . '\admin_handle_update_budget' );
-	add_action( 'admin_post_beruang_add_budget_category', __NAMESPACE__ . '\admin_handle_add_budget_category' );
-	add_action( 'admin_post_beruang_delete_budget_category', __NAMESPACE__ . '\admin_handle_delete_budget_category' );
 	register_setting(
 		'beruang_settings',
 		'beruang_currency',
@@ -729,88 +726,6 @@ function admin_handle_update_budget() {
 }
 
 /**
- * Handle admin-post form to add a budget–category link.
- *
- * Expects POST: beruang_bc_budget_id, beruang_bc_category_id.
- * Redirects on success or error.
- */
-function admin_handle_add_budget_category() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
-	}
-	check_admin_referer( 'beruang_add_budget_category' );
-	$budget_id   = isset( $_POST['beruang_bc_budget_id'] ) ? absint( $_POST['beruang_bc_budget_id'] ) : 0;
-	$category_id = isset( $_POST['beruang_bc_category_id'] ) ? absint( $_POST['beruang_bc_category_id'] ) : 0;
-	if ( $budget_id < 1 || $category_id < 1 ) {
-		wp_safe_redirect(
-			add_query_arg(
-				array(
-					'page'          => 'beruang-budget-categories',
-					'beruang_error' => 'invalid',
-				),
-				admin_url( 'admin.php' )
-			)
-		);
-		exit;
-	}
-	$budget   = DB::get_budget_by_id( $budget_id );
-	$category = DB::get_category_by_id( $category_id );
-	if ( ! $budget || ! $category || (int) $budget['user_id'] !== (int) $category['user_id'] ) {
-		wp_safe_redirect(
-			add_query_arg(
-				array(
-					'page'          => 'beruang-budget-categories',
-					'beruang_error' => 'invalid',
-				),
-				admin_url( 'admin.php' )
-			)
-		);
-		exit;
-	}
-	DB::insert_budget_category( $budget_id, $category_id );
-	wp_safe_redirect(
-		add_query_arg(
-			array(
-				'page'          => 'beruang-budget-categories',
-				'beruang_added' => '1',
-			),
-			admin_url( 'admin.php' )
-		)
-	);
-	exit;
-}
-
-/**
- * Handle GET request to remove a budget–category link.
- *
- * Expects GET: _wpnonce, budget_id, category_id. Optionally user_id for redirect.
- * Redirects on success or error.
- */
-function admin_handle_delete_budget_category() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
-	}
-	if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'beruang_delete_bc' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verification.
-		wp_safe_redirect( add_query_arg( array( 'page' => 'beruang-budget-categories' ), admin_url( 'admin.php' ) ) );
-		exit;
-	}
-	$budget_id   = isset( $_GET['budget_id'] ) ? absint( $_GET['budget_id'] ) : 0;
-	$category_id = isset( $_GET['category_id'] ) ? absint( $_GET['category_id'] ) : 0;
-	if ( $budget_id > 0 && $category_id > 0 ) {
-		DB::delete_budget_category( $budget_id, $category_id );
-	}
-	$redirect = array(
-		'page'            => 'beruang-budget-categories',
-		'beruang_deleted' => '1',
-	);
-	if ( ! empty( $_GET['user_id'] ) ) {
-		$redirect['user_id'] = absint( $_GET['user_id'] );
-	}
-	wp_safe_redirect( add_query_arg( $redirect, admin_url( 'admin.php' ) ) );
-	exit;
-}
-
-/**
  * Render admin transactions list page.
  *
  * Supports user filter, pagination, and inline edit form.
@@ -1168,90 +1083,6 @@ function admin_page_budgets() {
 						admin_url( 'admin.php' )
 					);
 					echo '<tr><td>' . esc_html( $row['id'] ) . '</td><td>' . esc_html( $row['user_id'] ) . '</td><td>' . esc_html( $row['name'] ) . '</td><td>' . esc_html( $target ) . ' ' . esc_html( $currency ) . '</td><td>' . esc_html( $row['type'] ) . '</td><td>' . esc_html( implode( ', ', $row['category_ids'] ) ) . '</td><td><a href="' . esc_url( $edit_url ) . '">' . esc_html__( 'Edit', 'beruang' ) . '</a></td></tr>';
-				}
-			}
-			?>
-			</tbody>
-		</table>
-		</div>
-	</div>
-	<?php
-}
-
-/**
- * Render admin budget–category links page.
- *
- * Supports user filter, add-link form, and delete links.
- */
-function admin_page_budget_categories() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
-		return;
-	}
-	global $wpdb;
-	$table       = DB::table_budget_category();
-	$b_table     = DB::table_budget();
-	$c_table     = DB::table_category();
-	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
-	$where       = '1=1';
-	$values      = array();
-	if ( $user_filter > 0 ) {
-		$where    = 'b.user_id = %d';
-		$values[] = $user_filter;
-	}
-	$sql = "SELECT bc.budget_id, bc.category_id, b.name AS budget_name, b.user_id, c.name AS category_name FROM $table bc JOIN $b_table b ON b.id = bc.budget_id LEFT JOIN $c_table c ON c.id = bc.category_id AND c.user_id = b.user_id WHERE $where ORDER BY b.name, c.name";
-	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Tables from API.
-	$items               = $values ? $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A ) : $wpdb->get_results( $sql, ARRAY_A );
-	$budgets_for_user    = $user_filter > 0 ? DB::get_budgets( $user_filter ) : array();
-	$categories_for_user = $user_filter > 0 ? DB::get_categories_flat( $user_filter, true ) : array();
-	?>
-	<div class="wrap">
-		<h1><?php esc_html_e( 'Budget Categories', 'beruang' ); ?></h1>
-		<?php if ( isset( $_GET['beruang_added'] ) ) { echo '<div class="notice notice-success"><p>' . esc_html__( 'Link added.', 'beruang' ) . '</p></div>'; } ?>
-		<?php if ( isset( $_GET['beruang_deleted'] ) ) { echo '<div class="notice notice-success"><p>' . esc_html__( 'Link removed.', 'beruang' ) . '</p></div>'; } ?>
-		<?php if ( isset( $_GET['beruang_error'] ) ) { echo '<div class="notice notice-error"><p>' . esc_html__( 'Invalid or missing budget/category.', 'beruang' ) . '</p></div>'; } ?>
-		<form method="get" class="beruang-admin-filter">
-			<input type="hidden" name="page" value="beruang-budget-categories" />
-			<label><?php esc_html_e( 'User ID', 'beruang' ); ?> <input type="number" name="user_id" value="<?php echo $user_filter ? esc_attr( $user_filter ) : ''; ?>" min="1" /></label>
-			<button type="submit" class="button"><?php esc_html_e( 'Filter', 'beruang' ); ?></button>
-		</form>
-		<?php if ( $user_filter > 0 ) { ?>
-		<h2><?php esc_html_e( 'Add link', 'beruang' ); ?></h2>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin:1em 0;">
-			<input type="hidden" name="action" value="beruang_add_budget_category" />
-			<?php wp_nonce_field( 'beruang_add_budget_category' ); ?>
-			<label><?php esc_html_e( 'Budget', 'beruang' ); ?> <select name="beruang_bc_budget_id" required><option value="">—</option>
-				<?php foreach ( $budgets_for_user as $b ) { echo '<option value="' . esc_attr( $b['id'] ) . '">' . esc_html( $b['name'] ) . '</option>'; } ?>
-			</select></label>
-			<label><?php esc_html_e( 'Category', 'beruang' ); ?> <select name="beruang_bc_category_id" required><option value="">—</option>
-				<?php
-				foreach ( $categories_for_user as $c ) {
-					$indent = str_repeat( '— ', (int) ( $c['depth'] ?? 0 ) );
-					echo '<option value="' . esc_attr( $c['id'] ) . '">' . esc_html( $indent . $c['name'] ) . '</option>';
-				}
-				?>
-			</select></label>
-			<button type="submit" class="button"><?php esc_html_e( 'Add link', 'beruang' ); ?></button>
-		</form>
-		<?php } ?>
-		<div class="beruang-admin-table-wrap">
-		<table class="wp-list-table widefat fixed striped">
-			<thead><tr><th><?php esc_html_e( 'Budget ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Budget name', 'beruang' ); ?></th><th><?php esc_html_e( 'Category ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Category name', 'beruang' ); ?></th><th><?php esc_html_e( 'User ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Actions', 'beruang' ); ?></th></tr></thead>
-			<tbody>
-			<?php
-			if ( empty( $items ) ) {
-				echo '<tr><td colspan="6">' . esc_html__( 'No budget-category links.', 'beruang' ) . '</td></tr>';
-			} else {
-				foreach ( $items as $row ) {
-					$delete_args = array(
-						'action'      => 'beruang_delete_budget_category',
-						'budget_id'   => $row['budget_id'],
-						'category_id' => $row['category_id'],
-					);
-					if ( $user_filter > 0 ) {
-						$delete_args['user_id'] = $user_filter;
-					}
-					$delete_url = wp_nonce_url( add_query_arg( $delete_args, admin_url( 'admin-post.php' ) ), 'beruang_delete_bc' );
-					echo '<tr><td>' . esc_html( $row['budget_id'] ) . '</td><td>' . esc_html( $row['budget_name'] ?? '—' ) . '</td><td>' . esc_html( $row['category_id'] ) . '</td><td>' . esc_html( $row['category_name'] ?? __( 'Uncategorized', 'beruang' ) ) . '</td><td>' . esc_html( $row['user_id'] ) . '</td><td><a href="' . esc_url( $delete_url ) . '" class="submitdelete">' . esc_html__( 'Delete', 'beruang' ) . '</a></td></tr>';
 				}
 			}
 			?>
