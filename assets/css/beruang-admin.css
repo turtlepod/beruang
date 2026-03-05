@@ -4,6 +4,10 @@
  * @package Beruang
  */
 
+.beruang-budget_page_beruang-transactions #wpbody {
+	overflow-x: hidden !important;
+}
+
 /* Filter form spacing and layout. */
 .beruang-admin-filter {
 	margin-bottom: 1.5em;
@@ -28,7 +32,6 @@
 /* Responsive table wrapper: horizontal scroll on narrow viewports. */
 .beruang-admin-table-wrap {
 	overflow-x: auto;
-	-webkit-overflow-scrolling: touch;
 	max-width: 100%;
 	margin-bottom: 1em;
 }
@@ -50,4 +53,69 @@
 	white-space: normal;
 	min-width: 120px;
 	max-width: 220px;
+}
+
+.beruang-transactions-table-wrap .wp-list-table .toggle-row {
+	display: none !important;
+}
+
+/* Transactions table: mobile layout – show all columns with horizontal scroll. */
+@media screen and (width <= 782px) {
+	/* Extend scroll to viewport edge; WordPress .wrap has margin-right: 12px, #wpcontent has padding-left: 10px. */
+	#beruang-transactions-filter .beruang-transactions-table-wrap {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
+		margin-right: -12px;
+		margin-left: -10px;
+		padding-left: 10px;
+		width: calc(100% + 22px);
+	}
+
+	.beruang-transactions-table-wrap .wp-list-table {
+		width: max-content;
+		min-width: 100%;
+		table-layout: auto;
+	}
+
+	.beruang-transactions-table-wrap .wp-list-table th.column-primary ~ th,
+	.beruang-transactions-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
+		display: table-cell !important;
+	}
+
+	.beruang-transactions-table-wrap .wp-list-table thead th.column-primary {
+		width: auto !important;
+	}
+
+	.beruang-transactions-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.check-column) {
+		position: static !important;
+		clear: none !important;
+		width: auto !important;
+	}
+
+	.beruang-transactions-table-wrap .wp-list-table td.column-primary,
+	.beruang-transactions-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td.column-primary ~ td:not(.check-column) {
+		padding: 8px 10px !important;
+	}
+
+	.beruang-transactions-table-wrap .wp-list-table tr:not(.inline-edit-row, .no-items) td:not(.column-primary)::before {
+		display: none !important;
+	}
+
+	.beruang-transactions-table-wrap .wp-list-table tfoot {
+		display: none;
+	}
+
+	/* Show filter on mobile (WordPress hides .tablenav.top .actions) and center it. */
+	.beruang-transactions-table-wrap .tablenav.top {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.beruang-transactions-table-wrap .tablenav.top .actions {
+		display: flex !important;
+		margin: 0;
+	}
 }

@@ -377,6 +377,18 @@ class DB {
 	}
 
 	/**
+	 * Get user IDs that have at least one transaction. For admin filter dropdown.
+	 *
+	 * @return int[]
+	 */
+	public static function get_transaction_user_ids() {
+		$table = self::table_transaction();
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name from API.
+		$ids = self::wpdb()->get_col( "SELECT DISTINCT user_id FROM $table ORDER BY user_id ASC" );
+		return is_array( $ids ) ? array_map( 'absint', $ids ) : array();
+	}
+
+	/**
 	 * Get a single transaction by ID (any user). For admin use.
 	 *
 	 * @param int $id Transaction ID.

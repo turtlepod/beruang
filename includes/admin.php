@@ -72,7 +72,7 @@ function admin_enqueue_styles( $hook ) {
 	wp_enqueue_style(
 		'beruang-admin',
 		BERUANG_PLUGIN_URL . 'dist/css/admin-style.css',
-		$deps,
+		array_merge( $deps, array( 'list-tables' ) ),
 		$ver
 	);
 }
@@ -728,14 +728,13 @@ function admin_handle_update_budget() {
 /**
  * Render admin transactions list page.
  *
- * Supports user filter, pagination, and inline edit form.
+ * Supports user filter, pagination, sortable columns, and inline edit form.
+ * Uses WP_List_Table for the transactions table.
  */
 function admin_page_transactions() {
 	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
 		return;
 	}
-	global $wpdb;
-	$table       = DB::table_transaction();
 	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
 	$edit_id     = isset( $_GET['edit'] ) ? absint( $_GET['edit'] ) : 0;
 	$edit_row    = $edit_id ? DB::get_transaction_by_id( $edit_id ) : null;
@@ -746,22 +745,7 @@ function admin_page_transactions() {
 		$edit_row        = null;
 		$edit_categories = array();
 	}
-	$where  = '1=1';
-	$values = array();
-	if ( $user_filter > 0 ) {
-		$where   .= ' AND user_id = %d';
-		$values[] = $user_filter;
-	}
-	$per_page = 20;
-	$page     = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
-	$offset   = ( $page - 1 ) * $per_page;
-	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Dynamic table/where for admin list.
-	$total = (int) $wpdb->get_var( $values ? $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE $where", $values ) : "SELECT COUNT(*) FROM $table WHERE $where" );
-	// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Dynamic table/where for admin list.
-	$items    = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE $where ORDER BY date DESC, time DESC, id DESC LIMIT %d OFFSET %d", array_merge( $values, array( $per_page, $offset ) ) ), ARRAY_A );
 	$currency = get_option( 'beruang_currency', 'IDR' );
-	$dec      = get_option( 'beruang_decimal_sep', ',' );
-	$thou     = get_option( 'beruang_thousands_sep', '.' );
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Transactions', 'beruang' ); ?></h1>
@@ -821,54 +805,16 @@ function admin_page_transactions() {
 			<?php
 		}
 		?>
-		<form method="get" class="beruang-admin-filter">
-			<input type="hidden" name="page" value="beruang-transactions" />
-			<label><?php esc_html_e( 'User ID', 'beruang' ); ?> <input type="number" name="user_id" value="<?php echo $user_filter ? esc_attr( $user_filter ) : ''; ?>" min="1" /></label>
-			<button type="submit" class="button"><?php esc_html_e( 'Filter', 'beruang' ); ?></button>
-		</form>
-		<div class="beruang-admin-table-wrap beruang-transactions-table-wrap">
-		<table class="wp-list-table widefat fixed striped">
-			<thead><tr>
-				<th><?php esc_html_e( 'ID', 'beruang' ); ?></th><th><?php esc_html_e( 'User ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Date', 'beruang' ); ?></th><th><?php esc_html_e( 'Time', 'beruang' ); ?></th>
-				<th><?php esc_html_e( 'Description', 'beruang' ); ?></th><th><?php esc_html_e( 'Category ID', 'beruang' ); ?></th><th><?php esc_html_e( 'Amount', 'beruang' ); ?></th><th><?php esc_html_e( 'Type', 'beruang' ); ?></th><th><?php esc_html_e( 'Actions', 'beruang' ); ?></th>
-			</tr></thead>
-			<tbody>
-			<?php
-			if ( empty( $items ) ) {
-				echo '<tr><td colspan="9">' . esc_html__( 'No transactions.', 'beruang' ) . '</td></tr>';
-			} else {
-				foreach ( $items as $row ) {
-					$amount   = number_format( (float) $row['amount'], '.' === $dec ? 2 : 0, $dec, $thou );
-					$edit_url = add_query_arg(
-						array(
-							'page'    => 'beruang-transactions',
-							'edit'    => $row['id'],
-							'user_id' => $user_filter ? $user_filter : null,
-						),
-						admin_url( 'admin.php' )
-					);
-					echo '<tr><td>' . esc_html( $row['id'] ) . '</td><td>' . esc_html( $row['user_id'] ) . '</td><td>' . esc_html( $row['date'] ) . '</td><td>' . esc_html( $row['time'] ?? '—' ) . '</td><td>' . esc_html( $row['description'] ) . '</td><td>' . esc_html( $row['category_id'] ) . '</td><td>' . esc_html( $amount ) . ' ' . esc_html( $currency ) . '</td><td>' . esc_html( $row['type'] ) . '</td><td><a href="' . esc_url( $edit_url ) . '">' . esc_html__( 'Edit', 'beruang' ) . '</a></td></tr>';
-				}
-			}
-			?>
-			</tbody>
-		</table>
-		</div>
 		<?php
-		if ( $total > $per_page ) {
-			echo '<p class="tablenav">' . esc_html__( 'Total:', 'beruang' ) . ' ' . (int) $total . ' | ';
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- paginate_links() returns escaped HTML.
-			echo paginate_links(
-				array(
-					'base'    => add_query_arg( 'paged', '%#%' ),
-					'format'  => '',
-					'current' => $page,
-					'total'   => ceil( $total / $per_page ),
-				)
-			);
-			echo '</p>';
-		}
+		$list_table = new Transactions_List_Table( $user_filter );
+		$list_table->prepare_items();
 		?>
+		<form id="beruang-transactions-filter" method="get">
+			<input type="hidden" name="page" value="beruang-transactions" />
+			<div class="beruang-admin-table-wrap beruang-transactions-table-wrap">
+				<?php $list_table->display(); ?>
+			</div>
+		</form>
 	</div>
 	<?php
 }
