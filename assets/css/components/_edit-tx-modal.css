@@ -126,6 +126,26 @@
 	width: 100%;
 }
 
+.beruang-edit-tx-modal-inner .beruang-datetime-wrap input[type="date"]::-webkit-calendar-picker-indicator {
+	background-image: var(--br-calendar-icon);
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 1em;
+	height: 1em;
+	cursor: pointer;
+}
+
+.beruang-edit-tx-modal-inner .beruang-datetime-wrap input[type="time"]::-webkit-calendar-picker-indicator {
+	background-image: var(--br-clock-icon);
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 1em;
+	height: 1em;
+	cursor: pointer;
+}
+
 .beruang-edit-tx-modal-inner .beruang-category-wrap {
 	display: flex;
 	align-items: stretch;
