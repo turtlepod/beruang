@@ -176,6 +176,23 @@ function rest_register_routes() {
 		)
 	);
 
+	// Description suggestions (autocomplete)
+	register_rest_route(
+		$ns,
+		'/descriptions',
+		array(
+			'methods'             => 'GET',
+			'permission_callback' => $perm,
+			'callback'            => __NAMESPACE__ . '\rest_get_descriptions',
+			'args'                => array(
+				'search' => array(
+					'default' => '',
+					'type'    => 'string',
+				),
+			),
+		)
+	);
+
 	// Categories
 	register_rest_route(
 		$ns,
@@ -544,6 +561,32 @@ function rest_delete_transaction( $request ) {
 		array(
 			'success' => true,
 			'data'    => array( 'deleted' => $ok ),
+		)
+	);
+}
+
+/**
+ * REST: Get description suggestions for autocomplete.
+ *
+ * @param \WP_REST_Request $request Request.
+ * @return \WP_REST_Response
+ */
+function rest_get_descriptions( $request ) {
+	$user_id = get_current_user_id();
+	$search  = $request->get_param( 'search' ) ? sanitize_text_field( $request->get_param( 'search' ) ) : '';
+	if ( '' === $search ) {
+		return rest_ensure_response(
+			array(
+				'success' => true,
+				'data'    => array( 'descriptions' => array() ),
+			)
+		);
+	}
+	$items = DB::get_description_suggestions( $user_id, $search );
+	return rest_ensure_response(
+		array(
+			'success' => true,
+			'data'    => array( 'descriptions' => $items ),
 		)
 	);
 }

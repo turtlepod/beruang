@@ -301,3 +301,47 @@
 		transform: rotate(360deg);
 	}
 }
+
+/* Description autocomplete */
+.beruang-desc-autocomplete-wrap {
+	position: relative;
+	max-width: var(--br-control-width);
+	width: 100%;
+}
+
+.beruang-desc-suggestions {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 100;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	background: var(--br-bg);
+	border: 1px solid var(--br-border);
+	border-top: none;
+	border-radius: 0 0 var(--br-radius-sm) var(--br-radius-sm);
+	box-shadow: 0 4px 8px rgb(0 0 0 / 10%);
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.beruang-desc-suggestion-item {
+	padding: 0.5em 0.6em;
+	cursor: pointer;
+	color: var(--br-text);
+	font-size: inherit;
+	line-height: 1.4;
+	border-bottom: 1px solid var(--br-border);
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&:hover,
+	&.is-active {
+		background: var(--br-bg-hover);
+		color: var(--br-text);
+	}
+}

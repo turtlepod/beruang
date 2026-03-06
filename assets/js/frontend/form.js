@@ -363,6 +363,103 @@ export function initForm() {
 		if ( equalsBtn ) equalsBtn.addEventListener( 'click', doEquals );
 	}
 
+	// Description autocomplete
+	function initDescriptionAutocomplete( input ) {
+		let debounceTimer = null;
+		let currentSuggestions = [];
+		let activeIndex = -1;
+
+		const list = document.createElement( 'ul' );
+		list.className = 'beruang-desc-suggestions';
+		list.hidden = true;
+
+		const wrapper = document.createElement( 'div' );
+		wrapper.className = 'beruang-desc-autocomplete-wrap';
+		input.parentNode.insertBefore( wrapper, input );
+		wrapper.appendChild( input );
+		wrapper.appendChild( list );
+
+		function closeSuggestions() {
+			list.hidden = true;
+			list.innerHTML = '';
+			currentSuggestions = [];
+			activeIndex = -1;
+		}
+
+		function setActive( idx ) {
+			const items = list.querySelectorAll( '.beruang-desc-suggestion-item' );
+			items.forEach( function ( item ) {
+				item.classList.remove( 'is-active' );
+			} );
+			if ( idx >= 0 && idx < items.length ) {
+				items[ idx ].classList.add( 'is-active' );
+				activeIndex = idx;
+			} else {
+				activeIndex = -1;
+			}
+		}
+
+		function renderSuggestions( suggestions ) {
+			list.innerHTML = '';
+			if ( ! suggestions.length ) {
+				closeSuggestions();
+				return;
+			}
+			suggestions.forEach( function ( text ) {
+				const li = document.createElement( 'li' );
+				li.className = 'beruang-desc-suggestion-item';
+				li.textContent = text;
+				li.addEventListener( 'mousedown', function ( e ) {
+					e.preventDefault();
+					input.value = text;
+					closeSuggestions();
+				} );
+				list.appendChild( li );
+			} );
+			list.hidden = false;
+			activeIndex = -1;
+		}
+
+		input.addEventListener( 'input', function () {
+			clearTimeout( debounceTimer );
+			const val = input.value.trim();
+			if ( ! val ) {
+				closeSuggestions();
+				return;
+			}
+			debounceTimer = setTimeout( function () {
+				request( 'GET', '/descriptions', { search: val } ).then( function ( r ) {
+					if ( r.success && r.data && r.data.descriptions ) {
+						currentSuggestions = r.data.descriptions;
+						renderSuggestions( currentSuggestions );
+					}
+				} );
+			}, 200 );
+		} );
+
+		input.addEventListener( 'keydown', function ( e ) {
+			if ( list.hidden ) return;
+			const items = list.querySelectorAll( '.beruang-desc-suggestion-item' );
+			if ( e.key === 'ArrowDown' ) {
+				e.preventDefault();
+				setActive( Math.min( activeIndex + 1, items.length - 1 ) );
+			} else if ( e.key === 'ArrowUp' ) {
+				e.preventDefault();
+				setActive( Math.max( activeIndex - 1, 0 ) );
+			} else if ( e.key === 'Enter' && activeIndex >= 0 ) {
+				e.preventDefault();
+				input.value = currentSuggestions[ activeIndex ];
+				closeSuggestions();
+			} else if ( e.key === 'Escape' ) {
+				closeSuggestions();
+			}
+		} );
+
+		input.addEventListener( 'blur', function () {
+			setTimeout( closeSuggestions, 150 );
+		} );
+	}
+
 	// Transaction forms
 	const forms = document.querySelectorAll( '.beruang-transaction-form' );
 	forms.forEach( function ( form ) {
@@ -428,4 +525,6 @@ export function initForm() {
 			} );
 		} );
 	} );
+
+	document.querySelectorAll( '.beruang-transaction-form [name="description"]' ).forEach( initDescriptionAutocomplete );
 }

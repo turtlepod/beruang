@@ -444,6 +444,30 @@ class DB {
 	}
 
 	/**
+	 * Get distinct description suggestions matching a search string.
+	 *
+	 * @param int    $user_id User ID.
+	 * @param string $search  Search term (partial match).
+	 * @param int    $limit   Max number of results (capped at 20).
+	 * @return string[]
+	 */
+	public static function get_description_suggestions( $user_id, $search, $limit = 3 ) {
+		$table   = self::table_transaction();
+		$user_id = absint( $user_id );
+		$limit   = min( absint( $limit ), 20 );
+		$results = self::wpdb()->get_col(
+			self::wpdb()->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from API.
+				"SELECT DISTINCT description FROM $table WHERE user_id = %d AND description LIKE %s AND description != '' ORDER BY description ASC LIMIT %d",
+				$user_id,
+				'%' . self::wpdb()->esc_like( $search ) . '%',
+				$limit
+			)
+		);
+		return is_array( $results ) ? array_values( $results ) : array();
+	}
+
+	/**
 	 * Update an existing transaction.
 	 *
 	 * @param int   $id   Transaction ID.
