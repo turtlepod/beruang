@@ -251,6 +251,9 @@ export function initForm() {
 	let calcTargetInput = null;
 	const calcModal = document.getElementById( 'beruang-calc-modal' );
 	const calcDisplay = calcModal && calcModal.querySelector( '.beruang-calc-display' );
+	let calcVal = '0';
+	let calcOp = null;
+	let calcPrev = null;
 
 	document.addEventListener( 'click', function ( e ) {
 		const calcBtn = e.target.closest( '.beruang-calc-btn' );
@@ -258,14 +261,15 @@ export function initForm() {
 		const form = calcBtn.closest( '.beruang-transaction-form' );
 		if ( ! form || ! calcModal || ! calcDisplay ) return;
 		calcTargetInput = form.querySelector( '[name="amount"]' );
-		calcDisplay.value = ( calcTargetInput && calcTargetInput.value ) || '0';
+		const initVal = ( calcTargetInput && calcTargetInput.value ) || '0';
+		calcVal = initVal;
+		calcOp = null;
+		calcPrev = null;
+		calcDisplay.value = initVal;
 		calcModal.hidden = false;
 	} );
 
 	if ( calcModal && calcDisplay ) {
-		let calcVal = '0';
-		let calcOp = null;
-		let calcPrev = null;
 		const updateDisplay = function () {
 			if ( calcOp && calcPrev !== null ) {
 				const second = calcVal === '0' ? '' : calcVal;

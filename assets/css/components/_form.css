@@ -47,24 +47,26 @@
 		}
 	}
 
-	& .beruang-form-row .beruang-datetime-wrap input[type="date"]::-webkit-calendar-picker-indicator {
-		background-image: var(--br-calendar-icon);
-		background-size: contain;
-		background-repeat: no-repeat;
-		background-position: center;
-		width: 1em;
-		height: 1em;
-		cursor: pointer;
+	& .beruang-form-row .beruang-datetime-wrap input[type="date"] {
+		padding-right: 0;
+		background: var(--br-bg) var(--br-calendar-icon) no-repeat right 0.5em center / 1em 1em !important;
+
+		&::-webkit-calendar-picker-indicator {
+			background: transparent;
+			color: transparent;
+			cursor: pointer;
+		}
 	}
 
-	& .beruang-form-row .beruang-datetime-wrap input[type="time"]::-webkit-calendar-picker-indicator {
-		background-image: var(--br-clock-icon);
-		background-size: contain;
-		background-repeat: no-repeat;
-		background-position: center;
-		width: 1em;
-		height: 1em;
-		cursor: pointer;
+	& .beruang-form-row .beruang-datetime-wrap input[type="time"] {
+		padding-right: 0;
+		background: var(--br-bg) var(--br-clock-icon) no-repeat right 0.5em center / 1em 1em !important;
+
+		&::-webkit-calendar-picker-indicator {
+			background: transparent;
+			color: transparent;
+			cursor: pointer;
+		}
 	}
 
 	& .beruang-form-row select {
