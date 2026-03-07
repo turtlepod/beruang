@@ -52,6 +52,12 @@
 	}
 }
 
+.beruang-modal-close-x svg {
+	display: block;
+	width: 1.1em;
+	height: 1.1em;
+}
+
 .beruang-modal-dialog {
 	position: relative;
 	display: block;

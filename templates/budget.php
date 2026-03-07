@@ -59,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div class="beruang-budget-modal beruang-modal" id="beruang-budget-modal" hidden>
 		<div class="beruang-modal-dialog">
-			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>">×</button>
+			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 			<div class="beruang-budget-modal-inner">
 			<h4><?php esc_html_e( 'Add / Edit budget', 'beruang' ); ?></h4>
 			<form id="beruang-budget-form">

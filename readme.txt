@@ -45,6 +45,13 @@ Use on pages where users are logged in:
 * `[beruang-graph]` – Chart (by month or by category) with year selector
 * `[beruang-budget]` – List budgets with progress; add/edit budget modal
 
+== Resources ==
+
+Font Awesome Free Icons
+* Icons: https://fontawesome.com/icons
+* License: CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/
+* The plugin uses inline SVG paths derived from Font Awesome Free icons: xmark (close), calculator (calc), list-ul (list), filter (filter), file-circle-plus (add), pen-to-square (edit), trash-can (trash).
+
 == Changelog ==
 
 = 0.3.0-beta =
