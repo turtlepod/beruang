@@ -57,12 +57,6 @@ function beruang_dist_exists() {
  * Enqueue frontend scripts and styles when shortcodes are present.
  */
 function enqueue_front_scripts() {
-	$post = get_post( get_queried_object_id() );
-
-	if ( ! $post || ( ! has_shortcode( $post->post_content ?? '', 'beruang-form' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-list' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-graph' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-budget' ) ) ) {
-		return;
-	}
-
 	if ( ! beruang_dist_exists() ) {
 		return;
 	}
@@ -85,18 +79,16 @@ function enqueue_front_scripts() {
 			$front_style_ver
 		);
 	}
-	$deps = array();
-	if ( has_shortcode( $post->post_content ?? '', 'beruang-graph' ) ) {
-		$chart_asset = BERUANG_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
-		wp_enqueue_script(
-			'chartjs',
-			BERUANG_PLUGIN_URL . 'assets/js/chart.umd.min.js',
-			array(),
-			file_exists( $chart_asset ) ? (string) filemtime( $chart_asset ) : '4.4.1',
-			true
-		);
-		$deps[] = 'chartjs';
-	}
+	$deps        = array();
+	$chart_asset = BERUANG_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
+	wp_enqueue_script(
+		'chartjs',
+		BERUANG_PLUGIN_URL . 'assets/js/chart.umd.min.js',
+		array(),
+		file_exists( $chart_asset ) ? (string) filemtime( $chart_asset ) : '4.4.1',
+		true
+	);
+	$deps[]         = 'chartjs';
 	$front_js_dist  = BERUANG_PLUGIN_DIR . 'dist/js/front.js';
 	$front_js_asset = BERUANG_PLUGIN_DIR . 'dist/js/front.asset.php';
 	$front_js_deps  = $deps;
@@ -167,9 +159,5 @@ function enqueue_front_scripts() {
  * Output Beruang JS template script blocks in footer.
  */
 function print_front_templates() {
-	$post = get_post( get_queried_object_id() );
-	if ( ! $post || ( ! has_shortcode( $post->post_content ?? '', 'beruang-form' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-list' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-budget' ) ) ) {
-		return;
-	}
 	include BERUANG_PLUGIN_DIR . 'includes/templates-js.php';
 }
