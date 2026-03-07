@@ -2,7 +2,8 @@
  * Beruang – responsive styles.
  */
 
-@media (width <= 600px) {
+/* stylelint-disable-next-line media-feature-range-notation */
+@media (max-width: 600px) {
 	.beruang-form-wrapper .beruang-form {
 		max-width: 100%;
 	}
@@ -29,7 +30,8 @@
 	.beruang-category-wrap,
 	.beruang-amount-row,
 	.beruang-type-toggle,
-	.beruang-submit-row {
+	.beruang-submit-row,
+	.beruang-desc-autocomplete-wrap {
 		max-width: 100%;
 	}
 
