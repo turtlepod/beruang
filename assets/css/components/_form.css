@@ -213,6 +213,12 @@
 		flex: 1;
 		min-width: 7em;
 	}
+
+	& input[type="date"],
+	& input[type="time"] {
+		height: var(--br-control-height) !important;
+		margin: 0 !important;
+	}
 }
 
 .beruang-category-wrap {
@@ -227,6 +233,13 @@
 		min-width: 0;
 		background: var(--br-bg) var(--br-dropdown-arrow) no-repeat right 0.6em center / 12px 12px !important;
 		color: var(--br-text) !important;
+		height: var(--br-control-height) !important;
+		margin: 0 !important;
+	}
+
+	& .beruang-manage-categories-btn {
+		height: var(--br-control-height) !important;
+		margin: 0 !important;
 	}
 }
 
@@ -253,6 +266,13 @@
 			min-width: 6em;
 			background: var(--br-bg) !important;
 			color: var(--br-text) !important;
+			height: var(--br-control-height) !important;
+			margin: 0 !important;
+		}
+
+		& .beruang-calc-btn {
+			height: var(--br-control-height) !important;
+			margin: 0 !important;
 		}
 	}
 
