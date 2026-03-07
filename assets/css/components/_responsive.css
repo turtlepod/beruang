@@ -18,11 +18,11 @@
 		}
 	}
 
-	.beruang-form-row input[type="text"],
-	.beruang-form-row input[type="number"],
-	.beruang-form-row input[type="date"],
-	.beruang-form-row input[type="time"],
-	.beruang-form-row select {
+	.beruang-form-wrapper .beruang-form-row input[type="text"],
+	.beruang-form-wrapper .beruang-form-row input[type="number"],
+	.beruang-form-wrapper .beruang-form-row input[type="date"],
+	.beruang-form-wrapper .beruang-form-row input[type="time"],
+	.beruang-form-wrapper .beruang-form-row select {
 		max-width: 100%;
 	}
 
@@ -30,7 +30,7 @@
 	.beruang-category-wrap,
 	.beruang-amount-row,
 	.beruang-type-toggle,
-	.beruang-submit-row,
+	.beruang-form-wrapper .beruang-submit-row,
 	.beruang-desc-autocomplete-wrap {
 		max-width: 100%;
 	}
