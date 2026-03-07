@@ -7,7 +7,7 @@
 		"10up/phpcs-composer": "^3.0"
 	},
 	"scripts": {
-		"lint": "phpcs . -s --runtime-set testVersion 7.4- --runtime-set ignore_warnings_on_exit 0",
+		"lint": "phpcs . -s --runtime-set testVersion 8.2- --runtime-set ignore_warnings_on_exit 0",
 		"lint-fix": "phpcbf ."
 	},
 	"config": {

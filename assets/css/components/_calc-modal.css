@@ -1,0 +1,161 @@
+/**
+ * Beruang – calculator modal.
+ */
+
+.beruang-calc-modal {
+	position: fixed;
+	inset: 0;
+	background: var(--br-overlay, rgb(0 0 0 / 40%));
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 999999;
+	isolation: isolate;
+
+	&[hidden] {
+		display: none !important;
+	}
+}
+
+.beruang-calc-content {
+	position: relative;
+	background: var(--br-bg);
+	color: var(--br-text);
+	padding: 1.5em;
+	border-radius: var(--br-radius-md);
+	min-width: 320px;
+}
+
+.beruang-modal-close-x {
+	position: absolute;
+	top: -15px;
+	right: -15px;
+	z-index: 10;
+	width: 2em;
+	height: 2em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	font-size: 18px;
+	line-height: 1;
+	color: var(--br-text-muted);
+	background: var(--br-bg);
+	border: 1px solid var(--br-border);
+	border-radius: 50%;
+	cursor: pointer;
+
+	&:hover {
+		color: var(--br-text);
+		background: var(--br-bg-hover);
+		border-color: var(--br-text-muted);
+	}
+}
+
+.beruang-modal-close-x svg {
+	display: block;
+	width: 1.1em;
+	height: 1.1em;
+}
+
+.beruang-modal-dialog {
+	position: relative;
+	display: block;
+	width: 100%;
+	max-width: 365px;
+}
+
+.beruang-calc-display {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 0.75em;
+	margin-bottom: 0.5em;
+	text-align: right;
+	font-size: 1.25em;
+	background: var(--br-bg-subtle);
+	color: var(--br-text);
+	border: 1px solid var(--br-border-alt);
+	border-radius: var(--br-radius-sm);
+}
+
+.beruang-calc-buttons {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 0.35em;
+	width: 100%;
+
+	& button {
+		min-width: 0;
+		padding: 0.6em 0.5em;
+		font-size: 1rem;
+		background: #2c3338;
+		color: var(--br-bg);
+		border: none;
+		border-radius: var(--br-radius-sm);
+		cursor: pointer;
+
+		&:hover {
+			background: var(--br-text);
+		}
+
+		&.beruang-calc-op {
+			background: #e5e5e5;
+			color: var(--br-text);
+
+			&:hover {
+				background: #d0d0d0;
+			}
+		}
+	}
+}
+
+.beruang-calc-bottom {
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr 1fr;
+	gap: 0.35em;
+	margin-top: 0.75em;
+}
+
+.beruang-calc-insert-close {
+	grid-column: span 2;
+	padding: 0.5em;
+	background: var(--br-bg-muted);
+	color: var(--br-text);
+	border: 1px solid var(--br-border);
+	border-radius: var(--br-radius-sm);
+	cursor: pointer;
+
+	&:hover {
+		background: #d8d8d8;
+		border-color: var(--br-text-muted);
+		color: var(--br-text);
+	}
+}
+
+.beruang-calc-clear {
+	padding: 0.5em;
+	background: var(--br-warning);
+	color: var(--br-bg);
+	border: none;
+	border-radius: var(--br-radius-sm);
+	cursor: pointer;
+
+	&:hover {
+		background: #d35400;
+		color: var(--br-bg);
+	}
+}
+
+.beruang-calc-equals {
+	padding: 0.5em 1em;
+	background: #007017;
+	color: var(--br-bg);
+	border: none;
+	border-radius: var(--br-radius-sm);
+	cursor: pointer;
+	font-size: 1rem;
+
+	&:hover {
+		background: #005a12;
+	}
+}

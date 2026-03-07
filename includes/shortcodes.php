@@ -78,6 +78,9 @@ function shortcode_render_list( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 		'list.php',
 		array(
 			'year'       => (int) current_time( 'Y' ),
+			'today'      => current_time( 'Y-m-d' ),
+			'time'       => current_time( 'H:i' ),
+			'currency'   => get_option( 'beruang_currency', 'IDR' ),
 			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
 		)
 	);
@@ -128,6 +131,33 @@ function shortcode_render_budget( $atts ) { // phpcs:ignore Generic.CodeAnalysis
 }
 
 /**
+ * Format amount for display in amount input value (respects decimal places setting).
+ *
+ * @param float|string $amount Amount from DB.
+ * @return string
+ */
+function shortcode_format_amount_input_value( $amount ) {
+	$places = (int) get_option( 'beruang_decimal_places', 2 );
+	$num    = (float) $amount;
+	return 0 === $places ? (string) (int) round( $num ) : number_format( $num, $places, '.', '' );
+}
+
+/**
+ * Output calculator and categories modals once per page.
+ * Call from form and list shortcodes so modals are available for both add and edit flows.
+ *
+ * @return void
+ */
+function output_modals_once() {
+	static $done = false;
+	if ( $done ) {
+		return;
+	}
+	$done = true;
+	shortcode_load_template( 'partials/modals.php', array() );
+}
+
+/**
  * Format amount for display.
  *
  * @param float  $amount   Amount value.
@@ -135,11 +165,12 @@ function shortcode_render_budget( $atts ) { // phpcs:ignore Generic.CodeAnalysis
  * @return string
  */
 function shortcode_format_amount( $amount, $currency = '' ) {
-	$dec  = get_option( 'beruang_decimal_sep', ',' );
-	$thou = get_option( 'beruang_thousands_sep', '.' );
+	$dec    = get_option( 'beruang_decimal_sep', ',' );
+	$thou   = get_option( 'beruang_thousands_sep', '.' );
+	$places = (int) get_option( 'beruang_decimal_places', 2 );
 	if ( '' === $currency ) {
 		$currency = get_option( 'beruang_currency', 'IDR' );
 	}
-	$formatted = number_format( (float) $amount, '.' === $dec ? 2 : 0, $dec, $thou );
+	$formatted = number_format( (float) $amount, $places, $dec, $thou );
 	return $formatted . ' ' . $currency;
 }
