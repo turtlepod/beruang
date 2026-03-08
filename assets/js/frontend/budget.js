@@ -181,4 +181,5 @@ export function initBudget() {
 	} );
 
 	loadBudgets();
+	document.addEventListener( 'beruang-transaction-saved', loadBudgets );
 }

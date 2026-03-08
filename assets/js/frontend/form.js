@@ -508,10 +508,10 @@ export function initForm() {
 					if ( isEdit ) {
 						const editModal = document.getElementById( 'beruang-edit-tx-modal' );
 						if ( editModal ) editModal.hidden = true;
-						document.dispatchEvent( new CustomEvent( 'beruang-transaction-saved' ) );
 					} else {
 						resetAddForm( form );
 					}
+					document.dispatchEvent( new CustomEvent( 'beruang-transaction-saved' ) );
 				} else {
 					if ( message ) {
 						message.textContent =

@@ -123,4 +123,8 @@ export function initGraph() {
 	else window.addEventListener( 'load', function () {
 		setTimeout( loadGraph, 100 );
 	} );
+	document.addEventListener( 'beruang-transaction-saved', loadGraph );
+	document.addEventListener( 'beruang-tab-activated', function ( e ) {
+		if ( e.detail && e.detail.tab === 'graph' && chart ) chart.resize();
+	} );
 }
