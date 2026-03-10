@@ -40,10 +40,8 @@
 		transition: border-color var(--br-transition), box-shadow var(--br-transition);
 
 		&:focus {
-			outline: 2px solid var(--br-primary);
-			outline-offset: 2px;
-			border-color: var(--br-primary) !important;
-			box-shadow: 0 0 0 1px var(--br-primary);
+			outline: none;
+			border-color: #000 !important;
 		}
 	}
 
@@ -85,10 +83,8 @@
 		transition: border-color var(--br-transition), box-shadow var(--br-transition);
 
 		&:focus {
-			outline: 2px solid var(--br-primary);
-			outline-offset: 2px;
-			border-color: var(--br-primary) !important;
-			box-shadow: 0 0 0 1px var(--br-primary);
+			outline: none;
+			border-color: #000 !important;
 		}
 	}
 

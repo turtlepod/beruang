@@ -462,6 +462,8 @@ export function initForm() {
 		input.addEventListener( 'blur', function () {
 			setTimeout( closeSuggestions, 150 );
 		} );
+
+		window.addEventListener( 'popstate', closeSuggestions );
 	}
 
 	// Transaction forms
