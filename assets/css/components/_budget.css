@@ -99,6 +99,10 @@
 	background: var(--br-success);
 	transition: width 0.2s;
 
+	&.warning {
+		background: #f59e0b;
+	}
+
 	&.over {
 		background: var(--br-error);
 	}
@@ -108,6 +112,11 @@
 	font-size: 0.9em;
 	opacity: 0.85;
 	color: var(--br-text-muted);
+}
+
+.beruang-budget-over {
+	color: var(--br-error);
+	font-weight: 600;
 }
 
 .beruang-budget-modal {

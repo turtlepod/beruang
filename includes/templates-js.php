@@ -68,7 +68,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="beruang-budget-card" data-id="{{ data.id }}">
 		<h4>{{ data.name }} <small>({{ data.typeLabel }})</small></h4>
 		<div class="beruang-budget-progress-wrap"><div class="beruang-budget-progress-bar {{ data.progressClass }}" style="width:{{ data.progressWidth }}%"></div></div>
-		<div class="beruang-budget-meta">{{ data.spentFormatted }} / {{ data.targetFormatted }} ({{ data.pct }}%)</div>
+		<div class="beruang-budget-meta">{{ data.spentFormatted }} / {{ data.targetFormatted }} ({{ data.pct }}%) &mdash; <span class="{{ data.remainingClass }}">{{ data.remainingLabel }}: {{ data.remainingFormatted }}</span></div>
 		<span class="beruang-budget-actions">
 			<button type="button" class="beruang-action-edit" data-id="{{ data.id }}" title="{{ data.editLabel }}" aria-label="{{ data.editLabel }}">{{{ data.editIcon }}}</button>
 			<button type="button" class="beruang-action-delete" data-id="{{ data.id }}" title="{{ data.deleteLabel }}" aria-label="{{ data.deleteLabel }}">{{{ data.deleteIcon }}}</button>

@@ -88,7 +88,9 @@ export function initBudget() {
 				let html = '';
 				budgets.forEach( function ( b ) {
 					const pct = Math.round( parseFloat( b.progress ) || 0 );
-					const over = pct > 100;
+					const remaining = parseFloat( b.target_amount ) - parseFloat( b.spent );
+					const over = remaining < 0;
+					const warning = ! over && pct >= 80;
 					html += budgetCardTpl( {
 						id: b.id,
 						name: b.name,
@@ -97,9 +99,12 @@ export function initBudget() {
 								? ( i18n.yearly || 'Yearly' )
 								: ( i18n.monthly || 'Monthly' ),
 						progressWidth: Math.min( pct, 100 ),
-						progressClass: over ? 'over' : '',
+						progressClass: over ? 'over' : ( warning ? 'warning' : '' ),
 						spentFormatted: formatNum( b.spent ),
 						targetFormatted: formatNum( b.target_amount ),
+						remainingFormatted: formatNum( Math.abs( remaining ) ),
+						remainingLabel: over ? ( i18n.over_budget || 'Over' ) : ( i18n.remaining || 'Remaining' ),
+						remainingClass: over ? 'beruang-budget-over' : '',
 						pct,
 						editLabel: i18n.edit || 'Edit',
 						deleteLabel: i18n.delete || 'Delete',
