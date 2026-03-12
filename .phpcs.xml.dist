@@ -2,7 +2,7 @@
 <ruleset name="Beruang">
 	<description>PHPCS configuration for Beruang plugin.</description>
 	<rule ref="10up-Default"/>
-	<config name="testVersion" value="7.4-"/>
+	<config name="testVersion" value="8.2-"/>
 	<file>.</file>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/example-plugin/*</exclude-pattern>

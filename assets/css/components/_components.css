@@ -1,0 +1,105 @@
+/**
+ * Beruang – shared components (icons, action buttons, modal actions).
+ */
+
+.beruang-icon {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.beruang-manage-categories-btn .beruang-icon {
+	flex-shrink: 0;
+}
+
+.beruang-calc-btn .beruang-icon {
+	color: inherit;
+}
+
+/* Edit/Delete action buttons */
+.beruang-action-edit,
+.beruang-action-delete {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--br-control-height);
+	height: var(--br-control-height);
+	padding: 0;
+	border-radius: var(--br-radius-sm);
+	cursor: pointer;
+}
+
+.beruang-action-edit .beruang-icon,
+.beruang-action-edit svg,
+.beruang-action-delete .beruang-icon,
+.beruang-action-delete svg {
+	width: 1em;
+	height: 1em;
+	color: inherit;
+}
+
+.beruang-action-edit {
+	background: var(--br-primary);
+	color: var(--br-bg);
+	border: none;
+
+	&:hover {
+		background: var(--br-primary-hover);
+	}
+}
+
+.beruang-action-delete {
+	background: var(--br-bg-muted);
+	color: var(--br-text);
+	border: 1px solid var(--br-border);
+
+	&:hover {
+		background: var(--br-error);
+		color: var(--br-bg);
+		border-color: var(--br-error);
+	}
+}
+
+/* Modal Save/Cancel buttons */
+.beruang-modal-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+	align-items: center;
+
+	& .beruang-form-message {
+		flex-basis: 100%;
+		order: 3;
+	}
+
+	& .beruang-modal-save,
+	& .beruang-modal-cancel {
+		flex: 1 1 0;
+		min-width: 0;
+		padding: 0.5em 1em;
+		height: var(--br-control-height);
+		border-radius: var(--br-radius-sm);
+		cursor: pointer;
+		line-height: 1.4;
+	}
+
+	& .beruang-modal-save {
+		background: var(--br-primary);
+		color: var(--br-bg);
+		border: none;
+
+		&:hover {
+			background: var(--br-primary-hover);
+		}
+	}
+
+	& .beruang-modal-cancel {
+		background: var(--br-bg-muted);
+		color: var(--br-text);
+		border: 1px solid var(--br-border);
+
+		&:hover {
+			background: var(--br-bg-hover);
+			border-color: var(--br-border-hover);
+		}
+	}
+}

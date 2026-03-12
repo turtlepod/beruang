@@ -36,6 +36,7 @@ function manifest_register_rewrite() {
  */
 function manifest_query_vars( $vars ) {
 	$vars[] = 'beruang_manifest';
+	$vars[] = 'beruang_sw';
 	return $vars;
 }
 
@@ -43,7 +44,10 @@ function manifest_query_vars( $vars ) {
  * Serve manifest JSON when requested.
  */
 function manifest_serve() {
-	if ( ! get_query_var( 'beruang_manifest' ) ) {
+	$serve_manifest = (bool) get_query_var( 'beruang_manifest' );
+	$serve_sw       = (bool) get_query_var( 'beruang_sw' );
+
+	if ( ! $serve_manifest && ! $serve_sw ) {
 		return;
 	}
 
@@ -51,6 +55,16 @@ function manifest_serve() {
 		status_header( 404 );
 		nocache_headers();
 		echo '';
+		exit;
+	}
+
+	if ( $serve_sw ) {
+		status_header( 200 );
+		header( 'Content-Type: application/javascript; charset=' . get_bloginfo( 'charset' ) );
+		header( 'X-Content-Type-Options: nosniff' );
+		header( 'Service-Worker-Allowed: /' );
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JavaScript worker content.
+		echo manifest_get_service_worker_script();
 		exit;
 	}
 
@@ -84,6 +98,24 @@ function manifest_head_tags() {
 			esc_attr( $theme_color )
 		);
 	}
+
+	$sw_url = add_query_arg( 'beruang_sw', '1', home_url( '/' ) );
+	printf(
+		"<script>(function(){if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register(%s).catch(function(){});});}})();</script>\n",
+		wp_json_encode( esc_url_raw( $sw_url ) )
+	);
+}
+
+/**
+ * Get service worker source.
+ *
+ * @return string
+ */
+function manifest_get_service_worker_script() {
+	return "const CACHE='beruang-pwa-v1';\n"
+		. "self.addEventListener('install',event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.add('/')).catch(()=>{}));});\n"
+		. "self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});\n"
+		. "self.addEventListener('fetch',event=>{if(event.request.method!=='GET'){return;}event.respondWith(fetch(event.request).catch(()=>caches.match(event.request).then(resp=>resp||caches.match('/'))));});\n";
 }
 
 /**

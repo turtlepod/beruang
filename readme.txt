@@ -3,7 +3,7 @@ Contributors: beruang
 Tags: budget, finance, transactions, expense, income, personal finance
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 0.2.0-beta
+Stable tag: 0.3.0-beta
 Requires PHP: 8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -45,7 +45,22 @@ Use on pages where users are logged in:
 * `[beruang-graph]` – Chart (by month or by category) with year selector
 * `[beruang-budget]` – List budgets with progress; add/edit budget modal
 
+== Resources ==
+
+Font Awesome Free Icons
+* Icons: https://fontawesome.com/icons
+* License: CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/
+* The plugin uses inline SVG paths derived from Font Awesome Free icons: xmark (close), calculator (calc), list-ul (list), filter (filter), file-circle-plus (add), pen-to-square (edit), trash-can (trash).
+
 == Changelog ==
+
+= 0.3.0-beta =
+* Refactored front-end CSS into component-based stylesheets and improved responsive rules.
+* Refactored front-end JavaScript into modular files for form, list, graph, budget, config, and shared utilities.
+* Updated admin management screens to use dedicated WP List Table classes for transactions, categories, and budgets.
+* Reworked templates into partials (including shared modals and transaction form partial).
+* Improved form UX with loading states, clearer error messages, calculator behavior, and focus/style fixes.
+* Improved asset/manifest loading behavior and refreshed plugin icons.
 
 = 0.2.0-beta =
 * Use REST API instead of admin-ajax
@@ -58,6 +73,6 @@ Use on pages where users are logged in:
 * Initial beta release
 * Transaction, category, and budget management
 * Shortcodes: form, list, graph, budget
-* Admin pages: Settings, Transactions, Categories, Budgets, Budget Categories
+* Admin pages: Settings, Transactions, Categories, Budgets
 * WP-CLI support
 * Export/import JSON

@@ -14,6 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-db.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/icon-helpers.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/seed.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-transactions-list-table.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-categories-list-table.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-budgets-list-table.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/admin.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/rest.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/manifest.php';
@@ -44,12 +47,17 @@ function on_plugins_loaded() {
 }
 
 /**
+ * Whether built assets exist in dist/.
+ */
+function beruang_dist_exists() {
+	return is_dir( BERUANG_PLUGIN_DIR . 'dist' );
+}
+
+/**
  * Enqueue frontend scripts and styles when shortcodes are present.
  */
 function enqueue_front_scripts() {
-	$post = get_post( get_queried_object_id() );
-
-	if ( ! $post || ( ! has_shortcode( $post->post_content ?? '', 'beruang-form' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-list' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-graph' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-budget' ) ) ) {
+	if ( ! beruang_dist_exists() ) {
 		return;
 	}
 
@@ -64,29 +72,23 @@ function enqueue_front_scripts() {
 			$front_style_ver   = $front_style_asset['version'] ?? $front_style_ver;
 		}
 		$front_css_url = BERUANG_PLUGIN_URL . 'dist/css/front-style.css';
-	} else {
-		$front_css_url   = BERUANG_PLUGIN_URL . 'assets/css/beruang-front.css';
-		$front_style_ver = (string) filemtime( BERUANG_PLUGIN_DIR . 'assets/css/beruang-front.css' );
-	}
-
-	wp_enqueue_style(
-		'beruang-front',
-		$front_css_url,
-		$front_style_deps,
-		$front_style_ver
-	);
-	$deps = array();
-	if ( has_shortcode( $post->post_content ?? '', 'beruang-graph' ) ) {
-		$chart_asset = BERUANG_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
-		wp_enqueue_script(
-			'chartjs',
-			BERUANG_PLUGIN_URL . 'assets/js/chart.umd.min.js',
-			array(),
-			file_exists( $chart_asset ) ? (string) filemtime( $chart_asset ) : '4.4.1',
-			true
+		wp_enqueue_style(
+			'beruang-front',
+			$front_css_url,
+			$front_style_deps,
+			$front_style_ver
 		);
-		$deps[] = 'chartjs';
 	}
+	$deps        = array();
+	$chart_asset = BERUANG_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
+	wp_enqueue_script(
+		'chartjs',
+		BERUANG_PLUGIN_URL . 'assets/js/chart.umd.min.js',
+		array(),
+		file_exists( $chart_asset ) ? (string) filemtime( $chart_asset ) : '4.4.1',
+		true
+	);
+	$deps[]         = 'chartjs';
 	$front_js_dist  = BERUANG_PLUGIN_DIR . 'dist/js/front.js';
 	$front_js_asset = BERUANG_PLUGIN_DIR . 'dist/js/front.asset.php';
 	$front_js_deps  = $deps;
@@ -98,69 +100,64 @@ function enqueue_front_scripts() {
 			$front_js_ver        = $front_js_asset_data['version'] ?? $front_js_ver;
 		}
 		$front_js_url = BERUANG_PLUGIN_URL . 'dist/js/front.js';
-	} else {
-		$front_js_url = BERUANG_PLUGIN_URL . 'assets/js/beruang-front.js';
-		$front_js_ver = (string) filemtime( BERUANG_PLUGIN_DIR . 'assets/js/beruang-front.js' );
+		wp_enqueue_script(
+			'beruang-front',
+			$front_js_url,
+			$front_js_deps,
+			$front_js_ver,
+			true
+		);
+		add_action( 'wp_footer', __NAMESPACE__ . '\print_front_templates', 5 );
+		wp_localize_script(
+			'beruang-front',
+			'beruangData',
+			array(
+				'rest_url'       => get_rest_url( null, 'beruang/v1' ),
+				'rest_nonce'     => wp_create_nonce( 'wp_rest' ),
+				'currency'       => get_option( 'beruang_currency', 'IDR' ),
+				'date_format'    => get_option( 'date_format', 'F j, Y' ),
+				'locale'         => str_replace( '_', '-', get_locale() ),
+				'decimal_sep'    => get_option( 'beruang_decimal_sep', ',' ),
+				'thousands_sep'  => get_option( 'beruang_thousands_sep', '.' ),
+				'decimal_places' => (int) get_option( 'beruang_decimal_places', 2 ),
+				'i18n'           => array(
+					'uncategorized'              => __( 'Uncategorized', 'beruang' ),
+					'expense'                    => __( 'Expense', 'beruang' ),
+					'income'                     => __( 'Income', 'beruang' ),
+					'saved'                      => __( 'Saved.', 'beruang' ),
+					'error'                      => __( 'Something went wrong.', 'beruang' ),
+					'filter'                     => __( 'Filter', 'beruang' ),
+					'search'                     => __( 'Search', 'beruang' ),
+					'monthly'                    => __( 'Monthly', 'beruang' ),
+					'yearly'                     => __( 'Yearly', 'beruang' ),
+					'add_budget'                 => __( 'Add budget', 'beruang' ),
+					'budget_name'                => __( 'Budget name', 'beruang' ),
+					'target'                     => __( 'Target', 'beruang' ),
+					'categories'                 => __( 'Categories', 'beruang' ),
+					'loading'                    => __( 'Loading…', 'beruang' ),
+					'no_transactions'            => __( 'No transactions.', 'beruang' ),
+					'no_budgets'                 => __( 'No budgets.', 'beruang' ),
+					'no_data'                    => __( 'No data', 'beruang' ),
+					'confirm_delete'             => __( 'Delete this budget?', 'beruang' ),
+					'delete'                     => __( 'Delete', 'beruang' ),
+					'edit'                       => __( 'Edit', 'beruang' ),
+					'manage_categories'          => __( 'Manage categories', 'beruang' ),
+					'add_category'               => __( 'Add category', 'beruang' ),
+					'update_category'            => __( 'Update category', 'beruang' ),
+					'confirm_delete_category'    => __( 'Delete this category?', 'beruang' ),
+					'confirm_delete_transaction' => __( 'Delete this transaction?', 'beruang' ),
+					'no_categories'              => __( 'No categories yet.', 'beruang' ),
+				),
+				'edit_icon'      => beruang_get_icon( 'edit' ),
+				'delete_icon'    => beruang_get_icon( 'trash' ),
+			)
+		);
 	}
-
-	wp_enqueue_script(
-		'beruang-front',
-		$front_js_url,
-		$front_js_deps,
-		$front_js_ver,
-		true
-	);
-	add_action( 'wp_footer', __NAMESPACE__ . '\print_front_templates', 5 );
-	wp_localize_script(
-		'beruang-front',
-		'beruangData',
-		array(
-			'rest_url'      => get_rest_url( null, 'beruang/v1' ),
-			'rest_nonce'    => wp_create_nonce( 'wp_rest' ),
-			'currency'      => get_option( 'beruang_currency', 'IDR' ),
-			'date_format'   => get_option( 'date_format', 'F j, Y' ),
-			'locale'        => str_replace( '_', '-', get_locale() ),
-			'decimal_sep'   => get_option( 'beruang_decimal_sep', ',' ),
-			'thousands_sep' => get_option( 'beruang_thousands_sep', '.' ),
-			'i18n'          => array(
-				'uncategorized'              => __( 'Uncategorized', 'beruang' ),
-				'expense'                    => __( 'Expense', 'beruang' ),
-				'income'                     => __( 'Income', 'beruang' ),
-				'saved'                      => __( 'Saved.', 'beruang' ),
-				'error'                      => __( 'Something went wrong.', 'beruang' ),
-				'filter'                     => __( 'Filter', 'beruang' ),
-				'search'                     => __( 'Search', 'beruang' ),
-				'monthly'                    => __( 'Monthly', 'beruang' ),
-				'yearly'                     => __( 'Yearly', 'beruang' ),
-				'add_budget'                 => __( 'Add budget', 'beruang' ),
-				'budget_name'                => __( 'Budget name', 'beruang' ),
-				'target'                     => __( 'Target', 'beruang' ),
-				'categories'                 => __( 'Categories', 'beruang' ),
-				'loading'                    => __( 'Loading…', 'beruang' ),
-				'no_transactions'            => __( 'No transactions.', 'beruang' ),
-				'no_budgets'                 => __( 'No budgets.', 'beruang' ),
-				'no_data'                    => __( 'No data', 'beruang' ),
-				'confirm_delete'             => __( 'Delete this budget?', 'beruang' ),
-				'delete'                     => __( 'Delete', 'beruang' ),
-				'edit'                       => __( 'Edit', 'beruang' ),
-				'manage_categories'          => __( 'Manage categories', 'beruang' ),
-				'add_category'               => __( 'Add category', 'beruang' ),
-				'update_category'            => __( 'Update category', 'beruang' ),
-				'confirm_delete_category'    => __( 'Delete this category?', 'beruang' ),
-				'confirm_delete_transaction' => __( 'Delete this transaction?', 'beruang' ),
-				'no_categories'              => __( 'No categories yet.', 'beruang' ),
-			),
-		)
-	);
 }
 
 /**
  * Output Beruang JS template script blocks in footer.
  */
 function print_front_templates() {
-	$post = get_post( get_queried_object_id() );
-	if ( ! $post || ( ! has_shortcode( $post->post_content ?? '', 'beruang-form' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-list' ) && ! has_shortcode( $post->post_content ?? '', 'beruang-budget' ) ) ) {
-		return;
-	}
 	include BERUANG_PLUGIN_DIR . 'includes/templates-js.php';
 }

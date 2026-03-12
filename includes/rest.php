@@ -176,6 +176,23 @@ function rest_register_routes() {
 		)
 	);
 
+	// Description suggestions (autocomplete)
+	register_rest_route(
+		$ns,
+		'/descriptions',
+		array(
+			'methods'             => 'GET',
+			'permission_callback' => $perm,
+			'callback'            => __NAMESPACE__ . '\rest_get_descriptions',
+			'args'                => array(
+				'search' => array(
+					'default' => '',
+					'type'    => 'string',
+				),
+			),
+		)
+	);
+
 	// Categories
 	register_rest_route(
 		$ns,
@@ -493,6 +510,28 @@ function rest_update_transaction( $request ) {
 	if ( $cat_id > 0 && ! DB::get_category_for_user( $user_id, $cat_id ) ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang' ), 400 );
 	}
+
+	$existing_time       = isset( $existing['time'] ) && '' !== trim( (string) $existing['time'] ) ? $existing['time'] : null;
+	$existing_normalized = array(
+		'date'        => (string) ( $existing['date'] ?? '' ),
+		'time'        => $existing_time,
+		'description' => (string) ( $existing['description'] ?? '' ),
+		'category_id' => (int) ( $existing['category_id'] ?? 0 ),
+		'amount'      => (float) ( $existing['amount'] ?? 0 ),
+		'type'        => ( 'income' === ( $existing['type'] ?? '' ) ) ? 'income' : 'expense',
+	);
+	$data_normalized     = array(
+		'date'        => $data['date'],
+		'time'        => $data['time'],
+		'description' => $data['description'],
+		'category_id' => $data['category_id'],
+		'amount'      => $data['amount'],
+		'type'        => $data['type'],
+	);
+	if ( $existing_normalized === $data_normalized ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'No changes were made.', 'beruang' ), 400 );
+	}
+
 	$ok = DB::update_transaction( $id, $data );
 	if ( $ok ) {
 		return rest_ensure_response(
@@ -522,6 +561,32 @@ function rest_delete_transaction( $request ) {
 		array(
 			'success' => true,
 			'data'    => array( 'deleted' => $ok ),
+		)
+	);
+}
+
+/**
+ * REST: Get description suggestions for autocomplete.
+ *
+ * @param \WP_REST_Request $request Request.
+ * @return \WP_REST_Response
+ */
+function rest_get_descriptions( $request ) {
+	$user_id = get_current_user_id();
+	$search  = $request->get_param( 'search' ) ? sanitize_text_field( $request->get_param( 'search' ) ) : '';
+	if ( '' === $search ) {
+		return rest_ensure_response(
+			array(
+				'success' => true,
+				'data'    => array( 'descriptions' => array() ),
+			)
+		);
+	}
+	$items = DB::get_description_suggestions( $user_id, $search );
+	return rest_ensure_response(
+		array(
+			'success' => true,
+			'data'    => array( 'descriptions' => $items ),
 		)
 	);
 }

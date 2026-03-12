@@ -1,6 +1,6 @@
 {
   "name": "beruang",
-  "version": "0.2.0-beta",
+  "version": "0.3.0-beta",
   "private": true,
   "description": "Track money, transactions, and budgets. Per-user data with shortcodes and admin pages.",
   "license": "GPL-2.0-or-later",
@@ -18,16 +18,16 @@
     "prepare": "husky",
     "start": "npm run watch",
     "watch": "10up-toolkit watch --port=5010",
-    "build": "10up-toolkit build",
+    "build": "npm run lint && 10up-toolkit build",
     "format-js": "10up-toolkit format-js",
     "lint": "npm run lint-php && npm run lint-js && npm run lint-css",
     "lint-php": "composer run lint",
-    "lint-js": "eslint \"assets/js/*.js\"",
-    "lint-css": "stylelint \"assets/css/*.css\"",
+    "lint-js": "eslint \"assets/js/*.js\" \"assets/js/frontend/*.js\"",
+    "lint-css": "stylelint \"assets/css/**/*.css\"",
     "lint-fix": "npm run lint-fix-js && npm run lint-fix-css",
-    "lint-fix-js": "eslint --fix \"assets/js/*.js\"",
-    "lint-fix-css": "stylelint --fix \"assets/css/*.css\"",
-    "zip": "npm run build && version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang.$version.zip beruang -x '*/.git/*' -x '*node_modules*' -x '*/vendor/*'",
+    "lint-fix-js": "eslint --fix \"assets/js/*.js\" \"assets/js/frontend/*.js\"",
+    "lint-fix-css": "stylelint --fix \"assets/css/**/*.css\"",
+    "zip": "npm run build && version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang.$version.zip beruang -x '*/.?*' -x '*node_modules*' -x '*/vendor/*'",
     "clean-dist": "rm -rf ./dist"
   },
   "10up-toolkit": {
@@ -44,7 +44,10 @@
     "assets/js/*.js": [
       "eslint --fix"
     ],
-    "assets/css/*.css": [
+    "assets/js/frontend/*.js": [
+      "eslint --fix"
+    ],
+    "assets/css/**/*.css": [
       "stylelint --fix"
     ]
   }

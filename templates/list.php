@@ -3,8 +3,11 @@
  * Template for [beruang-list] shortcode.
  *
  * @package Beruang
- * @var int   $year       Current year.
- * @var array $categories Flat categories from DB.
+ * @var int    $year        Current year.
+ * @var string $today       Default date (Y-m-d).
+ * @var string $time        Default time (H:i).
+ * @var string $currency    Currency code.
+ * @var array  $categories  Flat categories from DB.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,53 +48,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div class="beruang-edit-tx-modal beruang-modal" id="beruang-edit-tx-modal" hidden>
 		<div class="beruang-modal-dialog">
-			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>">×</button>
+			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 			<div class="beruang-edit-tx-modal-inner">
 			<h4><?php esc_html_e( 'Edit transaction', 'beruang' ); ?></h4>
-			<form id="beruang-edit-tx-form">
-				<input type="hidden" name="id" id="beruang-edit-tx-id" value="" />
-				<div class="beruang-form-row">
-					<label for="beruang-edit-tx-date"><?php esc_html_e( 'Date', 'beruang' ); ?></label>
-					<input type="date" id="beruang-edit-tx-date" name="date" required />
-				</div>
-				<div class="beruang-form-row">
-					<label for="beruang-edit-tx-time"><?php esc_html_e( 'Time', 'beruang' ); ?></label>
-					<input type="time" id="beruang-edit-tx-time" name="time" />
-				</div>
-				<div class="beruang-form-row">
-					<label for="beruang-edit-tx-description"><?php esc_html_e( 'Description', 'beruang' ); ?></label>
-					<input type="text" id="beruang-edit-tx-description" name="description" />
-				</div>
-				<div class="beruang-form-row">
-					<label for="beruang-edit-tx-category"><?php esc_html_e( 'Category', 'beruang' ); ?></label>
-					<select id="beruang-edit-tx-category" name="category_id">
-						<option value="0"><?php esc_html_e( 'Uncategorized', 'beruang' ); ?></option>
-						<?php
-						foreach ( $categories as $cat ) {
-							$depth  = (int) ( $cat['depth'] ?? 0 );
-							$indent = str_repeat( '— ', $depth );
-							echo '<option value="' . esc_attr( $cat['id'] ) . '">' . esc_html( $indent . $cat['name'] ) . '</option>';
-						}
-						?>
-					</select>
-				</div>
-				<div class="beruang-form-row">
-					<label for="beruang-edit-tx-amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label>
-					<input type="number" id="beruang-edit-tx-amount" name="amount" step="0.01" min="0" required />
-				</div>
-				<div class="beruang-form-row">
-					<label><?php esc_html_e( 'Type', 'beruang' ); ?></label>
-					<select id="beruang-edit-tx-type" name="type">
-						<option value="expense"><?php esc_html_e( 'Expense', 'beruang' ); ?></option>
-						<option value="income"><?php esc_html_e( 'Income', 'beruang' ); ?></option>
-					</select>
-				</div>
-				<div class="beruang-form-row beruang-modal-actions">
-					<button type="submit" class="beruang-submit beruang-modal-save"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
-					<button type="button" class="beruang-modal-cancel beruang-edit-tx-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
-				</div>
-			</form>
+			<?php
+			\Beruang\shortcode_load_template(
+				'partials/transaction-form.php',
+				array(
+					'mode'         => 'edit',
+					'form_id'      => 'beruang-edit-tx-form',
+					'field_prefix' => 'beruang-edit-tx',
+					'today'        => $today,
+					'time'         => $time,
+					'currency'     => $currency,
+					'categories'   => $categories,
+				)
+			);
+			?>
 			</div>
 		</div>
 	</div>
 </div>
+<?php \Beruang\output_modals_once(); ?>
