@@ -348,6 +348,9 @@ export function initForm() {
 						key === '\u00f7' ||
 						key === '\u00d7'
 					) {
+						if ( calcOp && calcPrev !== null ) {
+							doEquals();
+						}
 						calcPrev = calcVal;
 						calcOp = key;
 						calcVal = '0';
