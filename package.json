@@ -1,6 +1,6 @@
 {
   "name": "beruang",
-  "version": "0.3.0-beta",
+  "version": "0.4.0-beta",
   "private": true,
   "description": "Track money, transactions, and budgets. Per-user data with shortcodes and admin pages.",
   "license": "GPL-2.0-or-later",

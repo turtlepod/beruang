@@ -148,6 +148,7 @@
 	background: var(--br-bg) var(--br-clock-icon) no-repeat right 0.5em center / 1em 1em !important;
 }
 
+.beruang-edit-tx-modal-inner .beruang-description-wrap,
 .beruang-edit-tx-modal-inner .beruang-category-wrap {
 	display: flex;
 	align-items: stretch;
@@ -155,13 +156,15 @@
 	width: 100%;
 }
 
+.beruang-edit-tx-modal-inner .beruang-description-wrap input,
 .beruang-edit-tx-modal-inner .beruang-category-wrap select {
 	flex: 1;
 	min-width: 0;
 }
 
 .beruang-edit-tx-modal-inner .beruang-manage-categories-btn,
-.beruang-edit-tx-modal-inner .beruang-calc-btn {
+.beruang-edit-tx-modal-inner .beruang-calc-btn,
+.beruang-edit-tx-modal-inner .beruang-note-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;

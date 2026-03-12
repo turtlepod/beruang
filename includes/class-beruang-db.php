@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class DB {
 
-	const DB_VERSION        = 1;
+	const DB_VERSION        = 2;
 	const OPTION_DB_VERSION = 'beruang_db_version';
 
 	/**
@@ -33,6 +33,15 @@ class DB {
 	 */
 	public static function table_category() {
 		return self::wpdb()->prefix . 'beruang_category';
+	}
+
+	/**
+	 * Wallet table name.
+	 *
+	 * @return string
+	 */
+	public static function table_wallet() {
+		return self::wpdb()->prefix . 'beruang_wallet';
 	}
 
 	/**
@@ -82,6 +91,7 @@ class DB {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		$charset_collate = self::wpdb()->get_charset_collate();
 		$cat             = self::table_category();
+		$wallet          = self::table_wallet();
 		$tx              = self::table_transaction();
 		$budget          = self::table_budget();
 		$bc              = self::table_budget_category();
@@ -97,18 +107,29 @@ class DB {
 			KEY parent_id (parent_id)
 		) $charset_collate;";
 
+		$sql_wallet = "CREATE TABLE $wallet (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+			name varchar(255) NOT NULL DEFAULT '',
+			PRIMARY KEY (id),
+			KEY user_id (user_id)
+		) $charset_collate;";
+
 		$sql_tx = "CREATE TABLE $tx (
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			user_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			date date NOT NULL,
 			time time DEFAULT NULL,
 			description text,
+			note longtext,
+			wallet_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			category_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			amount decimal(14,2) NOT NULL DEFAULT 0.00,
 			type varchar(20) NOT NULL DEFAULT 'expense',
 			PRIMARY KEY (id),
 			KEY user_id (user_id),
 			KEY date (date),
+			KEY wallet_id (wallet_id),
 			KEY category_id (category_id),
 			KEY type (type)
 		) $charset_collate;";
@@ -130,10 +151,138 @@ class DB {
 		) $charset_collate;";
 
 		dbDelta( $sql_cat );
+		dbDelta( $sql_wallet );
 		dbDelta( $sql_tx );
 		dbDelta( $sql_budget );
 		dbDelta( $sql_bc );
 		update_option( self::OPTION_DB_VERSION, self::DB_VERSION );
+	}
+
+	/**
+	 * Get all wallets for a user.
+	 *
+	 * @param int $user_id User ID.
+	 * @return array
+	 */
+	public static function get_wallets( $user_id ) {
+		$table   = self::table_wallet();
+		$user_id = absint( $user_id );
+
+		$rows = self::wpdb()->get_results(
+			self::wpdb()->prepare(
+				"SELECT * FROM $table WHERE user_id = %d ORDER BY name ASC",
+				$user_id
+			),
+			ARRAY_A
+		);
+
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * Get a single wallet for a user.
+	 *
+	 * @param int $user_id User ID.
+	 * @param int $id      Wallet ID.
+	 * @return array|null
+	 */
+	public static function get_wallet_for_user( $user_id, $id ) {
+		$table = self::table_wallet();
+		$row   = self::wpdb()->get_row(
+			self::wpdb()->prepare(
+				"SELECT * FROM $table WHERE id = %d AND user_id = %d",
+				absint( $id ),
+				absint( $user_id )
+			),
+			ARRAY_A
+		);
+		return $row ? $row : null;
+	}
+
+	/**
+	 * Get a single wallet by ID (any user). For admin use.
+	 *
+	 * @param int $id Wallet ID.
+	 * @return array|null
+	 */
+	public static function get_wallet_by_id( $id ) {
+		$table = self::table_wallet();
+		$row   = self::wpdb()->get_row(
+			self::wpdb()->prepare( "SELECT * FROM $table WHERE id = %d", absint( $id ) ),
+			ARRAY_A
+		);
+		return $row ? $row : null;
+	}
+
+	/**
+	 * Save a wallet (insert or update).
+	 *
+	 * @param int   $user_id User ID.
+	 * @param array $data    Wallet fields.
+	 * @param int   $id      Update existing if > 0.
+	 * @return int|false Wallet ID or false.
+	 */
+	public static function save_wallet( $user_id, $data, $id = 0 ) {
+		$table   = self::table_wallet();
+		$user_id = absint( $user_id );
+		$name    = isset( $data['name'] ) ? sanitize_text_field( $data['name'] ) : '';
+
+		if ( '' === $name ) {
+			return false;
+		}
+
+		if ( $id > 0 ) {
+			$wallet = self::get_wallet_for_user( $user_id, $id );
+			if ( ! $wallet ) {
+				return false;
+			}
+			self::wpdb()->update(
+				$table,
+				array( 'name' => $name ),
+				array(
+					'id'      => absint( $id ),
+					'user_id' => $user_id,
+				),
+				array( '%s' ),
+				array( '%d', '%d' )
+			);
+			return absint( $id );
+		}
+
+		self::wpdb()->insert(
+			$table,
+			array(
+				'user_id' => $user_id,
+				'name'    => $name,
+			),
+			array( '%d', '%s' )
+		);
+
+		$insert_id = self::wpdb()->insert_id;
+		return $insert_id ? (int) $insert_id : false;
+	}
+
+	/**
+	 * Delete wallet.
+	 *
+	 * @param int $user_id User ID.
+	 * @param int $id      Wallet ID.
+	 * @return bool
+	 */
+	public static function delete_wallet( $user_id, $id ) {
+		$table  = self::table_wallet();
+		$wallet = self::get_wallet_for_user( $user_id, $id );
+		if ( ! $wallet ) {
+			return false;
+		}
+		return (bool) self::wpdb()->delete(
+			$table,
+			array(
+				'id'      => absint( $id ),
+				'user_id' => absint( $user_id ),
+			),
+			array( '%d', '%d' )
+		);
 	}
 
 	// --- Categories ---
@@ -320,7 +469,7 @@ class DB {
 	 * Get transactions with optional filters.
 	 *
 	 * @param int   $user_id User ID.
-	 * @param array $args    Keys: month, year, search, category_id, type, page, per_page.
+	 * @param array $args    Keys: month, year, search, category_id, category_ids, wallet_id, type, page, per_page.
 	 * @return array Keys: items, total.
 	 */
 	public static function get_transactions( $user_id, $args = array() ) {
@@ -340,6 +489,22 @@ class DB {
 		if ( isset( $args['category_id'] ) && '' !== $args['category_id'] && null !== $args['category_id'] ) {
 			$where[]  = 'category_id = %d';
 			$values[] = absint( $args['category_id'] );
+		}
+		if ( ! empty( $args['category_ids'] ) && is_array( $args['category_ids'] ) ) {
+			$ids = array_values(
+				array_unique(
+					array_map( 'absint', $args['category_ids'] )
+				)
+			);
+			if ( ! empty( $ids ) ) {
+				$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+				$where[]      = "category_id IN ($placeholders)";
+				$values       = array_merge( $values, $ids );
+			}
+		}
+		if ( isset( $args['wallet_id'] ) && '' !== $args['wallet_id'] && null !== $args['wallet_id'] ) {
+			$where[]  = 'wallet_id = %d';
+			$values[] = absint( $args['wallet_id'] );
 		}
 		if ( ! empty( $args['type'] ) && in_array( $args['type'], array( 'expense', 'income' ), true ) ) {
 			$where[]  = 'type = %s';
@@ -413,6 +578,18 @@ class DB {
 	}
 
 	/**
+	 * Get user IDs that have at least one wallet. For admin filter dropdown.
+	 *
+	 * @return int[]
+	 */
+	public static function get_wallet_user_ids() {
+		$table = self::table_wallet();
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name from API.
+		$ids = self::wpdb()->get_col( "SELECT DISTINCT user_id FROM $table ORDER BY user_id ASC" );
+		return is_array( $ids ) ? array_map( 'absint', $ids ) : array();
+	}
+
+	/**
 	 * Get a single transaction by ID (any user). For admin use.
 	 *
 	 * @param int $id Transaction ID.
@@ -471,13 +648,14 @@ class DB {
 	 * Update an existing transaction.
 	 *
 	 * @param int   $id   Transaction ID.
-	 * @param array $data date, time, description, category_id, amount, type.
+	 * @param array $data date, time, description, note, wallet_id, category_id, amount, type.
 	 * @return bool
 	 */
 	public static function update_transaction( $id, $data ) {
-		$table = self::table_transaction();
-		$id    = absint( $id );
-		$date  = isset( $data['date'] ) ? sanitize_text_field( $data['date'] ) : '';
+		$table    = self::table_transaction();
+		$id       = absint( $id );
+		$existing = self::get_transaction_by_id( $id );
+		$date     = isset( $data['date'] ) ? sanitize_text_field( $data['date'] ) : '';
 		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
 			$date = current_time( 'Y-m-d' );
 		}
@@ -486,9 +664,14 @@ class DB {
 			$time = null;
 		}
 		$description = isset( $data['description'] ) ? sanitize_textarea_field( $data['description'] ) : '';
+		$note        = array_key_exists( 'note', $data ) ? sanitize_textarea_field( $data['note'] ) : (string) ( $existing['note'] ?? '' );
+		$wallet_id   = isset( $data['wallet_id'] ) ? absint( $data['wallet_id'] ) : 0;
 		$category_id = isset( $data['category_id'] ) ? absint( $data['category_id'] ) : 0;
 		$amount      = isset( $data['amount'] ) ? floatval( $data['amount'] ) : 0;
 		$type        = isset( $data['type'] ) && 'income' === $data['type'] ? 'income' : 'expense';
+		if ( $wallet_id < 1 ) {
+			$wallet_id = $existing ? (int) $existing['wallet_id'] : 0;
+		}
 
 		return (bool) self::wpdb()->update(
 			$table,
@@ -496,12 +679,14 @@ class DB {
 				'date'        => $date,
 				'time'        => $time,
 				'description' => $description,
+				'note'        => $note,
+				'wallet_id'   => $wallet_id,
 				'category_id' => $category_id,
 				'amount'      => $amount,
 				'type'        => $type,
 			),
 			array( 'id' => $id ),
-			array( '%s', '%s', '%s', '%d', '%f', '%s' ),
+			array( '%s', '%s', '%s', '%s', '%d', '%d', '%f', '%s' ),
 			array( '%d' )
 		);
 	}
@@ -529,7 +714,7 @@ class DB {
 	 * Insert a new transaction.
 	 *
 	 * @param int   $user_id User ID.
-	 * @param array $data    Keys: date, time, description, category_id, amount, type.
+	 * @param array $data    Keys: date, time, description, note, wallet_id, category_id, amount, type.
 	 * @return int|false Insert ID or false.
 	 */
 	public static function insert_transaction( $user_id, $data ) {
@@ -544,6 +729,8 @@ class DB {
 			$time = null;
 		}
 		$description = isset( $data['description'] ) ? sanitize_textarea_field( $data['description'] ) : '';
+		$note        = isset( $data['note'] ) ? sanitize_textarea_field( $data['note'] ) : '';
+		$wallet_id   = isset( $data['wallet_id'] ) ? absint( $data['wallet_id'] ) : 0;
 		$category_id = isset( $data['category_id'] ) ? absint( $data['category_id'] ) : 0;
 		$amount      = isset( $data['amount'] ) ? floatval( $data['amount'] ) : 0;
 		$type        = isset( $data['type'] ) && 'income' === $data['type'] ? 'income' : 'expense';
@@ -555,11 +742,13 @@ class DB {
 				'date'        => $date,
 				'time'        => $time,
 				'description' => $description,
+				'note'        => $note,
+				'wallet_id'   => $wallet_id,
 				'category_id' => $category_id,
 				'amount'      => $amount,
 				'type'        => $type,
 			),
-			array( '%d', '%s', '%s', '%s', '%d', '%f', '%s' )
+			array( '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%f', '%s' )
 		);
 		$insert_id = self::wpdb()->insert_id;
 		return $insert_id ? (int) $insert_id : false;
@@ -590,10 +779,10 @@ class DB {
 	}
 
 	/**
-	 * Delete all Beruang data for a user: transactions, budget-category links, budgets, categories.
+	 * Delete all Beruang data for a user: transactions, budget-category links, budgets, wallets, categories.
 	 *
 	 * @param int $user_id User ID.
-	 * @return array{ transactions: int, budgets: int, categories: int } Counts of deleted rows.
+	 * @return array{ transactions: int, budgets: int, wallets: int, categories: int } Counts of deleted rows.
 	 */
 	public static function reset_user_data( $user_id ) {
 		$table   = self::table_transaction();
@@ -607,12 +796,15 @@ class DB {
 			$placeholders = implode( ',', array_map( 'absint', $ids ) );
 			$bc_del       = self::wpdb()->query( "DELETE FROM $bc WHERE budget_id IN ($placeholders)" );
 		}
-		$bud_del = self::wpdb()->query( self::wpdb()->prepare( "DELETE FROM $budget WHERE user_id = %d", $user_id ) );
-		$cat     = self::table_category();
-		$cat_del = self::wpdb()->query( self::wpdb()->prepare( "DELETE FROM $cat WHERE user_id = %d", $user_id ) );
+		$bud_del  = self::wpdb()->query( self::wpdb()->prepare( "DELETE FROM $budget WHERE user_id = %d", $user_id ) );
+		$wallet   = self::table_wallet();
+		$wall_del = self::wpdb()->query( self::wpdb()->prepare( "DELETE FROM $wallet WHERE user_id = %d", $user_id ) );
+		$cat      = self::table_category();
+		$cat_del  = self::wpdb()->query( self::wpdb()->prepare( "DELETE FROM $cat WHERE user_id = %d", $user_id ) );
 		return array(
 			'transactions' => (int) $tx,
 			'budgets'      => (int) $bud_del,
+			'wallets'      => (int) $wall_del,
 			'categories'   => (int) $cat_del,
 		);
 	}

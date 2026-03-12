@@ -21,6 +21,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 </div>
+<div class="beruang beruang-note-modal beruang-modal" id="beruang-note-modal" hidden>
+	<div class="beruang-modal-dialog">
+		<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+		<div class="beruang-note-modal-inner">
+			<h4><?php esc_html_e( 'Transaction note', 'beruang' ); ?></h4>
+			<div class="beruang-form-row">
+				<label for="beruang-note-modal-text"><?php esc_html_e( 'Note', 'beruang' ); ?></label>
+				<textarea id="beruang-note-modal-text" rows="5" placeholder="<?php esc_attr_e( 'Optional details...', 'beruang' ); ?>"></textarea>
+			</div>
+			<div class="beruang-form-row beruang-modal-actions">
+				<button type="button" class="beruang-submit beruang-modal-save beruang-note-save"><?php esc_html_e( 'Save note', 'beruang' ); ?></button>
+				<button type="button" class="beruang-modal-cancel beruang-note-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+			</div>
+		</div>
+	</div>
+</div>
 <div class="beruang beruang-categories-modal beruang-modal" id="beruang-categories-modal" hidden>
 	<div class="beruang-modal-dialog">
 		<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>

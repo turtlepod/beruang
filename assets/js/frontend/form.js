@@ -21,17 +21,39 @@ function setCurrentDateTime( form ) {
 		String( now.getMinutes() ).padStart( 2, '0' );
 }
 
+function syncNoteUi( form ) {
+	const noteEl = form.querySelector( '[name="note"]' );
+	const noteBtn = form.querySelector( '.beruang-note-btn' );
+	if ( ! noteEl ) return;
+
+	const hasNote = ( noteEl.value || '' ).trim().length > 0;
+	const addLabel = i18n.add_note || 'Add note';
+	const editLabel = i18n.edit_note || 'Edit note';
+
+	if ( noteBtn ) {
+		noteBtn.setAttribute( 'title', hasNote ? editLabel : addLabel );
+		noteBtn.setAttribute( 'aria-label', hasNote ? editLabel : addLabel );
+	}
+}
+
 function resetAddForm( form ) {
 	const typeField = form.querySelector( '[name="type"]' );
 	const message = form.querySelector( '.beruang-form-message' );
 	setCurrentDateTime( form );
 	form.querySelector( '[name="category_id"]' ).value = '0';
+	const walletEl = form.querySelector( '[name="wallet_id"]' );
+	if ( walletEl ) {
+		walletEl.value = walletEl.dataset.defaultWalletId || walletEl.value || '0';
+	}
 	if ( typeField ) typeField.value = 'expense';
 	form.querySelectorAll( '.beruang-type-btn' ).forEach( function ( b ) {
 		b.classList.remove( 'active' );
 		if ( b.dataset.type === 'expense' ) b.classList.add( 'active' );
 	} );
 	form.querySelector( '[name="description"]' ).value = '';
+	const noteEl = form.querySelector( '[name="note"]' );
+	if ( noteEl ) noteEl.value = '';
+	syncNoteUi( form );
 	form.querySelector( '[name="amount"]' ).value = '';
 	if ( message ) {
 		message.textContent = i18n.saved || 'Saved.';
@@ -43,6 +65,55 @@ export function initForm() {
 	const optionTpl = beruangTemplate( 'beruang-option' );
 	const catItemTpl = beruangTemplate( 'beruang-cat-item' );
 	const catEmptyTpl = beruangTemplate( 'beruang-cat-empty' );
+
+	let noteTargetForm = null;
+	let noteTargetInput = null;
+	const noteModal = document.getElementById( 'beruang-note-modal' );
+	const noteModalText = document.getElementById( 'beruang-note-modal-text' );
+	const noteSaveBtn = noteModal && noteModal.querySelector( '.beruang-note-save' );
+	const noteCancelBtn = noteModal && noteModal.querySelector( '.beruang-note-cancel' );
+
+	function closeNoteModal() {
+		noteTargetForm = null;
+		noteTargetInput = null;
+		if ( noteModal ) noteModal.hidden = true;
+	}
+
+	document.addEventListener( 'click', function ( e ) {
+		const noteBtn = e.target.closest( '.beruang-note-btn' );
+		if ( ! noteBtn || ! noteModal || ! noteModalText ) return;
+		const form = noteBtn.closest( '.beruang-transaction-form' );
+		if ( ! form ) return;
+		const noteInput = form.querySelector( '[name="note"]' );
+		if ( ! noteInput ) return;
+		noteTargetForm = form;
+		noteTargetInput = noteInput;
+		noteModalText.value = noteInput.value || '';
+		noteModal.hidden = false;
+		noteModalText.focus();
+	} );
+
+	if ( noteSaveBtn && noteModalText ) {
+		noteSaveBtn.addEventListener( 'click', function () {
+			if ( noteTargetInput ) {
+				noteTargetInput.value = noteModalText.value;
+			}
+			if ( noteTargetForm ) {
+				syncNoteUi( noteTargetForm );
+			}
+			closeNoteModal();
+		} );
+	}
+
+	if ( noteCancelBtn ) {
+		noteCancelBtn.addEventListener( 'click', closeNoteModal );
+	}
+
+	if ( noteModal ) {
+		noteModal.addEventListener( 'click', function ( e ) {
+			if ( e.target === noteModal ) closeNoteModal();
+		} );
+	}
 
 	// Categories modal
 	const catModal = document.getElementById( 'beruang-categories-modal' );
@@ -77,6 +148,38 @@ export function initForm() {
 			opts += optionTpl( { value: c.id, label: indent + ( c.name || '' ) } );
 		} );
 		return opts;
+	}
+
+	function buildWalletOptions( wallets ) {
+		let opts = optionTpl( {
+			value: '0',
+			label: i18n.cash || 'Cash',
+		} );
+		( wallets || [] ).forEach( function ( w ) {
+			opts += optionTpl( {
+				value: w.id,
+				label: w.name || '',
+			} );
+		} );
+		return opts;
+	}
+
+	function refreshWalletSelects() {
+		request( 'GET', '/wallets' ).then( function ( r ) {
+			if ( ! r.success || ! r.data || ! r.data.wallets ) return;
+			const wallets = r.data.wallets;
+			const defaultWalletId = String( r.data.default_wallet_id || '0' );
+			document.querySelectorAll( '.beruang-transaction-form [name="wallet_id"]' ).forEach( function ( el ) {
+				const currentVal = el.value;
+				el.innerHTML = buildWalletOptions( wallets );
+				el.dataset.defaultWalletId = defaultWalletId;
+				if ( currentVal && el.querySelector( 'option[value="' + currentVal + '"]' ) ) {
+					el.value = currentVal;
+				} else {
+					el.value = defaultWalletId;
+				}
+			} );
+		} );
 	}
 
 	function refreshCategoriesInModal( excludeId, selectedParentId ) {
@@ -471,14 +574,24 @@ export function initForm() {
 
 	// Transaction forms
 	const forms = document.querySelectorAll( '.beruang-transaction-form' );
+	refreshWalletSelects();
+	document.addEventListener( 'beruang-wallets-updated', refreshWalletSelects );
 	forms.forEach( function ( form ) {
 		const typeField = form.querySelector( '[name="type"]' );
 		const message = form.querySelector( '.beruang-form-message' );
 		const mode = form.dataset.mode || 'add';
 		const isEdit = mode === 'edit';
+		const noteEl = form.querySelector( '[name="note"]' );
 
 		if ( ! isEdit ) {
 			setCurrentDateTime( form );
+		}
+
+		syncNoteUi( form );
+		if ( noteEl ) {
+			noteEl.addEventListener( 'input', function () {
+				syncNoteUi( form );
+			} );
 		}
 
 		form.querySelectorAll( '.beruang-type-btn' ).forEach( function ( btn ) {
@@ -502,6 +615,8 @@ export function initForm() {
 				date: form.querySelector( '[name="date"]' ).value,
 				time: form.querySelector( '[name="time"]' ).value || null,
 				description: form.querySelector( '[name="description"]' ).value,
+				note: ( form.querySelector( '[name="note"]' ) || { value: '' } ).value,
+				wallet_id: ( form.querySelector( '[name="wallet_id"]' ) || { value: 0 } ).value || 0,
 				category_id: form.querySelector( '[name="category_id"]' ).value || 0,
 				amount: form.querySelector( '[name="amount"]' ).value,
 				type: ( typeField && typeField.value ) || 'expense',

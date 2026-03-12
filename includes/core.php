@@ -17,6 +17,7 @@ require_once BERUANG_PLUGIN_DIR . 'includes/seed.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-transactions-list-table.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-categories-list-table.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-budgets-list-table.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-wallets-list-table.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/admin.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/rest.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/manifest.php';
@@ -122,6 +123,7 @@ function enqueue_front_scripts() {
 				'decimal_places' => (int) get_option( 'beruang_decimal_places', 2 ),
 				'i18n'           => array(
 					'uncategorized'              => __( 'Uncategorized', 'beruang' ),
+					'cash'                       => __( 'Cash', 'beruang' ),
 					'expense'                    => __( 'Expense', 'beruang' ),
 					'income'                     => __( 'Income', 'beruang' ),
 					'saved'                      => __( 'Saved.', 'beruang' ),
@@ -144,6 +146,10 @@ function enqueue_front_scripts() {
 					'manage_categories'          => __( 'Manage categories', 'beruang' ),
 					'add_category'               => __( 'Add category', 'beruang' ),
 					'update_category'            => __( 'Update category', 'beruang' ),
+					'add_wallet'                 => __( 'Add wallet', 'beruang' ),
+					'update_wallet'              => __( 'Update wallet', 'beruang' ),
+					'confirm_delete_wallet'      => __( 'Delete this wallet?', 'beruang' ),
+					'no_wallets'                 => __( 'No wallets yet.', 'beruang' ),
 					'confirm_delete_category'    => __( 'Delete this category?', 'beruang' ),
 					'confirm_delete_transaction' => __( 'Delete this transaction?', 'beruang' ),
 					'no_categories'              => __( 'No categories yet.', 'beruang' ),

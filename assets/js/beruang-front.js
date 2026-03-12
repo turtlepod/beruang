@@ -10,6 +10,7 @@ import { initForm } from './frontend/form.js';
 import { initList } from './frontend/list.js';
 import { initGraph } from './frontend/graph.js';
 import { initBudget } from './frontend/budget.js';
+import { initWallet } from './frontend/wallet.js';
 
 // Modal x close (dismiss without saving).
 document.addEventListener( 'click', function ( e ) {
@@ -24,4 +25,5 @@ document.addEventListener( 'DOMContentLoaded', function () {
 	initList();
 	initGraph();
 	initBudget();
+	initWallet();
 } );

@@ -28,6 +28,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<li class="beruang-cat-empty">{{ data.message }}</li>
 </script>
 
+<script type="text/html" id="tmpl-beruang-wallet-item">
+	<li class="beruang-wallet-item" data-id="{{ data.id }}" data-name="{{ data.name }}">
+		<span class="beruang-cat-item-name">{{ data.displayName }}</span>
+		{{{ data.actionsHtml }}}
+	</li>
+</script>
+
+<script type="text/html" id="tmpl-beruang-wallet-empty">
+	<li class="beruang-cat-empty">{{ data.message }}</li>
+</script>
+
 <script type="text/html" id="tmpl-beruang-message">
 	<p class="beruang-loading">{{ data.message }}</p>
 </script>

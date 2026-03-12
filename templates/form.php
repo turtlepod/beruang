@@ -7,6 +7,8 @@
  * @var string $time        Default time (H:i).
  * @var string $currency    Currency code.
  * @var array  $categories  Flat categories from DB.
+ * @var array  $wallets     Wallets from DB.
+ * @var int    $default_wallet_id Default wallet ID.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,13 +22,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	\Beruang\shortcode_load_template(
 		'partials/transaction-form.php',
 		array(
-			'mode'         => 'add',
-			'form_id'      => 'beruang-transaction-form',
-			'field_prefix' => 'beruang',
-			'today'        => $today,
-			'time'         => $time,
-			'currency'     => $currency,
-			'categories'   => $categories,
+			'mode'              => 'add',
+			'form_id'           => 'beruang-transaction-form',
+			'field_prefix'      => 'beruang',
+			'today'             => $today,
+			'time'              => $time,
+			'currency'          => $currency,
+			'categories'        => $categories,
+			'wallets'           => $wallets,
+			'default_wallet_id' => $default_wallet_id,
 		)
 	);
 	?>

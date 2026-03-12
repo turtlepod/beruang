@@ -25,11 +25,11 @@
 	& .beruang-form-row input[type="text"],
 	& .beruang-form-row input[type="number"],
 	& .beruang-form-row input[type="date"],
-	& .beruang-form-row input[type="time"] {
+	& .beruang-form-row input[type="time"],
+	& .beruang-form-row textarea {
 		width: 100%;
 		max-width: var(--br-control-width);
 		padding: 0.5em 0.6em;
-		height: var(--br-control-height);
 		background: var(--br-bg) !important;
 		color: var(--br-text) !important;
 		border: 1px solid var(--br-border) !important;
@@ -43,6 +43,18 @@
 			outline: none;
 			border-color: #000 !important;
 		}
+	}
+
+	& .beruang-form-row input[type="text"],
+	& .beruang-form-row input[type="number"],
+	& .beruang-form-row input[type="date"],
+	& .beruang-form-row input[type="time"] {
+		height: var(--br-control-height);
+	}
+
+	& .beruang-form-row textarea {
+		min-height: 6.5em;
+		resize: vertical;
 	}
 
 	& .beruang-form-row .beruang-datetime-wrap input[type="date"] {
@@ -89,7 +101,8 @@
 	}
 
 	& .beruang-manage-categories-btn,
-	& .beruang-calc-btn {
+	& .beruang-calc-btn,
+	& .beruang-note-btn {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -217,13 +230,30 @@
 	}
 }
 
+.beruang-description-wrap,
 .beruang-category-wrap {
 	display: flex;
 	align-items: stretch;
 	gap: 0.5em;
 	max-width: var(--br-control-width);
 	width: 100%;
+}
 
+.beruang-description-wrap {
+	& input {
+		flex: 1;
+		min-width: 0;
+		height: var(--br-control-height) !important;
+		margin: 0 !important;
+	}
+
+	& .beruang-note-btn {
+		height: var(--br-control-height) !important;
+		margin: 0 !important;
+	}
+}
+
+.beruang-category-wrap {
 	& select {
 		flex: 1;
 		min-width: 0;

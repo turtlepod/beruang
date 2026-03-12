@@ -19,6 +19,7 @@ export function initList() {
 	const yearSel = listWrap && listWrap.querySelector( '.beruang-filter-year' );
 	const searchEl = listWrap && listWrap.querySelector( '.beruang-filter-search' );
 	const categoryEl = listWrap && listWrap.querySelector( '.beruang-filter-category' );
+	const budgetEl = listWrap && listWrap.querySelector( '.beruang-filter-budget' );
 	if ( filterBtn && filters ) {
 		filterBtn.addEventListener( 'click', function () {
 			filters.hidden = ! filters.hidden;
@@ -130,8 +131,9 @@ export function initList() {
 			: parseInt( accordion.dataset.year, 10 );
 		const search = searchEl ? searchEl.value : '';
 		const categoryId = categoryEl ? categoryEl.value : '';
+		const budgetId = budgetEl ? budgetEl.value : '';
 		accordion.innerHTML = msgTpl( { message: i18n.loading || 'Loading…' } );
-		const params = { year, search, category_id: categoryId, page: 1 };
+		const params = { year, search, category_id: categoryId, budget_id: budgetId, page: 1 };
 		let allItems = [];
 		function fetchPage( pageNum ) {
 			params.page = pageNum;
@@ -163,6 +165,7 @@ export function initList() {
 			if ( yearSel ) yearSel.value = accordion.dataset.year || '';
 			if ( searchEl ) searchEl.value = '';
 			if ( categoryEl ) categoryEl.value = '';
+			if ( budgetEl ) budgetEl.value = '';
 			loadList();
 		} );
 	}
@@ -212,12 +215,19 @@ export function initList() {
 				const timeEl = editForm.querySelector( '[name="time"]' );
 				const descEl = editForm.querySelector( '[name="description"]' );
 				const catEl = editForm.querySelector( '[name="category_id"]' );
+				const noteEl = editForm.querySelector( '[name="note"]' );
+				const walletEl = editForm.querySelector( '[name="wallet_id"]' );
 				const amtEl = editForm.querySelector( '[name="amount"]' );
 				const typeEl = editForm.querySelector( '[name="type"]' );
 				if ( idEl ) idEl.value = t.id;
 				if ( dateEl ) dateEl.value = t.date || '';
 				if ( timeEl ) timeEl.value = t.time || '';
 				if ( descEl ) descEl.value = t.description || '';
+				if ( noteEl ) {
+					noteEl.value = t.note || '';
+					noteEl.dispatchEvent( new Event( 'input' ) );
+				}
+				if ( walletEl ) walletEl.value = t.wallet_id || walletEl.dataset.defaultWalletId || '0';
 				if ( catEl ) catEl.value = t.category_id || '0';
 				if ( amtEl ) amtEl.value = amtStr;
 				if ( typeEl ) typeEl.value = type;

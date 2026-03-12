@@ -72,6 +72,11 @@ function rest_register_routes() {
 					'required' => true,
 					'type'     => 'string',
 				),
+				'note'        => array( 'type' => 'string' ),
+				'wallet_id'   => array(
+					'default' => 0,
+					'type'    => 'integer',
+				),
 				'category_id' => array(
 					'default' => 0,
 					'type'    => 'integer',
@@ -104,6 +109,10 @@ function rest_register_routes() {
 					'type'    => 'string',
 				),
 				'category_id' => array(
+					'default' => '',
+					'type'    => 'string',
+				),
+				'budget_id'   => array(
 					'default' => '',
 					'type'    => 'string',
 				),
@@ -152,6 +161,8 @@ function rest_register_routes() {
 				'date'        => array( 'type' => 'string' ),
 				'time'        => array( 'type' => 'string' ),
 				'description' => array( 'type' => 'string' ),
+				'note'        => array( 'type' => 'string' ),
+				'wallet_id'   => array( 'type' => 'integer' ),
 				'category_id' => array( 'type' => 'integer' ),
 				'amount'      => array( 'type' => 'number' ),
 				'type'        => array( 'enum' => array( 'expense', 'income' ) ),
@@ -201,6 +212,53 @@ function rest_register_routes() {
 			'methods'             => 'GET',
 			'permission_callback' => $perm,
 			'callback'            => __NAMESPACE__ . '\rest_get_categories',
+		)
+	);
+
+	// Wallets
+	register_rest_route(
+		$ns,
+		'/wallets',
+		array(
+			'methods'             => 'GET',
+			'permission_callback' => $perm,
+			'callback'            => __NAMESPACE__ . '\rest_get_wallets',
+		)
+	);
+	register_rest_route(
+		$ns,
+		'/wallets',
+		array(
+			'methods'             => 'POST',
+			'permission_callback' => $perm,
+			'callback'            => __NAMESPACE__ . '\rest_save_wallet',
+			'args'                => array(
+				'id'   => array(
+					'default' => 0,
+					'type'    => 'integer',
+				),
+				'name' => array(
+					'required' => true,
+					'type'     => 'string',
+				),
+			),
+		)
+	);
+	register_rest_route(
+		$ns,
+		'/wallets/(?P<id>\d+)',
+		array(
+			'methods'             => 'DELETE',
+			'permission_callback' => $perm,
+			'callback'            => __NAMESPACE__ . '\rest_delete_wallet',
+			'args'                => array(
+				'id' => array(
+					'required'          => true,
+					'validate_callback' => function ( $v ) {
+						return is_numeric( $v ) && $v > 0;
+					},
+				),
+			),
 		)
 	);
 	register_rest_route(
@@ -369,12 +427,18 @@ function rest_save_transaction( $request ) {
 	$date        = isset( $body['date'] ) ? sanitize_text_field( $body['date'] ) : '';
 	$time        = isset( $body['time'] ) ? sanitize_text_field( $body['time'] ) : null;
 	$description = isset( $body['description'] ) ? sanitize_textarea_field( $body['description'] ) : '';
+	$note        = isset( $body['note'] ) ? sanitize_textarea_field( $body['note'] ) : '';
+	$wallet_id   = isset( $body['wallet_id'] ) ? absint( $body['wallet_id'] ) : 0;
 	$category_id = isset( $body['category_id'] ) ? absint( $body['category_id'] ) : 0;
 	$amount      = isset( $body['amount'] ) ? floatval( $body['amount'] ) : 0;
 	$type        = isset( $body['type'] ) && 'income' === $body['type'] ? 'income' : 'expense';
 
 	if ( '' === $time ) {
 		$time = null;
+	}
+
+	if ( $wallet_id > 0 && ! DB::get_wallet_for_user( $user_id, $wallet_id ) ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid wallet.', 'beruang' ), 400 );
 	}
 
 	if ( $category_id > 0 && ! DB::get_category_for_user( $user_id, $category_id ) ) {
@@ -387,6 +451,8 @@ function rest_save_transaction( $request ) {
 			'date'        => $date,
 			'time'        => $time,
 			'description' => $description,
+			'note'        => $note,
+			'wallet_id'   => $wallet_id,
 			'category_id' => $category_id,
 			'amount'      => $amount,
 			'type'        => $type,
@@ -415,21 +481,36 @@ function rest_get_transactions( $request ) {
 	$search      = $request->get_param( 'search' ) ? sanitize_text_field( $request->get_param( 'search' ) ) : '';
 	$category_id = $request->get_param( 'category_id' );
 	$category_id = '' !== $category_id && null !== $category_id ? absint( $category_id ) : '';
+	$budget_id   = $request->get_param( 'budget_id' );
+	$budget_id   = '' !== $budget_id && null !== $budget_id ? absint( $budget_id ) : '';
 	$page        = max( 1, absint( $request->get_param( 'page' ) ) );
 
 	if ( $category_id > 0 && ! DB::get_category_for_user( $user_id, $category_id ) ) {
 		$category_id = '';
 	}
 
+	$category_ids = array();
+	if ( $budget_id > 0 ) {
+		$budget = DB::get_budget_for_user( $user_id, $budget_id );
+		if ( ! $budget ) {
+			$budget_id = '';
+		} else {
+			$category_ids = ! empty( $budget['category_ids'] ) && is_array( $budget['category_ids'] )
+				? array_map( 'absint', $budget['category_ids'] )
+				: array();
+		}
+	}
+
 	$per_page = $request->get_param( 'per_page' ) ? absint( $request->get_param( 'per_page' ) ) : 100;
 	$per_page = min( max( 1, $per_page ), 500 );
 
 	$args   = array(
-		'year'        => $year,
-		'search'      => $search,
-		'category_id' => $category_id,
-		'page'        => $page,
-		'per_page'    => $per_page,
+		'year'         => $year,
+		'search'       => $search,
+		'category_id'  => $category_id,
+		'category_ids' => $category_ids,
+		'page'         => $page,
+		'per_page'     => $per_page,
 	);
 	$result = DB::get_transactions( $user_id, $args );
 	$total  = (int) ( $result['total'] ?? 0 );
@@ -498,12 +579,19 @@ function rest_update_transaction( $request ) {
 		'date'        => isset( $body['date'] ) ? sanitize_text_field( $body['date'] ) : $existing['date'],
 		'time'        => isset( $body['time'] ) ? sanitize_text_field( $body['time'] ) : null,
 		'description' => isset( $body['description'] ) ? sanitize_textarea_field( $body['description'] ) : $existing['description'],
+		'note'        => isset( $body['note'] ) ? sanitize_textarea_field( $body['note'] ) : (string) ( $existing['note'] ?? '' ),
+		'wallet_id'   => isset( $body['wallet_id'] ) ? absint( $body['wallet_id'] ) : (int) ( $existing['wallet_id'] ?? 0 ),
 		'category_id' => isset( $body['category_id'] ) ? absint( $body['category_id'] ) : (int) ( $existing['category_id'] ?? 0 ),
 		'amount'      => isset( $body['amount'] ) ? floatval( $body['amount'] ) : (float) ( $existing['amount'] ?? 0 ),
 		'type'        => isset( $body['type'] ) && 'income' === $body['type'] ? 'income' : 'expense',
 	);
 	if ( '' === $data['time'] ) {
 		$data['time'] = null;
+	}
+
+	$wallet_id = (int) $data['wallet_id'];
+	if ( $wallet_id > 0 && ! DB::get_wallet_for_user( $user_id, $wallet_id ) ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid wallet.', 'beruang' ), 400 );
 	}
 
 	$cat_id = (int) $data['category_id'];
@@ -516,6 +604,8 @@ function rest_update_transaction( $request ) {
 		'date'        => (string) ( $existing['date'] ?? '' ),
 		'time'        => $existing_time,
 		'description' => (string) ( $existing['description'] ?? '' ),
+		'note'        => (string) ( $existing['note'] ?? '' ),
+		'wallet_id'   => (int) ( $existing['wallet_id'] ?? 0 ),
 		'category_id' => (int) ( $existing['category_id'] ?? 0 ),
 		'amount'      => (float) ( $existing['amount'] ?? 0 ),
 		'type'        => ( 'income' === ( $existing['type'] ?? '' ) ) ? 'income' : 'expense',
@@ -524,6 +614,8 @@ function rest_update_transaction( $request ) {
 		'date'        => $data['date'],
 		'time'        => $data['time'],
 		'description' => $data['description'],
+		'note'        => $data['note'],
+		'wallet_id'   => $data['wallet_id'],
 		'category_id' => $data['category_id'],
 		'amount'      => $data['amount'],
 		'type'        => $data['type'],
@@ -663,6 +755,98 @@ function rest_delete_category( $request ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang' ), 400 );
 	}
 	$ok = DB::delete_category( $user_id, $id );
+	return rest_ensure_response(
+		array(
+			'success' => true,
+			'data'    => array( 'deleted' => $ok ),
+		)
+	);
+}
+
+/**
+ * REST: Get wallets.
+ *
+ * @param \WP_REST_Request $request Request.
+ * @return \WP_REST_Response
+ */
+function rest_get_wallets( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	$user_id = get_current_user_id();
+	$wallets = DB::get_wallets( $user_id );
+
+	return rest_ensure_response(
+		array(
+			'success' => true,
+			'data'    => array(
+				'wallets'           => $wallets,
+				'default_wallet_id' => 0,
+			),
+		)
+	);
+}
+
+/**
+ * REST: Save wallet.
+ *
+ * @param \WP_REST_Request $request Request.
+ * @return \WP_REST_Response
+ */
+function rest_save_wallet( $request ) {
+	$user_id = get_current_user_id();
+	$body    = $request->get_json_params();
+	$body    = is_array( $body ) ? $body : array();
+	$id      = isset( $body['id'] ) ? absint( $body['id'] ) : 0;
+	$name    = isset( $body['name'] ) ? sanitize_text_field( $body['name'] ) : '';
+
+	if ( '' === $name ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Name required.', 'beruang' ), 400 );
+	}
+
+	if ( $id > 0 ) {
+		$wallet = DB::get_wallet_for_user( $user_id, $id );
+		if ( ! $wallet ) {
+			return rest_json_error( new \WP_REST_Response(), __( 'Wallet not found.', 'beruang' ), 404 );
+		}
+	}
+
+	$saved = DB::save_wallet(
+		$user_id,
+		array( 'name' => $name ),
+		$id
+	);
+
+	if ( $saved ) {
+		return rest_ensure_response(
+			array(
+				'success' => true,
+				'data'    => array( 'id' => $saved ),
+			)
+		);
+	}
+
+	return rest_json_error( new \WP_REST_Response(), __( 'Failed to save wallet.', 'beruang' ), 400 );
+}
+
+/**
+ * REST: Delete wallet.
+ *
+ * @param \WP_REST_Request $request Request.
+ * @return \WP_REST_Response
+ */
+function rest_delete_wallet( $request ) {
+	$user_id = get_current_user_id();
+	$id      = (int) $request['id'];
+
+	if ( ! $id ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang' ), 400 );
+	}
+
+	$wallet = DB::get_wallet_for_user( $user_id, $id );
+	if ( ! $wallet ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Wallet not found.', 'beruang' ), 404 );
+	}
+
+	$ok = DB::delete_wallet( $user_id, $id );
+
 	return rest_ensure_response(
 		array(
 			'success' => true,

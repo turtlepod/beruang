@@ -2,7 +2,9 @@
  * Beruang – manage categories modal.
  */
 
-.beruang-categories-modal {
+.beruang-note-modal,
+.beruang-categories-modal,
+.beruang-wallet-modal {
 	position: fixed;
 	inset: 0;
 	background: var(--br-overlay, rgb(0 0 0 / 40%));
@@ -18,6 +20,7 @@
 	}
 }
 
+.beruang-note-modal-inner,
 .beruang-categories-modal-inner {
 	position: relative;
 	background: var(--br-bg);
@@ -92,7 +95,8 @@
 	}
 }
 
-.beruang-cat-cancel-edit {
+.beruang-cat-cancel-edit,
+.beruang-wallet-cancel-edit {
 	padding: 0.5em 1em;
 	height: var(--br-control-height);
 	background: var(--br-bg-muted) !important;
@@ -127,7 +131,8 @@
 	margin: 0;
 	padding: 0;
 
-	& .beruang-cat-item {
+	& .beruang-cat-item,
+	& .beruang-wallet-item {
 		display: flex;
 		align-items: center;
 		gap: 0.5em;
@@ -159,6 +164,50 @@
 	&:hover {
 		background: var(--br-bg-hover-alt);
 		border-color: var(--br-border-hover);
+	}
+}
+
+.beruang-note-modal-inner textarea {
+	width: 100%;
+	min-height: 7.5em;
+	resize: vertical;
+	padding: 0.5em 0.6em;
+	background: var(--br-bg) !important;
+	color: var(--br-text) !important;
+	border: 1px solid var(--br-border) !important;
+	border-radius: var(--br-radius-sm);
+	font-family: inherit;
+	font-size: inherit;
+}
+
+.beruang-wallet-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75em;
+}
+
+.beruang-wallet-header-actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+}
+
+.beruang-wallet-add {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--br-control-height);
+	height: var(--br-control-height);
+	padding: 0;
+	background: var(--br-primary);
+	color: var(--br-bg);
+	border: none;
+	border-radius: var(--br-radius-sm);
+	cursor: pointer;
+
+	&:hover {
+		background: var(--br-primary-hover);
 	}
 }
 
