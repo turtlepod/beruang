@@ -55,8 +55,12 @@ Font Awesome Free Icons
 == Changelog ==
 
 = 0.3.0-beta =
-* Restructure assets.
-* Loading screen & error message.
+* Refactored front-end CSS into component-based stylesheets and improved responsive rules.
+* Refactored front-end JavaScript into modular files for form, list, graph, budget, config, and shared utilities.
+* Updated admin management screens to use dedicated WP List Table classes for transactions, categories, and budgets.
+* Reworked templates into partials (including shared modals and transaction form partial).
+* Improved form UX with loading states, clearer error messages, calculator behavior, and focus/style fixes.
+* Improved asset/manifest loading behavior and refreshed plugin icons.
 
 = 0.2.0-beta =
 * Use REST API instead of admin-ajax
