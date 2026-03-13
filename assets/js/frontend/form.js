@@ -153,7 +153,7 @@ export function initForm() {
 	function buildWalletOptions( wallets ) {
 		let opts = optionTpl( {
 			value: '0',
-			label: i18n.cash || 'Cash',
+			label: i18n.cash || 'No Wallet',
 		} );
 		( wallets || [] ).forEach( function ( w ) {
 			opts += optionTpl( {

@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/html" id="tmpl-beruang-wallet-item">
-	<li class="beruang-wallet-item" data-id="{{ data.id }}" data-name="{{ data.name }}">
+	<li class="beruang-wallet-item" data-id="{{ data.id }}" data-name="{{ data.name }}" data-default="{{ data.isDefault }}">
 		<span class="beruang-cat-item-name">{{ data.displayName }}</span>
 		{{{ data.actionsHtml }}}
 	</li>

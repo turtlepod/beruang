@@ -123,7 +123,7 @@ function enqueue_front_scripts() {
 				'decimal_places' => (int) get_option( 'beruang_decimal_places', 2 ),
 				'i18n'           => array(
 					'uncategorized'              => __( 'Uncategorized', 'beruang' ),
-					'cash'                       => __( 'Cash', 'beruang' ),
+					'cash'                       => __( 'No Wallet', 'beruang' ),
 					'expense'                    => __( 'Expense', 'beruang' ),
 					'income'                     => __( 'Income', 'beruang' ),
 					'saved'                      => __( 'Saved.', 'beruang' ),

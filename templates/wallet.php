@@ -20,10 +20,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div class="beruang-categories-list-wrap">
 		<ul class="beruang-categories-list" id="beruang-wallet-list" data-default-wallet-id="<?php echo esc_attr( (string) $default_wallet_id ); ?>">
+			<li class="beruang-wallet-item" data-id="0" data-name="<?php esc_attr_e( 'No Wallet', 'beruang' ); ?>" data-default="1">
+				<span class="beruang-cat-item-name"><?php esc_html_e( 'No Wallet', 'beruang' ); ?></span>
+			</li>
 			<?php
 			foreach ( $wallets as $wallet ) {
 				?>
-				<li class="beruang-wallet-item" data-id="<?php echo esc_attr( $wallet['id'] ); ?>" data-name="<?php echo esc_attr( $wallet['name'] ); ?>">
+				<li class="beruang-wallet-item" data-id="<?php echo esc_attr( $wallet['id'] ); ?>" data-name="<?php echo esc_attr( $wallet['name'] ); ?>" data-default="0">
 					<span class="beruang-cat-item-name"><?php echo esc_html( $wallet['name'] ); ?></span>
 					<button type="button" class="beruang-action-edit" title="<?php esc_attr_e( 'Edit', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Edit', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'edit', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 					<button type="button" class="beruang-action-delete" title="<?php esc_attr_e( 'Delete', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Delete', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'trash', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>

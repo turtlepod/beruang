@@ -35,7 +35,7 @@ $type_id   = $field_prefix . '-type';
 	<div class="beruang-form-row">
 		<label for="<?php echo esc_attr( $wallet_id ); ?>"><?php esc_html_e( 'Wallet', 'beruang' ); ?></label>
 		<select id="<?php echo esc_attr( $wallet_id ); ?>" name="wallet_id" data-default-wallet-id="<?php echo esc_attr( (string) $default_wallet_id ); ?>">
-			<option value="0"<?php echo selected( 0, (int) $default_wallet_id, false ); ?>><?php esc_html_e( 'Cash', 'beruang' ); ?></option>
+			<option value="0"<?php echo selected( 0, (int) $default_wallet_id, false ); ?>><?php esc_html_e( 'No Wallet', 'beruang' ); ?></option>
 			<?php
 			foreach ( $wallets as $wallet ) {
 				echo '<option value="' . esc_attr( $wallet['id'] ) . '"' . selected( (int) $wallet['id'], (int) $default_wallet_id, false ) . '>' . esc_html( $wallet['name'] ) . '</option>';
