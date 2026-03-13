@@ -18,31 +18,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$is_edit   = ( 'edit' === $mode );
-$date_id   = $field_prefix . '-date';
-$time_id   = $field_prefix . '-time';
-$desc_id   = $field_prefix . '-description';
-$note_id   = $field_prefix . '-note';
-$wallet_id = $field_prefix . '-wallet';
-$cat_id    = $field_prefix . '-category';
-$amt_id    = $field_prefix . '-amount';
-$type_id   = $field_prefix . '-type';
+$is_edit        = ( 'edit' === $mode );
+$date_id        = $field_prefix . '-date';
+$time_id        = $field_prefix . '-time';
+$desc_id        = $field_prefix . '-description';
+$note_id        = $field_prefix . '-note';
+$wallet_id      = $field_prefix . '-wallet';
+$cat_id         = $field_prefix . '-category';
+$amt_id         = $field_prefix . '-amount';
+$type_id        = $field_prefix . '-type';
+$has_wallets    = ! empty( $wallets );
+$default_wallet = null === $default_wallet_id ? '' : (string) $default_wallet_id;
 ?>
 <form class="beruang-form beruang-transaction-form" id="<?php echo esc_attr( $form_id ); ?>" data-mode="<?php echo esc_attr( $mode ); ?>">
 	<?php if ( $is_edit ) : ?>
 		<input type="hidden" name="id" id="<?php echo esc_attr( $field_prefix ); ?>-id" value="" />
 	<?php endif; ?>
+	<?php if ( $has_wallets ) : ?>
 	<div class="beruang-form-row">
 		<label for="<?php echo esc_attr( $wallet_id ); ?>"><?php esc_html_e( 'Wallet', 'beruang' ); ?></label>
-		<select id="<?php echo esc_attr( $wallet_id ); ?>" name="wallet_id" data-default-wallet-id="<?php echo esc_attr( (string) $default_wallet_id ); ?>">
-			<option value="0"<?php echo selected( 0, (int) $default_wallet_id, false ); ?>><?php esc_html_e( 'Cash', 'beruang' ); ?></option>
+		<select id="<?php echo esc_attr( $wallet_id ); ?>" name="wallet_id" data-default-wallet-id="<?php echo esc_attr( $default_wallet ); ?>">
+			<option value=""<?php echo selected( '', $default_wallet, false ); ?>><?php esc_html_e( 'No Wallet', 'beruang' ); ?></option>
 			<?php
 			foreach ( $wallets as $wallet ) {
-				echo '<option value="' . esc_attr( $wallet['id'] ) . '"' . selected( (int) $wallet['id'], (int) $default_wallet_id, false ) . '>' . esc_html( $wallet['name'] ) . '</option>';
+				echo '<option value="' . esc_attr( $wallet['id'] ) . '"' . selected( (string) $wallet['id'], $default_wallet, false ) . '>' . esc_html( $wallet['name'] ) . '</option>';
 			}
 			?>
 		</select>
 	</div>
+	<?php else : ?>
+		<input type="hidden" name="wallet_id" value="" />
+	<?php endif; ?>
 	<div class="beruang-form-row beruang-datetime-row">
 		<label for="<?php echo esc_attr( $date_id ); ?>"><?php esc_html_e( 'Date', 'beruang' ); ?></label>
 		<span class="beruang-datetime-wrap">

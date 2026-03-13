@@ -211,6 +211,30 @@
 	}
 }
 
+.beruang-wallet-default-row {
+	margin-top: 1em;
+
+	& select {
+		max-width: 20em;
+	}
+}
+
+.beruang-wallet-item {
+	flex-wrap: wrap;
+}
+
+.beruang-wallet-meta,
+.beruang-wallet-balance {
+	color: var(--br-text-muted);
+	font-size: 0.85em;
+	width: 100%;
+}
+
+.beruang-wallet-balance {
+	color: var(--br-text);
+	font-weight: 600;
+}
+
 .beruang-cat-empty {
 	color: var(--br-text-muted);
 	opacity: 0.8;

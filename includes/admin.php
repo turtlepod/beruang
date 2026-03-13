@@ -422,7 +422,7 @@ function admin_handle_export_csv() {
 		$cat_id      = isset( $row['category_id'] ) ? (int) $row['category_id'] : 0;
 		$cat_name    = $cat_id && isset( $cat_names[ $cat_id ] ) ? $cat_names[ $cat_id ] : '';
 		$wallet_id   = isset( $row['wallet_id'] ) ? (int) $row['wallet_id'] : 0;
-		$wallet_name = $wallet_id && isset( $wallet_names[ $wallet_id ] ) ? $wallet_names[ $wallet_id ] : __( 'Cash', 'beruang' );
+		$wallet_name = $wallet_id && isset( $wallet_names[ $wallet_id ] ) ? $wallet_names[ $wallet_id ] : __( 'No Wallet', 'beruang' );
 		fputcsv(
 			$output,
 			array(

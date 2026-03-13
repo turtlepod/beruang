@@ -48,6 +48,20 @@ function rest_json_error( $response, $message, $status = 400 ) {
 }
 
 /**
+ * Normalize wallet ID input. Empty values are treated as "No Wallet".
+ *
+ * @param mixed $raw Raw wallet_id.
+ * @return int|null
+ */
+function rest_parse_wallet_id( $raw ) {
+	if ( null === $raw || '' === $raw ) {
+		return null;
+	}
+	$id = absint( $raw );
+	return $id > 0 ? $id : null;
+}
+
+/**
  * Register REST routes.
  */
 function rest_register_routes() {
@@ -73,10 +87,7 @@ function rest_register_routes() {
 					'type'     => 'string',
 				),
 				'note'        => array( 'type' => 'string' ),
-				'wallet_id'   => array(
-					'default' => 0,
-					'type'    => 'integer',
-				),
+				'wallet_id'   => array( 'type' => 'string' ),
 				'category_id' => array(
 					'default' => 0,
 					'type'    => 'integer',
@@ -162,7 +173,7 @@ function rest_register_routes() {
 				'time'        => array( 'type' => 'string' ),
 				'description' => array( 'type' => 'string' ),
 				'note'        => array( 'type' => 'string' ),
-				'wallet_id'   => array( 'type' => 'integer' ),
+				'wallet_id'   => array( 'type' => 'string' ),
 				'category_id' => array( 'type' => 'integer' ),
 				'amount'      => array( 'type' => 'number' ),
 				'type'        => array( 'enum' => array( 'expense', 'income' ) ),
@@ -233,14 +244,35 @@ function rest_register_routes() {
 			'permission_callback' => $perm,
 			'callback'            => __NAMESPACE__ . '\rest_save_wallet',
 			'args'                => array(
-				'id'   => array(
+				'id'             => array(
 					'default' => 0,
 					'type'    => 'integer',
 				),
-				'name' => array(
+				'name'           => array(
 					'required' => true,
 					'type'     => 'string',
 				),
+				'initial_amount' => array(
+					'type' => 'number',
+				),
+				'initial_date'   => array(
+					'type' => 'string',
+				),
+				'set_as_default' => array(
+					'type' => 'boolean',
+				),
+			),
+		)
+	);
+	register_rest_route(
+		$ns,
+		'/wallets/default',
+		array(
+			'methods'             => 'POST',
+			'permission_callback' => $perm,
+			'callback'            => __NAMESPACE__ . '\rest_set_default_wallet',
+			'args'                => array(
+				'wallet_id' => array( 'type' => 'string' ),
 			),
 		)
 	);
@@ -428,7 +460,7 @@ function rest_save_transaction( $request ) {
 	$time        = isset( $body['time'] ) ? sanitize_text_field( $body['time'] ) : null;
 	$description = isset( $body['description'] ) ? sanitize_textarea_field( $body['description'] ) : '';
 	$note        = isset( $body['note'] ) ? sanitize_textarea_field( $body['note'] ) : '';
-	$wallet_id   = isset( $body['wallet_id'] ) ? absint( $body['wallet_id'] ) : 0;
+	$wallet_id   = array_key_exists( 'wallet_id', $body ) ? rest_parse_wallet_id( $body['wallet_id'] ) : null;
 	$category_id = isset( $body['category_id'] ) ? absint( $body['category_id'] ) : 0;
 	$amount      = isset( $body['amount'] ) ? floatval( $body['amount'] ) : 0;
 	$type        = isset( $body['type'] ) && 'income' === $body['type'] ? 'income' : 'expense';
@@ -437,7 +469,7 @@ function rest_save_transaction( $request ) {
 		$time = null;
 	}
 
-	if ( $wallet_id > 0 && ! DB::get_wallet_for_user( $user_id, $wallet_id ) ) {
+	if ( null !== $wallet_id && ! DB::get_wallet_for_user( $user_id, $wallet_id ) ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Invalid wallet.', 'beruang' ), 400 );
 	}
 
@@ -575,12 +607,16 @@ function rest_update_transaction( $request ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Transaction not found.', 'beruang' ), 404 );
 	}
 
+	$existing_wallet_id = isset( $existing['wallet_id'] ) && '' !== (string) $existing['wallet_id']
+		? absint( $existing['wallet_id'] )
+		: null;
+
 	$data = array(
 		'date'        => isset( $body['date'] ) ? sanitize_text_field( $body['date'] ) : $existing['date'],
 		'time'        => isset( $body['time'] ) ? sanitize_text_field( $body['time'] ) : null,
 		'description' => isset( $body['description'] ) ? sanitize_textarea_field( $body['description'] ) : $existing['description'],
 		'note'        => isset( $body['note'] ) ? sanitize_textarea_field( $body['note'] ) : (string) ( $existing['note'] ?? '' ),
-		'wallet_id'   => isset( $body['wallet_id'] ) ? absint( $body['wallet_id'] ) : (int) ( $existing['wallet_id'] ?? 0 ),
+		'wallet_id'   => array_key_exists( 'wallet_id', $body ) ? rest_parse_wallet_id( $body['wallet_id'] ) : $existing_wallet_id,
 		'category_id' => isset( $body['category_id'] ) ? absint( $body['category_id'] ) : (int) ( $existing['category_id'] ?? 0 ),
 		'amount'      => isset( $body['amount'] ) ? floatval( $body['amount'] ) : (float) ( $existing['amount'] ?? 0 ),
 		'type'        => isset( $body['type'] ) && 'income' === $body['type'] ? 'income' : 'expense',
@@ -589,8 +625,8 @@ function rest_update_transaction( $request ) {
 		$data['time'] = null;
 	}
 
-	$wallet_id = (int) $data['wallet_id'];
-	if ( $wallet_id > 0 && ! DB::get_wallet_for_user( $user_id, $wallet_id ) ) {
+	$wallet_id = $data['wallet_id'];
+	if ( null !== $wallet_id && ! DB::get_wallet_for_user( $user_id, $wallet_id ) ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Invalid wallet.', 'beruang' ), 400 );
 	}
 
@@ -605,7 +641,7 @@ function rest_update_transaction( $request ) {
 		'time'        => $existing_time,
 		'description' => (string) ( $existing['description'] ?? '' ),
 		'note'        => (string) ( $existing['note'] ?? '' ),
-		'wallet_id'   => (int) ( $existing['wallet_id'] ?? 0 ),
+		'wallet_id'   => $existing_wallet_id,
 		'category_id' => (int) ( $existing['category_id'] ?? 0 ),
 		'amount'      => (float) ( $existing['amount'] ?? 0 ),
 		'type'        => ( 'income' === ( $existing['type'] ?? '' ) ) ? 'income' : 'expense',
@@ -773,12 +809,18 @@ function rest_get_wallets( $request ) { // phpcs:ignore Generic.CodeAnalysis.Unu
 	$user_id = get_current_user_id();
 	$wallets = DB::get_wallets( $user_id );
 
+	foreach ( $wallets as &$wallet ) {
+		$wallet['initial_amount'] = isset( $wallet['initial_amount'] ) ? (float) $wallet['initial_amount'] : 0.0;
+		$wallet['current_amount'] = DB::get_wallet_current_amount( $user_id, absint( $wallet['id'] ) );
+	}
+	unset( $wallet );
+
 	return rest_ensure_response(
 		array(
 			'success' => true,
 			'data'    => array(
 				'wallets'           => $wallets,
-				'default_wallet_id' => 0,
+				'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
 			),
 		)
 	);
@@ -791,11 +833,14 @@ function rest_get_wallets( $request ) { // phpcs:ignore Generic.CodeAnalysis.Unu
  * @return \WP_REST_Response
  */
 function rest_save_wallet( $request ) {
-	$user_id = get_current_user_id();
-	$body    = $request->get_json_params();
-	$body    = is_array( $body ) ? $body : array();
-	$id      = isset( $body['id'] ) ? absint( $body['id'] ) : 0;
-	$name    = isset( $body['name'] ) ? sanitize_text_field( $body['name'] ) : '';
+	$user_id        = get_current_user_id();
+	$body           = $request->get_json_params();
+	$body           = is_array( $body ) ? $body : array();
+	$id             = isset( $body['id'] ) ? absint( $body['id'] ) : 0;
+	$name           = isset( $body['name'] ) ? sanitize_text_field( $body['name'] ) : '';
+	$initial_amount = isset( $body['initial_amount'] ) ? (float) $body['initial_amount'] : 0.0;
+	$initial_date   = isset( $body['initial_date'] ) ? sanitize_text_field( $body['initial_date'] ) : current_time( 'Y-m-d' );
+	$set_as_default = ! empty( $body['set_as_default'] );
 
 	if ( '' === $name ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Name required.', 'beruang' ), 400 );
@@ -810,15 +855,26 @@ function rest_save_wallet( $request ) {
 
 	$saved = DB::save_wallet(
 		$user_id,
-		array( 'name' => $name ),
+		array(
+			'name'           => $name,
+			'initial_amount' => $initial_amount,
+			'initial_date'   => $initial_date,
+		),
 		$id
 	);
+
+	if ( $saved && $set_as_default ) {
+		DB::set_default_wallet_id( $user_id, $saved );
+	}
 
 	if ( $saved ) {
 		return rest_ensure_response(
 			array(
 				'success' => true,
-				'data'    => array( 'id' => $saved ),
+				'data'    => array(
+					'id'                => $saved,
+					'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
+				),
 			)
 		);
 	}
@@ -851,6 +907,36 @@ function rest_delete_wallet( $request ) {
 		array(
 			'success' => true,
 			'data'    => array( 'deleted' => $ok ),
+		)
+	);
+}
+
+/**
+ * REST: Set default wallet.
+ *
+ * @param \WP_REST_Request $request Request.
+ * @return \WP_REST_Response
+ */
+function rest_set_default_wallet( $request ) {
+	$user_id   = get_current_user_id();
+	$body      = $request->get_json_params();
+	$body      = is_array( $body ) ? $body : array();
+	$wallet_id = array_key_exists( 'wallet_id', $body ) ? rest_parse_wallet_id( $body['wallet_id'] ) : null;
+
+	if ( null !== $wallet_id && ! DB::get_wallet_for_user( $user_id, $wallet_id ) ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Wallet not found.', 'beruang' ), 404 );
+	}
+
+	if ( ! DB::set_default_wallet_id( $user_id, $wallet_id ) ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Failed to set default wallet.', 'beruang' ), 400 );
+	}
+
+	return rest_ensure_response(
+		array(
+			'success' => true,
+			'data'    => array(
+				'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
+			),
 		)
 	);
 }

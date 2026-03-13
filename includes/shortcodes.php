@@ -61,7 +61,7 @@ function shortcode_render_form( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 			'currency'          => get_option( 'beruang_currency', 'IDR' ),
 			'categories'        => DB::get_categories_flat( $user_id, true ),
 			'wallets'           => DB::get_wallets( $user_id ),
-			'default_wallet_id' => 0,
+			'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
 		)
 	);
 	return ob_get_clean();
@@ -89,7 +89,7 @@ function shortcode_render_list( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 			'categories'        => DB::get_categories_flat( $user_id, true ),
 			'budgets'           => DB::get_budgets( $user_id ),
 			'wallets'           => DB::get_wallets( $user_id ),
-			'default_wallet_id' => 0,
+			'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
 		)
 	);
 	return ob_get_clean();
@@ -149,12 +149,17 @@ function shortcode_render_wallet( $atts ) { // phpcs:ignore Generic.CodeAnalysis
 		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to manage wallets.', 'beruang' ) . '</p>';
 	}
 	$user_id = get_current_user_id();
+	$wallets = DB::get_wallets( $user_id );
+	foreach ( $wallets as &$wallet ) {
+		$wallet['current_amount'] = DB::get_wallet_current_amount( $user_id, absint( $wallet['id'] ) );
+	}
+	unset( $wallet );
 	ob_start();
 	shortcode_load_template(
 		'wallet.php',
 		array(
-			'wallets'           => DB::get_wallets( $user_id ),
-			'default_wallet_id' => 0,
+			'wallets'           => $wallets,
+			'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
 		)
 	);
 	return ob_get_clean();

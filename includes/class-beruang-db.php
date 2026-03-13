@@ -16,8 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class DB {
 
-	const DB_VERSION        = 2;
-	const OPTION_DB_VERSION = 'beruang_db_version';
+	const DB_VERSION              = 3;
+	const OPTION_DB_VERSION       = 'beruang_db_version';
+	const DEFAULT_WALLET_META_KEY = 'beruang_default_wallet_id';
 
 	/**
 	 * WordPress database abstraction.
@@ -111,6 +112,8 @@ class DB {
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			user_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			name varchar(255) NOT NULL DEFAULT '',
+			initial_amount decimal(14,2) NOT NULL DEFAULT 0.00,
+			initial_date date NOT NULL,
 			PRIMARY KEY (id),
 			KEY user_id (user_id)
 		) $charset_collate;";
@@ -122,7 +125,7 @@ class DB {
 			time time DEFAULT NULL,
 			description text,
 			note longtext,
-			wallet_id bigint(20) unsigned NOT NULL DEFAULT 0,
+			wallet_id bigint(20) unsigned DEFAULT NULL,
 			category_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			amount decimal(14,2) NOT NULL DEFAULT 0.00,
 			type varchar(20) NOT NULL DEFAULT 'expense',
@@ -155,7 +158,71 @@ class DB {
 		dbDelta( $sql_tx );
 		dbDelta( $sql_budget );
 		dbDelta( $sql_bc );
+		self::migrate_data();
 		update_option( self::OPTION_DB_VERSION, self::DB_VERSION );
+	}
+
+	/**
+	 * Upgrade DB schema/data when plugin version changes.
+	 *
+	 * @return void
+	 */
+	public static function maybe_upgrade() {
+		$current = (int) get_option( self::OPTION_DB_VERSION, 0 );
+		if ( $current >= self::DB_VERSION ) {
+			return;
+		}
+		self::install();
+	}
+
+	/**
+	 * Migrate data after dbDelta schema sync.
+	 *
+	 * @return void
+	 */
+	private static function migrate_data() {
+		$tx_table     = self::table_transaction();
+		$wallet_table = self::table_wallet();
+
+		// Legacy "Cash" sentinel is now represented as NULL wallet_id.
+		self::wpdb()->query( "UPDATE $tx_table SET wallet_id = NULL WHERE wallet_id = 0" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery
+
+		$today = current_time( 'Y-m-d' );
+		self::wpdb()->query( "UPDATE $wallet_table SET initial_amount = 0 WHERE initial_amount IS NULL" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		self::wpdb()->query(
+			self::wpdb()->prepare(
+				"UPDATE $wallet_table SET initial_date = %s WHERE initial_date IS NULL OR initial_date = '0000-00-00'",
+				$today
+			)
+		);
+	}
+
+	/**
+	 * Normalize date used as wallet baseline date.
+	 *
+	 * @param mixed $date Raw date.
+	 * @return string
+	 */
+	private static function normalize_wallet_date( $date ) {
+		$date = is_string( $date ) ? sanitize_text_field( $date ) : '';
+		if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
+			return $date;
+		}
+		return current_time( 'Y-m-d' );
+	}
+
+	/**
+	 * Normalize wallet ID so empty values are persisted as NULL.
+	 *
+	 * @param mixed $wallet_id Wallet ID.
+	 * @return int|null
+	 */
+	private static function normalize_wallet_id( $wallet_id ) {
+		if ( null === $wallet_id || '' === $wallet_id ) {
+			return null;
+		}
+		$id = absint( $wallet_id );
+		return $id > 0 ? $id : null;
 	}
 
 	/**
@@ -177,6 +244,88 @@ class DB {
 		);
 
 		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * Get current default wallet ID for user.
+	 *
+	 * @param int $user_id User ID.
+	 * @return int|null
+	 */
+	public static function get_default_wallet_id( $user_id ) {
+		$user_id   = absint( $user_id );
+		$wallet_id = absint( get_user_meta( $user_id, self::DEFAULT_WALLET_META_KEY, true ) );
+		if ( $wallet_id < 1 ) {
+			return null;
+		}
+		$wallet = self::get_wallet_for_user( $user_id, $wallet_id );
+		if ( ! $wallet ) {
+			delete_user_meta( $user_id, self::DEFAULT_WALLET_META_KEY );
+			return null;
+		}
+		return $wallet_id;
+	}
+
+	/**
+	 * Set default wallet ID for user.
+	 *
+	 * @param int      $user_id   User ID.
+	 * @param int|null $wallet_id Wallet ID or null to clear.
+	 * @return bool
+	 */
+	public static function set_default_wallet_id( $user_id, $wallet_id ) {
+		$user_id = absint( $user_id );
+		if ( null === $wallet_id || absint( $wallet_id ) < 1 ) {
+			delete_user_meta( $user_id, self::DEFAULT_WALLET_META_KEY );
+			return true;
+		}
+		$wallet_id = absint( $wallet_id );
+		$wallet    = self::get_wallet_for_user( $user_id, $wallet_id );
+		if ( ! $wallet ) {
+			return false;
+		}
+		return false !== update_user_meta( $user_id, self::DEFAULT_WALLET_META_KEY, $wallet_id );
+	}
+
+	/**
+	 * Get current wallet amount from its baseline date until today.
+	 *
+	 * @param int      $user_id   User ID.
+	 * @param int      $wallet_id Wallet ID.
+	 * @param int|null $as_of_ts  Optional timestamp for "today" boundary.
+	 * @return float
+	 */
+	public static function get_wallet_current_amount( $user_id, $wallet_id, $as_of_ts = null ) {
+		$wallet = self::get_wallet_for_user( $user_id, $wallet_id );
+		if ( ! $wallet ) {
+			return 0.0;
+		}
+
+		$initial_amount = isset( $wallet['initial_amount'] ) ? (float) $wallet['initial_amount'] : 0.0;
+		$initial_date   = self::normalize_wallet_date( $wallet['initial_date'] ?? '' );
+		$today          = $as_of_ts ? gmdate( 'Y-m-d', (int) $as_of_ts ) : current_time( 'Y-m-d' );
+
+		if ( $initial_date > $today ) {
+			return $initial_amount;
+		}
+
+		$tx_table = self::table_transaction();
+		$net      = self::wpdb()->get_var(
+			self::wpdb()->prepare(
+				"SELECT COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END), 0)
+				 FROM $tx_table
+				 WHERE user_id = %d
+				 AND wallet_id = %d
+				 AND date >= %s
+				 AND date <= %s",
+				absint( $user_id ),
+				absint( $wallet_id ),
+				$initial_date,
+				$today
+			)
+		);
+
+		return $initial_amount + (float) $net;
 	}
 
 	/**
@@ -223,9 +372,11 @@ class DB {
 	 * @return int|false Wallet ID or false.
 	 */
 	public static function save_wallet( $user_id, $data, $id = 0 ) {
-		$table   = self::table_wallet();
-		$user_id = absint( $user_id );
-		$name    = isset( $data['name'] ) ? sanitize_text_field( $data['name'] ) : '';
+		$table          = self::table_wallet();
+		$user_id        = absint( $user_id );
+		$name           = isset( $data['name'] ) ? sanitize_text_field( $data['name'] ) : '';
+		$initial_amount = isset( $data['initial_amount'] ) ? (float) $data['initial_amount'] : 0.0;
+		$initial_date   = self::normalize_wallet_date( $data['initial_date'] ?? '' );
 
 		if ( '' === $name ) {
 			return false;
@@ -236,14 +387,24 @@ class DB {
 			if ( ! $wallet ) {
 				return false;
 			}
+			if ( ! array_key_exists( 'initial_amount', $data ) ) {
+				$initial_amount = isset( $wallet['initial_amount'] ) ? (float) $wallet['initial_amount'] : 0.0;
+			}
+			if ( ! array_key_exists( 'initial_date', $data ) ) {
+				$initial_date = self::normalize_wallet_date( $wallet['initial_date'] ?? '' );
+			}
 			self::wpdb()->update(
 				$table,
-				array( 'name' => $name ),
+				array(
+					'name'           => $name,
+					'initial_amount' => $initial_amount,
+					'initial_date'   => $initial_date,
+				),
 				array(
 					'id'      => absint( $id ),
 					'user_id' => $user_id,
 				),
-				array( '%s' ),
+				array( '%s', '%f', '%s' ),
 				array( '%d', '%d' )
 			);
 			return absint( $id );
@@ -252,10 +413,12 @@ class DB {
 		self::wpdb()->insert(
 			$table,
 			array(
-				'user_id' => $user_id,
-				'name'    => $name,
+				'user_id'        => $user_id,
+				'name'           => $name,
+				'initial_amount' => $initial_amount,
+				'initial_date'   => $initial_date,
 			),
-			array( '%d', '%s' )
+			array( '%d', '%s', '%f', '%s' )
 		);
 
 		$insert_id = self::wpdb()->insert_id;
@@ -271,18 +434,23 @@ class DB {
 	 */
 	public static function delete_wallet( $user_id, $id ) {
 		$table  = self::table_wallet();
+		$id     = absint( $id );
 		$wallet = self::get_wallet_for_user( $user_id, $id );
 		if ( ! $wallet ) {
 			return false;
 		}
-		return (bool) self::wpdb()->delete(
+		$deleted = (bool) self::wpdb()->delete(
 			$table,
 			array(
-				'id'      => absint( $id ),
+				'id'      => $id,
 				'user_id' => absint( $user_id ),
 			),
 			array( '%d', '%d' )
 		);
+		if ( $deleted && absint( self::get_default_wallet_id( $user_id ) ) === $id ) {
+			self::set_default_wallet_id( $user_id, null );
+		}
+		return $deleted;
 	}
 
 	// --- Categories ---
@@ -665,13 +833,12 @@ class DB {
 		}
 		$description = isset( $data['description'] ) ? sanitize_textarea_field( $data['description'] ) : '';
 		$note        = array_key_exists( 'note', $data ) ? sanitize_textarea_field( $data['note'] ) : (string) ( $existing['note'] ?? '' );
-		$wallet_id   = isset( $data['wallet_id'] ) ? absint( $data['wallet_id'] ) : 0;
+		$wallet_id   = array_key_exists( 'wallet_id', $data )
+			? self::normalize_wallet_id( $data['wallet_id'] )
+			: self::normalize_wallet_id( $existing['wallet_id'] ?? null );
 		$category_id = isset( $data['category_id'] ) ? absint( $data['category_id'] ) : 0;
 		$amount      = isset( $data['amount'] ) ? floatval( $data['amount'] ) : 0;
 		$type        = isset( $data['type'] ) && 'income' === $data['type'] ? 'income' : 'expense';
-		if ( $wallet_id < 1 ) {
-			$wallet_id = $existing ? (int) $existing['wallet_id'] : 0;
-		}
 
 		return (bool) self::wpdb()->update(
 			$table,
@@ -730,7 +897,7 @@ class DB {
 		}
 		$description = isset( $data['description'] ) ? sanitize_textarea_field( $data['description'] ) : '';
 		$note        = isset( $data['note'] ) ? sanitize_textarea_field( $data['note'] ) : '';
-		$wallet_id   = isset( $data['wallet_id'] ) ? absint( $data['wallet_id'] ) : 0;
+		$wallet_id   = array_key_exists( 'wallet_id', $data ) ? self::normalize_wallet_id( $data['wallet_id'] ) : null;
 		$category_id = isset( $data['category_id'] ) ? absint( $data['category_id'] ) : 0;
 		$amount      = isset( $data['amount'] ) ? floatval( $data['amount'] ) : 0;
 		$type        = isset( $data['type'] ) && 'income' === $data['type'] ? 'income' : 'expense';

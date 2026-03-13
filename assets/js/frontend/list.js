@@ -227,7 +227,9 @@ export function initList() {
 					noteEl.value = t.note || '';
 					noteEl.dispatchEvent( new Event( 'input' ) );
 				}
-				if ( walletEl ) walletEl.value = t.wallet_id || walletEl.dataset.defaultWalletId || '0';
+				if ( walletEl ) {
+					walletEl.value = t.wallet_id ? String( t.wallet_id ) : '';
+				}
 				if ( catEl ) catEl.value = t.category_id || '0';
 				if ( amtEl ) amtEl.value = amtStr;
 				if ( typeEl ) typeEl.value = type;

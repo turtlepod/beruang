@@ -42,6 +42,7 @@ function on_activation() {
  * Fires on plugins_loaded: load text domain, register shortcodes, and hook actions.
  */
 function on_plugins_loaded() {
+	DB::maybe_upgrade();
 	load_plugin_textdomain( 'beruang', false, dirname( plugin_basename( BERUANG_PLUGIN_FILE ) ) . '/languages' );
 	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_front_scripts' );
 	manifest_setup();
@@ -123,7 +124,7 @@ function enqueue_front_scripts() {
 				'decimal_places' => (int) get_option( 'beruang_decimal_places', 2 ),
 				'i18n'           => array(
 					'uncategorized'              => __( 'Uncategorized', 'beruang' ),
-					'cash'                       => __( 'Cash', 'beruang' ),
+					'no_wallet'                  => __( 'No Wallet', 'beruang' ),
 					'expense'                    => __( 'Expense', 'beruang' ),
 					'income'                     => __( 'Income', 'beruang' ),
 					'saved'                      => __( 'Saved.', 'beruang' ),
@@ -153,6 +154,10 @@ function enqueue_front_scripts() {
 					'confirm_delete_category'    => __( 'Delete this category?', 'beruang' ),
 					'confirm_delete_transaction' => __( 'Delete this transaction?', 'beruang' ),
 					'no_categories'              => __( 'No categories yet.', 'beruang' ),
+					/* translators: 1: amount, 2: date (Y-m-d). */
+					'wallet_baseline'            => __( 'Baseline: %1$s on %2$s', 'beruang' ),
+					/* translators: %s: current wallet amount. */
+					'wallet_current'             => __( 'Current: %s', 'beruang' ),
 				),
 				'edit_icon'      => beruang_get_icon( 'edit' ),
 				'delete_icon'    => beruang_get_icon( 'trash' ),

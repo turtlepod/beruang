@@ -43,7 +43,7 @@ function resetAddForm( form ) {
 	form.querySelector( '[name="category_id"]' ).value = '0';
 	const walletEl = form.querySelector( '[name="wallet_id"]' );
 	if ( walletEl ) {
-		walletEl.value = walletEl.dataset.defaultWalletId || walletEl.value || '0';
+		walletEl.value = walletEl.dataset.defaultWalletId || walletEl.value || '';
 	}
 	if ( typeField ) typeField.value = 'expense';
 	form.querySelectorAll( '.beruang-type-btn' ).forEach( function ( b ) {
@@ -152,8 +152,8 @@ export function initForm() {
 
 	function buildWalletOptions( wallets ) {
 		let opts = optionTpl( {
-			value: '0',
-			label: i18n.cash || 'Cash',
+			value: '',
+			label: i18n.no_wallet || 'No Wallet',
 		} );
 		( wallets || [] ).forEach( function ( w ) {
 			opts += optionTpl( {
@@ -168,8 +168,8 @@ export function initForm() {
 		request( 'GET', '/wallets' ).then( function ( r ) {
 			if ( ! r.success || ! r.data || ! r.data.wallets ) return;
 			const wallets = r.data.wallets;
-			const defaultWalletId = String( r.data.default_wallet_id || '0' );
-			document.querySelectorAll( '.beruang-transaction-form [name="wallet_id"]' ).forEach( function ( el ) {
+			const defaultWalletId = r.data.default_wallet_id ? String( r.data.default_wallet_id ) : '';
+			document.querySelectorAll( '.beruang-transaction-form select[name="wallet_id"]' ).forEach( function ( el ) {
 				const currentVal = el.value;
 				el.innerHTML = buildWalletOptions( wallets );
 				el.dataset.defaultWalletId = defaultWalletId;
@@ -616,7 +616,7 @@ export function initForm() {
 				time: form.querySelector( '[name="time"]' ).value || null,
 				description: form.querySelector( '[name="description"]' ).value,
 				note: ( form.querySelector( '[name="note"]' ) || { value: '' } ).value,
-				wallet_id: ( form.querySelector( '[name="wallet_id"]' ) || { value: 0 } ).value || 0,
+				wallet_id: ( form.querySelector( '[name="wallet_id"]' ) || { value: '' } ).value || null,
 				category_id: form.querySelector( '[name="category_id"]' ).value || 0,
 				amount: form.querySelector( '[name="amount"]' ).value,
 				type: ( typeField && typeField.value ) || 'expense',
