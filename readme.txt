@@ -56,8 +56,10 @@ Font Awesome Free Icons
 
 = 0.4.0-beta =
 * Several fixes
-* Wallet
-* Notes
+* Wallet feature
+* Notes feature
+* Add Unit test
+* Add playwright test
 
 = 0.3.0-beta =
 * Refactored front-end CSS into component-based stylesheets and improved responsive rules.
