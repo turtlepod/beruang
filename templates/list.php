@@ -51,6 +51,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 			}
 			?>
 		</select>
+		<select class="beruang-filter-wallet">
+			<option value=""><?php esc_html_e( 'All wallets', 'beruang' ); ?></option>
+			<option value="0"><?php esc_html_e( 'No wallet', 'beruang' ); ?></option>
+			<?php
+			foreach ( $wallets as $wallet ) {
+				echo '<option value="' . esc_attr( $wallet['id'] ) . '">' . esc_html( $wallet['name'] ) . '</option>';
+			}
+			?>
+		</select>
 		<button type="button" class="beruang-filter-apply"><?php esc_html_e( 'Apply', 'beruang' ); ?></button>
 		<button type="button" class="beruang-filter-reset"><?php esc_html_e( 'Reset', 'beruang' ); ?></button>
 	</div>

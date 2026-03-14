@@ -127,6 +127,10 @@ function rest_register_routes() {
 					'default' => '',
 					'type'    => 'string',
 				),
+				'wallet_id'   => array(
+					'default' => '',
+					'type'    => 'string',
+				),
 				'page'        => array(
 					'default' => 1,
 					'type'    => 'integer',
@@ -515,6 +519,8 @@ function rest_get_transactions( $request ) {
 	$category_id = '' !== $category_id && null !== $category_id ? absint( $category_id ) : '';
 	$budget_id   = $request->get_param( 'budget_id' );
 	$budget_id   = '' !== $budget_id && null !== $budget_id ? absint( $budget_id ) : '';
+	$wallet_id   = $request->get_param( 'wallet_id' );
+	$wallet_id   = '' !== $wallet_id && null !== $wallet_id ? absint( $wallet_id ) : '';
 	$page        = max( 1, absint( $request->get_param( 'page' ) ) );
 
 	if ( $category_id > 0 && ! DB::get_category_for_user( $user_id, $category_id ) ) {
@@ -533,6 +539,10 @@ function rest_get_transactions( $request ) {
 		}
 	}
 
+	if ( $wallet_id > 0 && ! DB::get_wallet_for_user( $user_id, $wallet_id ) ) {
+		$wallet_id = '';
+	}
+
 	$per_page = $request->get_param( 'per_page' ) ? absint( $request->get_param( 'per_page' ) ) : 100;
 	$per_page = min( max( 1, $per_page ), 500 );
 
@@ -541,6 +551,7 @@ function rest_get_transactions( $request ) {
 		'search'       => $search,
 		'category_id'  => $category_id,
 		'category_ids' => $category_ids,
+		'wallet_id'    => $wallet_id,
 		'page'         => $page,
 		'per_page'     => $per_page,
 	);

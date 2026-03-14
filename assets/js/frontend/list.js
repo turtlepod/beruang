@@ -20,6 +20,7 @@ export function initList() {
 	const searchEl = listWrap && listWrap.querySelector( '.beruang-filter-search' );
 	const categoryEl = listWrap && listWrap.querySelector( '.beruang-filter-category' );
 	const budgetEl = listWrap && listWrap.querySelector( '.beruang-filter-budget' );
+	const walletEl = listWrap && listWrap.querySelector( '.beruang-filter-wallet' );
 	if ( filterBtn && filters ) {
 		filterBtn.addEventListener( 'click', function () {
 			filters.hidden = ! filters.hidden;
@@ -132,8 +133,9 @@ export function initList() {
 		const search = searchEl ? searchEl.value : '';
 		const categoryId = categoryEl ? categoryEl.value : '';
 		const budgetId = budgetEl ? budgetEl.value : '';
+		const walletId = walletEl ? walletEl.value : '';
 		accordion.innerHTML = msgTpl( { message: i18n.loading || 'Loading…' } );
-		const params = { year, search, category_id: categoryId, budget_id: budgetId, page: 1 };
+		const params = { year, search, category_id: categoryId, budget_id: budgetId, wallet_id: walletId, page: 1 };
 		let allItems = [];
 		function fetchPage( pageNum ) {
 			params.page = pageNum;
@@ -166,6 +168,7 @@ export function initList() {
 			if ( searchEl ) searchEl.value = '';
 			if ( categoryEl ) categoryEl.value = '';
 			if ( budgetEl ) budgetEl.value = '';
+			if ( walletEl ) walletEl.value = '';
 			loadList();
 		} );
 	}

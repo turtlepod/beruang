@@ -7,7 +7,7 @@
 'use strict';
 
 import { i18n, editIcon, deleteIcon } from './config.js';
-import { request, beruangTemplate, setFormLoading, escapeHtml } from './utils.js';
+import { request, beruangTemplate, setFormLoading, escapeHtml, formatNum } from './utils.js';
 
 export function initWallet() {
 	const form = document.getElementById( 'beruang-wallet-form' );
@@ -68,28 +68,46 @@ export function initWallet() {
 		if ( nameEl ) nameEl.value = item.dataset.name || '';
 		if ( initialAmountEl ) initialAmountEl.value = item.dataset.initialAmount || '';
 		if ( initialDateEl ) initialDateEl.value = item.dataset.initialDate || getTodayDate();
-		if ( setDefaultEl ) setDefaultEl.checked = false;
+		if ( setDefaultEl ) {
+			const currentDefaultId = defaultWalletSelect
+				? defaultWalletSelect.dataset.defaultWalletId
+				: list.dataset.defaultWalletId;
+			setDefaultEl.checked = !! currentDefaultId && String( item.dataset.id ) === String( currentDefaultId );
+		}
 		if ( submitBtn ) submitBtn.textContent = i18n.update_wallet || 'Update wallet';
 		clearMessage();
 		modal.hidden = false;
 	}
 
-	function renderWallets( wallets ) {
+	function renderWallets( wallets, defaultWalletId ) {
 		if ( ! wallets.length ) {
 			list.innerHTML = walletEmptyTpl( { message: i18n.no_wallets || 'No wallet created.' } );
 			return;
 		}
+		const defaultId = defaultWalletId ? String( defaultWalletId ) : '';
 		let html = '';
 		wallets.forEach( function ( wallet ) {
 			const actionsHtml = '<button type="button" class="beruang-action-edit" title="' + ( i18n.edit || 'Edit' ) + '" aria-label="' + ( i18n.edit || 'Edit' ) + '">' + editIcon + '</button>' +
 				'<button type="button" class="beruang-action-delete" title="' + ( i18n.delete || 'Delete' ) + '" aria-label="' + ( i18n.delete || 'Delete' ) + '">' + deleteIcon + '</button>';
+			const walletId = String( wallet.id );
+			const initialAmount = wallet.initial_amount !== undefined ? wallet.initial_amount : 0;
+			const initialDate = wallet.initial_date || '';
+			const currentAmount = wallet.current_amount !== undefined ? wallet.current_amount : initialAmount;
+			const baselineTpl = i18n.wallet_baseline || 'Baseline: %1$s on %2$s';
+			const metaLabel = baselineTpl.replace( '%1$s', formatNum( initialAmount ) ).replace( '%2$s', initialDate );
+			const currentTpl = i18n.wallet_current || 'Current: %s';
+			const balanceLabel = currentTpl.replace( '%s', formatNum( currentAmount ) );
+			const balanceClass = currentAmount >= 0 ? 'positive' : 'negative';
 			html += walletItemTpl( {
-				id: wallet.id,
+				id: walletId,
 				name: wallet.name || '',
-				isDefault: '0',
+				isDefault: defaultId && walletId === defaultId ? '1' : '0',
 				displayName: wallet.name || '',
-				initialAmount: wallet.initial_amount !== undefined ? String( wallet.initial_amount ) : '',
-				initialDate: wallet.initial_date || '',
+				initialAmount: String( initialAmount ),
+				initialDate,
+				metaLabel,
+				balanceLabel,
+				balanceClass,
 				actionsHtml,
 			} );
 		} );
@@ -116,7 +134,7 @@ export function initWallet() {
 	function refreshWallets() {
 		request( 'GET', '/wallets' ).then( function ( r ) {
 			if ( ! r.success || ! r.data || ! r.data.wallets ) return;
-			renderWallets( r.data.wallets );
+			renderWallets( r.data.wallets, r.data.default_wallet_id );
 			updateDefaultSelect( r.data.wallets, r.data.default_wallet_id );
 			document.dispatchEvent( new CustomEvent( 'beruang-wallets-updated' ) );
 		} );
@@ -168,15 +186,15 @@ export function initWallet() {
 	list.addEventListener( 'click', function ( e ) {
 		const editBtn = e.target.closest( '.beruang-action-edit' );
 		if ( editBtn ) {
-			const item = editBtn.closest( '.beruang-wallet-item' );
-			if ( ! item || item.dataset.default === '1' ) return;
+			const item = editBtn.closest( '.beruang-wallet-card' );
+			if ( ! item ) return;
 			openEditModal( item );
 			return;
 		}
 
 		const deleteBtn = e.target.closest( '.beruang-action-delete' );
 		if ( ! deleteBtn ) return;
-		const item = deleteBtn.closest( '.beruang-wallet-item' );
+		const item = deleteBtn.closest( '.beruang-wallet-card' );
 		if ( ! item || ! item.dataset.id || item.dataset.default === '1' ) return;
 		if ( ! confirm( i18n.confirm_delete_wallet || 'Delete this wallet?' ) ) return;
 		request( 'DELETE', '/wallets/' + item.dataset.id ).then( function ( r ) {
@@ -191,11 +209,12 @@ export function initWallet() {
 			const walletId = this.value || null;
 			request( 'POST', '/wallets/default', { wallet_id: walletId } ).then( function ( r ) {
 				if ( r.success ) {
-					document.dispatchEvent( new CustomEvent( 'beruang-wallets-updated' ) );
+					refreshWallets();
 				}
 			} );
 		} );
 	}
 
 	refreshWallets();
+	document.addEventListener( 'beruang-transaction-saved', refreshWallets );
 }

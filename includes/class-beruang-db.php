@@ -674,8 +674,12 @@ class DB {
 			}
 		}
 		if ( isset( $args['wallet_id'] ) && '' !== $args['wallet_id'] && null !== $args['wallet_id'] ) {
-			$where[]  = 'wallet_id = %d';
-			$values[] = absint( $args['wallet_id'] );
+			if ( 0 === (int) $args['wallet_id'] ) {
+				$where[] = 'wallet_id IS NULL';
+			} else {
+				$where[]  = 'wallet_id = %d';
+				$values[] = absint( $args['wallet_id'] );
+			}
 		}
 		if ( ! empty( $args['type'] ) && in_array( $args['type'], array( 'expense', 'income' ), true ) ) {
 			$where[]  = 'type = %s';

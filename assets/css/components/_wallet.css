@@ -1,12 +1,12 @@
 /**
- * Beruang – budget section and modal.
+ * Beruang – wallet section and cards.
  */
 
-.beruang-budget-wrapper {
+.beruang-wallet-wrapper {
 	padding: 1em 0;
 }
 
-.beruang-budget-header {
+.beruang-wallet-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -14,35 +14,14 @@
 	margin-bottom: 1em;
 }
 
-.beruang-budget-header-actions {
+.beruang-wallet-header-actions {
 	display: flex;
 	align-items: center;
 	gap: 0.5em;
 	margin-left: auto;
-
-	& .beruang-filter-btn {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: var(--br-control-height);
-		height: var(--br-control-height);
-		padding: 0;
-	}
 }
 
-.beruang-budget-filters {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.5em;
-	margin-bottom: 1em;
-	padding: 0.75em;
-	background: var(--br-bg-subtle);
-	border: 1px solid var(--br-border-alt);
-	border-radius: var(--br-radius-sm);
-	color: var(--br-text);
-}
-
-.beruang-budget-add {
+.beruang-wallet-add {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -65,13 +44,21 @@
 	}
 }
 
-.beruang-budget-card {
+.beruang-wallet-list {
+	margin-top: 0.5em;
+}
+
+.beruang-wallet-card {
 	padding: 1em;
 	margin-bottom: 0.75em;
 	background: var(--br-bg);
 	border-radius: var(--br-radius-sm);
 	border-left: 4px solid var(--br-primary);
 	color: var(--br-text);
+
+	&[data-default="1"] {
+		border-left-color: var(--br-success);
+	}
 
 	& h4 {
 		margin: 0 0 0.5em;
@@ -80,46 +67,67 @@
 	}
 }
 
-.beruang-budget-actions {
-	display: inline-flex;
-	gap: 0.5em;
-	margin-top: 0.5em;
-}
+.beruang-wallet-card-balance {
+	font-size: 1.1em;
+	font-weight: 600;
+	margin: 0.25em 0;
+	color: var(--br-text);
 
-.beruang-budget-progress-wrap {
-	height: 8px;
-	background: var(--br-border-alt);
-	border-radius: var(--br-radius-sm);
-	overflow: hidden;
-	margin: 0.5em 0;
-}
-
-.beruang-budget-progress-bar {
-	height: 100%;
-	background: var(--br-success);
-	transition: width 0.2s;
-
-	&.warning {
-		background: #f59e0b;
+	&.positive {
+		color: var(--br-success);
 	}
 
-	&.over {
-		background: var(--br-error);
+	&.negative {
+		color: var(--br-error);
 	}
 }
 
-.beruang-budget-meta {
+.beruang-wallet-card-meta {
 	font-size: 0.9em;
 	opacity: 0.85;
 	color: var(--br-text-muted);
 }
 
-.beruang-budget-over {
-	color: var(--br-error);
-	font-weight: 600;
+.beruang-wallet-card-actions {
+	display: inline-flex;
+	gap: 0.5em;
+	margin-top: 0.5em;
 }
 
-.beruang-budget-modal {
+.beruang-wallet-default-row {
+	margin-top: 1em;
+
+	& select {
+		max-width: 20em;
+	}
+}
+
+.beruang-wallet-form .beruang-form-row {
+	margin-bottom: 0.75em;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5em;
+}
+
+.beruang-wallet-form .beruang-submit {
+	padding: 0.5em 1.2em;
+	height: var(--br-control-height);
+	background: var(--br-primary) !important;
+	color: var(--br-bg) !important;
+	border: none !important;
+	border-radius: var(--br-radius-sm);
+	cursor: pointer;
+	line-height: 1.4;
+	font-weight: 600;
+
+	&:hover {
+		background: var(--br-primary-hover) !important;
+		color: var(--br-bg) !important;
+	}
+}
+
+.beruang-wallet-modal {
 	position: fixed;
 	inset: 0;
 	background: var(--br-overlay);
@@ -134,15 +142,15 @@
 	}
 }
 
-.beruang-budget-modal-inner {
+.beruang-wallet-modal-inner {
 	position: relative;
 	background: var(--br-bg);
+	color: var(--br-text);
 	padding: 1.5em;
 	border-radius: var(--br-radius-md);
 	width: 100%;
 	max-height: 90vh;
 	overflow-y: auto;
-	color: var(--br-text);
 
 	& h4 {
 		margin-top: 0;
@@ -175,35 +183,5 @@
 		border-radius: var(--br-radius-sm);
 		font-family: inherit;
 		font-size: inherit;
-	}
-}
-
-.beruang-budget-categories-list {
-	margin: 0;
-	padding: 0.5em;
-	max-height: 14em;
-	overflow-y: auto;
-	border: 1px solid var(--br-border-alt);
-	border-radius: var(--br-radius-sm);
-	background: var(--br-bg);
-
-	& label {
-		display: flex;
-		align-items: center;
-		gap: 0.5em;
-		padding: 0.8em 0;
-		margin: 0;
-		font-weight: normal;
-		color: var(--br-text);
-		border-bottom: 1px solid var(--br-divider);
-		cursor: pointer;
-
-		&:last-child {
-			border-bottom: none;
-		}
-
-		& input[type="checkbox"] {
-			flex-shrink: 0;
-		}
 	}
 }

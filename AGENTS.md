@@ -126,6 +126,7 @@ Extended documentation lives in `docs/`:
 - `npm run build` → `dist/` (10up-toolkit)
 - Entry: `beruang-front.js` → `dist/js/front.js`
 - Front scripts only load when `dist/` exists.
+- **Always run `npm run build` after changing any file. The project must build successfully before marking work as ready for review.**
 
 ## Quick Edit Targets
 

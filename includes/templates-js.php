@@ -29,10 +29,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/html" id="tmpl-beruang-wallet-item">
-	<li class="beruang-wallet-item" data-id="{{ data.id }}" data-name="{{ data.name }}" data-default="{{ data.isDefault }}" data-initial-amount="{{ data.initialAmount }}" data-initial-date="{{ data.initialDate }}">
-		<span class="beruang-cat-item-name">{{ data.displayName }}</span>
-		{{{ data.actionsHtml }}}
-	</li>
+	<div class="beruang-wallet-card" data-id="{{ data.id }}" data-name="{{ data.name }}" data-default="{{ data.isDefault }}" data-initial-amount="{{ data.initialAmount }}" data-initial-date="{{ data.initialDate }}">
+		<h4>{{ data.displayName }}</h4>
+		<div class="beruang-wallet-card-balance {{ data.balanceClass }}">{{ data.balanceLabel }}</div>
+		<div class="beruang-wallet-card-meta">{{ data.metaLabel }}</div>
+		<span class="beruang-wallet-card-actions">{{{ data.actionsHtml }}}</span>
+	</div>
 </script>
 
 <script type="text/html" id="tmpl-beruang-wallet-empty">
