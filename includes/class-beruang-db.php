@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class DB {
 
-	const DB_VERSION              = 3;
+	const DB_VERSION              = 4;
 	const OPTION_DB_VERSION       = 'beruang_db_version';
 	const DEFAULT_WALLET_META_KEY = 'beruang_default_wallet_id';
 
@@ -183,6 +183,9 @@ class DB {
 	private static function migrate_data() {
 		$tx_table     = self::table_transaction();
 		$wallet_table = self::table_wallet();
+
+		// Ensure wallet_id column allows NULL (dbDelta does not ALTER existing column constraints).
+		self::wpdb()->query( "ALTER TABLE $tx_table MODIFY wallet_id bigint(20) unsigned DEFAULT NULL" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 		// Legacy "Cash" sentinel is now represented as NULL wallet_id.
 		self::wpdb()->query( "UPDATE $tx_table SET wallet_id = NULL WHERE wallet_id = 0" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery

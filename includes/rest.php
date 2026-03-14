@@ -87,7 +87,7 @@ function rest_register_routes() {
 					'type'     => 'string',
 				),
 				'note'        => array( 'type' => 'string' ),
-				'wallet_id'   => array( 'type' => 'string' ),
+				'wallet_id'   => array( 'type' => array( 'string', 'null' ) ),
 				'category_id' => array(
 					'default' => 0,
 					'type'    => 'integer',
@@ -173,7 +173,7 @@ function rest_register_routes() {
 				'time'        => array( 'type' => 'string' ),
 				'description' => array( 'type' => 'string' ),
 				'note'        => array( 'type' => 'string' ),
-				'wallet_id'   => array( 'type' => 'string' ),
+				'wallet_id'   => array( 'type' => array( 'string', 'null' ) ),
 				'category_id' => array( 'type' => 'integer' ),
 				'amount'      => array( 'type' => 'number' ),
 				'type'        => array( 'enum' => array( 'expense', 'income' ) ),

@@ -21,7 +21,7 @@
 | `BERUANG_PLUGIN_URL` | beruang.php | Plugin URL |
 | `ADMIN_SLUG` | includes/admin.php | `'beruang'` |
 | `ADMIN_CAPABILITY` | includes/admin.php | `'manage_options'` |
-| `DB::DB_VERSION` | class-beruang-db.php | Schema version (3) |
+| `DB::DB_VERSION` | class-beruang-db.php | Schema version (4) |
 
 ## File Map
 
@@ -112,6 +112,14 @@ All require logged-in user. Frontend JS uses `window.beruangData` (restUrl, rest
 - `beruang_currency`, `beruang_decimal_sep`, `beruang_thousands_sep`, `beruang_decimal_places`
 - `beruang_pwa_enabled`, `beruang_pwa_app_name`, `beruang_pwa_short_name`, `beruang_pwa_theme_color`
 - `beruang_db_version` (internal)
+
+## Docs
+
+Extended documentation lives in `docs/`:
+
+| File | Contents |
+|------|----------|
+| `docs/e2e-tests.md` | Playwright E2E test setup, configuration, coverage tables, CLI commands, bugs found |
 
 ## Build
 

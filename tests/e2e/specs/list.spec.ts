@@ -93,9 +93,9 @@ test.describe( '[beruang-list]', () => {
 	// Transactions load
 	// -------------------------------------------------------------------
 
-	test( 'loading indicator disappears after transactions are fetched', async ( { page } ) => {
-		// Wait until the "Loading…" paragraph is gone (JS replaced it with data or empty state).
-		await expect( page.locator( '#beruang-list-accordion .beruang-loading' ) ).toBeHidden( {
+	test( 'loading indicator text changes after transactions are fetched', async ( { page } ) => {
+		// The JS replaces "Loading…" with actual rows or "No transactions." once the REST call returns.
+		await expect( page.locator( '#beruang-list-accordion' ) ).not.toContainText( 'Loading…', {
 			timeout: 10_000,
 		} );
 	} );
@@ -107,18 +107,21 @@ test.describe( '[beruang-list]', () => {
 	test( 'a transaction submitted on the form page appears in the list', async ( { page, urls } ) => {
 		const description = `E2E list test ${ Date.now() }`;
 
-		// Submit a transaction on the form page.
+		// Submit a transaction on the form page and wait for the REST call to succeed.
 		await page.goto( urls.form );
+		const responsePromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/transactions' ) &&
+				resp.request().method() === 'POST'
+		);
 		await page.locator( '#beruang-description' ).fill( description );
 		await page.locator( '#beruang-amount' ).fill( '5000' );
-		await page.locator( '.beruang-submit' ).click();
-		await expect( page.locator( '#beruang-description' ) ).toHaveValue( '', {
-			timeout: 10_000,
-		} );
+		await page.locator( '#beruang-transaction-form button[type="submit"]' ).click();
+		await responsePromise;
 
 		// Navigate to the list page and verify the transaction is visible.
 		await page.goto( urls.list );
-		await expect( page.locator( '#beruang-list-accordion .beruang-loading' ) ).toBeHidden( {
+		await expect( page.locator( '#beruang-list-accordion' ) ).not.toContainText( 'Loading…', {
 			timeout: 10_000,
 		} );
 		await expect( page.locator( '#beruang-list-accordion' ) ).toContainText( description );

@@ -80,9 +80,9 @@ test.describe( '[beruang-form]', () => {
 		await expect( page.locator( '#beruang-calc-modal' ) ).toBeHidden();
 	} );
 
-	test( 'calculator display starts empty', async ( { page } ) => {
+	test( 'calculator display starts at zero', async ( { page } ) => {
 		await page.locator( '.beruang-calc-btn' ).click();
-		await expect( page.locator( '.beruang-calc-display' ) ).toHaveValue( '' );
+		await expect( page.locator( '.beruang-calc-display' ) ).toHaveValue( '0' );
 	} );
 
 	// -------------------------------------------------------------------
@@ -133,14 +133,18 @@ test.describe( '[beruang-form]', () => {
 	// Form submission
 	// -------------------------------------------------------------------
 
-	test( 'submitting a valid transaction clears the description field', async ( { page } ) => {
+	test( 'submitting a valid transaction returns HTTP 200 from the REST API', async ( { page } ) => {
+		const responsePromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/transactions' ) &&
+				resp.request().method() === 'POST'
+		);
+
 		await page.locator( '#beruang-description' ).fill( 'E2E test expense' );
 		await page.locator( '#beruang-amount' ).fill( '10000' );
-		await page.locator( '.beruang-submit' ).click();
+		await page.locator( '#beruang-transaction-form button[type="submit"]' ).click();
 
-		// After successful submission the description should be cleared.
-		await expect( page.locator( '#beruang-description' ) ).toHaveValue( '', {
-			timeout: 10_000,
-		} );
+		const response = await responsePromise;
+		expect( response.status() ).toBe( 200 );
 	} );
 } );

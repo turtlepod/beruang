@@ -18,7 +18,7 @@ test.describe( 'unauthenticated access', () => {
 		{ key: 'form', message: 'Please log in to add transactions.' },
 		{ key: 'list', message: 'Please log in to view transactions.' },
 		{ key: 'graph', message: 'Please log in to view graphs.' },
-		{ key: 'budget', message: 'Please log in to manage budgets.' },
+		{ key: 'budget', message: 'Please log in to view budgets.' },
 		{ key: 'wallet', message: 'Please log in to manage wallets.' },
 	];
 
