@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<button type="button" class="beruang-wallet-add" title="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		</div>
 	</div>
-	<div class="beruang-form-row beruang-wallet-default-row"<?php echo count( $wallets ) >= 2 ? '' : ' hidden'; ?>>
+	<div class="beruang-form-row beruang-wallet-default-row"<?php echo count( $wallets ) >= 1 ? '' : ' hidden'; ?>>
 		<label for="beruang-default-wallet-select"><?php esc_html_e( 'Default wallet', 'beruang' ); ?></label>
 		<select id="beruang-default-wallet-select" class="beruang-default-wallet-select" data-default-wallet-id="<?php echo esc_attr( null === $default_wallet_id ? '' : (string) $default_wallet_id ); ?>">
 			<option value=""><?php esc_html_e( 'No Wallet', 'beruang' ); ?></option>

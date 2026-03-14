@@ -116,7 +116,7 @@ export function initWallet() {
 
 	function updateDefaultSelect( wallets, defaultWalletId ) {
 		if ( defaultWalletRow ) {
-			defaultWalletRow.hidden = wallets.length < 2;
+			defaultWalletRow.hidden = wallets.length < 1;
 		}
 		if ( ! defaultWalletSelect ) return;
 		const currentDefault = defaultWalletId ? String( defaultWalletId ) : '';
@@ -206,7 +206,7 @@ export function initWallet() {
 
 	if ( defaultWalletSelect ) {
 		defaultWalletSelect.addEventListener( 'change', function () {
-			const walletId = this.value || null;
+			const walletId = this.value;
 			request( 'POST', '/wallets/default', { wallet_id: walletId } ).then( function ( r ) {
 				if ( r.success ) {
 					refreshWallets();
