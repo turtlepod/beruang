@@ -10,23 +10,44 @@
  * @var string $time         Default time (H:i).
  * @var string $currency     Currency code.
  * @var array  $categories   Flat categories from DB.
+ * @var array  $wallets      Wallets from DB.
+ * @var int    $default_wallet_id Default wallet ID.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$is_edit = ( 'edit' === $mode );
-$date_id = $field_prefix . '-date';
-$time_id = $field_prefix . '-time';
-$desc_id = $field_prefix . '-description';
-$cat_id  = $field_prefix . '-category';
-$amt_id  = $field_prefix . '-amount';
-$type_id = $field_prefix . '-type';
+$is_edit        = ( 'edit' === $mode );
+$date_id        = $field_prefix . '-date';
+$time_id        = $field_prefix . '-time';
+$desc_id        = $field_prefix . '-description';
+$note_id        = $field_prefix . '-note';
+$wallet_id      = $field_prefix . '-wallet';
+$cat_id         = $field_prefix . '-category';
+$amt_id         = $field_prefix . '-amount';
+$type_id        = $field_prefix . '-type';
+$has_wallets    = ! empty( $wallets );
+$default_wallet = null === $default_wallet_id ? '' : (string) $default_wallet_id;
 ?>
 <form class="beruang-form beruang-transaction-form" id="<?php echo esc_attr( $form_id ); ?>" data-mode="<?php echo esc_attr( $mode ); ?>">
 	<?php if ( $is_edit ) : ?>
 		<input type="hidden" name="id" id="<?php echo esc_attr( $field_prefix ); ?>-id" value="" />
+	<?php endif; ?>
+	<?php if ( $has_wallets ) : ?>
+	<div class="beruang-form-row">
+		<label for="<?php echo esc_attr( $wallet_id ); ?>"><?php esc_html_e( 'Wallet', 'beruang' ); ?></label>
+		<select id="<?php echo esc_attr( $wallet_id ); ?>" name="wallet_id" data-default-wallet-id="<?php echo esc_attr( $default_wallet ); ?>">
+			<option value=""<?php echo selected( '', $default_wallet, false ); ?>><?php esc_html_e( 'No Wallet', 'beruang' ); ?></option>
+			<?php
+			foreach ( $wallets as $wallet ) {
+				echo '<option value="' . esc_attr( $wallet['id'] ) . '"' . selected( (string) $wallet['id'], $default_wallet, false ) . '>' . esc_html( $wallet['name'] ) . '</option>';
+			}
+			?>
+		</select>
+	</div>
+	<?php else : ?>
+		<input type="hidden" name="wallet_id" value="" />
 	<?php endif; ?>
 	<div class="beruang-form-row beruang-datetime-row">
 		<label for="<?php echo esc_attr( $date_id ); ?>"><?php esc_html_e( 'Date', 'beruang' ); ?></label>
@@ -37,7 +58,11 @@ $type_id = $field_prefix . '-type';
 	</div>
 	<div class="beruang-form-row">
 		<label for="<?php echo esc_attr( $desc_id ); ?>"><?php esc_html_e( 'Description', 'beruang' ); ?></label>
-		<input type="text" id="<?php echo esc_attr( $desc_id ); ?>" name="description" placeholder="<?php esc_attr_e( 'Meal, Gas, etc...', 'beruang' ); ?>" required />
+		<span class="beruang-description-wrap">
+			<input type="text" id="<?php echo esc_attr( $desc_id ); ?>" name="description" placeholder="<?php esc_attr_e( 'Meal, Gas, etc...', 'beruang' ); ?>" required />
+			<button type="button" class="beruang-note-btn" title="<?php esc_attr_e( 'Add note', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add note', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'note', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+		</span>
+		<textarea id="<?php echo esc_attr( $note_id ); ?>" name="note" rows="3" hidden aria-hidden="true" tabindex="-1"></textarea>
 	</div>
 	<div class="beruang-form-row">
 		<label for="<?php echo esc_attr( $cat_id ); ?>"><?php esc_html_e( 'Category', 'beruang' ); ?></label>
