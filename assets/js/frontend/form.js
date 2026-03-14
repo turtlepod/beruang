@@ -469,6 +469,15 @@ export function initForm() {
 		} );
 		const clearBtn = calcModal.querySelector( '.beruang-calc-clear' );
 		if ( clearBtn ) clearBtn.addEventListener( 'click', doClear );
+		const backspaceBtn = calcModal.querySelector( '.beruang-calc-backspace' );
+		if ( backspaceBtn ) backspaceBtn.addEventListener( 'click', function () {
+			if ( calcVal.length > 1 ) {
+				calcVal = calcVal.slice( 0, -1 );
+			} else {
+				calcVal = '0';
+			}
+			updateDisplay();
+		} );
 		const equalsBtn = calcModal.querySelector( '.beruang-calc-equals' );
 		if ( equalsBtn ) equalsBtn.addEventListener( 'click', doEquals );
 	}

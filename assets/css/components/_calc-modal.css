@@ -110,20 +110,27 @@
 }
 
 .beruang-calc-bottom {
-	display: grid;
-	grid-template-columns: 2fr 1fr 1fr 1fr;
+	display: flex;
+	flex-direction: column;
 	gap: 0.35em;
 	margin-top: 0.75em;
 }
 
+.beruang-calc-bottom-row {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0.35em;
+}
+
 .beruang-calc-insert-close {
-	grid-column: span 2;
-	padding: 0.5em;
+	width: 100%;
+	padding: 1em;
 	background: var(--br-bg-muted);
 	color: var(--br-text);
 	border: 1px solid var(--br-border);
 	border-radius: var(--br-radius-sm);
 	cursor: pointer;
+	margin-top: .75em;
 
 	&:hover {
 		background: #d8d8d8;
@@ -143,6 +150,28 @@
 	&:hover {
 		background: #d35400;
 		color: var(--br-bg);
+	}
+}
+
+.beruang-calc-backspace {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.5em;
+	background: #2c3338;
+	color: var(--br-bg);
+	border: none;
+	border-radius: var(--br-radius-sm);
+	cursor: pointer;
+
+	& svg {
+		display: block;
+		width: 1.1em;
+		height: 1.1em;
+	}
+
+	&:hover {
+		background: var(--br-text);
 	}
 }
 
