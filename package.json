@@ -27,7 +27,7 @@
     "lint-fix": "npm run lint-fix-js && npm run lint-fix-css",
     "lint-fix-js": "eslint --fix \"assets/js/*.js\" \"assets/js/frontend/*.js\"",
     "lint-fix-css": "stylelint --fix \"assets/css/**/*.css\"",
-    "zip": "npm run build && version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang.$version.zip beruang -x '*/.?*' -x '*node_modules*' -x '*/vendor/*'",
+    "zip": "npm run build && composer run test && version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang.$version.zip beruang -x '*/.?*' -x '*node_modules*' -x '*/vendor/*'",
     "clean-dist": "rm -rf ./dist"
   },
   "10up-toolkit": {
