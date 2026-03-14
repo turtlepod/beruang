@@ -17,6 +17,7 @@ export function initWallet() {
 
 	const walletAddBtn = document.querySelector( '.beruang-wallet-add' );
 	const walletItemTpl = beruangTemplate( 'beruang-wallet-item' );
+	const walletEmptyTpl = beruangTemplate( 'beruang-wallet-empty' );
 	const editIdEl = document.getElementById( 'beruang-wallet-edit-id' );
 	const nameEl = document.getElementById( 'beruang-wallet-name' );
 	const initialAmountEl = document.getElementById( 'beruang-wallet-initial-amount' );
@@ -74,15 +75,11 @@ export function initWallet() {
 	}
 
 	function renderWallets( wallets ) {
-		let html = walletItemTpl( {
-			id: 0,
-			name: i18n.no_wallet || 'No Wallet',
-			isDefault: '1',
-			displayName: i18n.no_wallet || 'No Wallet',
-			initialAmount: '',
-			initialDate: '',
-			actionsHtml: '',
-		} );
+		if ( ! wallets.length ) {
+			list.innerHTML = walletEmptyTpl( { message: i18n.no_wallets || 'No wallet created.' } );
+			return;
+		}
+		let html = '';
 		wallets.forEach( function ( wallet ) {
 			const actionsHtml = '<button type="button" class="beruang-action-edit" title="' + ( i18n.edit || 'Edit' ) + '" aria-label="' + ( i18n.edit || 'Edit' ) + '">' + editIcon + '</button>' +
 				'<button type="button" class="beruang-action-delete" title="' + ( i18n.delete || 'Delete' ) + '" aria-label="' + ( i18n.delete || 'Delete' ) + '">' + deleteIcon + '</button>';
