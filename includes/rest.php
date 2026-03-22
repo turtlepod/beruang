@@ -270,6 +270,39 @@ function rest_register_routes() {
 	);
 	register_rest_route(
 		$ns,
+		'/wallets/transfer',
+		array(
+			'methods'             => 'POST',
+			'permission_callback' => $perm,
+			'callback'            => __NAMESPACE__ . '\rest_transfer_wallet',
+			'args'                => array(
+				'from_wallet_id' => array(
+					'required' => true,
+					'type'     => 'integer',
+				),
+				'to_wallet_id'   => array(
+					'required' => true,
+					'type'     => 'integer',
+				),
+				'amount'         => array(
+					'required' => true,
+					'type'     => 'number',
+				),
+				'category_id'    => array(
+					'default' => 0,
+					'type'    => 'integer',
+				),
+				'note'           => array( 'type' => 'string' ),
+				'date'           => array(
+					'required' => true,
+					'type'     => 'string',
+				),
+				'time'           => array( 'type' => 'string' ),
+			),
+		)
+	);
+	register_rest_route(
+		$ns,
 		'/wallets/default',
 		array(
 			'methods'             => 'POST',
@@ -958,6 +991,96 @@ function rest_set_default_wallet( $request ) {
 			'success' => true,
 			'data'    => array(
 				'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
+			),
+		)
+	);
+}
+
+/**
+ * REST: Transfer between wallets — creates one expense and one income transaction.
+ *
+ * @param \WP_REST_Request $request Request.
+ * @return \WP_REST_Response
+ */
+function rest_transfer_wallet( $request ) {
+	$user_id = get_current_user_id();
+	$body    = $request->get_json_params();
+	$body    = is_array( $body ) ? $body : array();
+
+	$from_id     = absint( $body['from_wallet_id'] ?? 0 );
+	$to_id       = absint( $body['to_wallet_id'] ?? 0 );
+	$amount      = floatval( $body['amount'] ?? 0 );
+	$category_id = absint( $body['category_id'] ?? 0 );
+	$note        = sanitize_textarea_field( $body['note'] ?? '' );
+	$date        = sanitize_text_field( $body['date'] ?? '' );
+	$time        = isset( $body['time'] ) && '' !== (string) $body['time'] ? sanitize_text_field( $body['time'] ) : null;
+
+	if ( ! $from_id || ! $to_id ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Both wallets are required.', 'beruang' ), 400 );
+	}
+	if ( $from_id === $to_id ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Source and target wallets must be different.', 'beruang' ), 400 );
+	}
+	if ( $amount <= 0 ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Amount must be greater than zero.', 'beruang' ), 400 );
+	}
+
+	$from_wallet = DB::get_wallet_for_user( $user_id, $from_id );
+	$to_wallet   = DB::get_wallet_for_user( $user_id, $to_id );
+
+	if ( ! $from_wallet ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Source wallet not found.', 'beruang' ), 404 );
+	}
+	if ( ! $to_wallet ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Target wallet not found.', 'beruang' ), 404 );
+	}
+
+	$shared = array(
+		'date'        => $date,
+		'time'        => $time,
+		'note'        => $note,
+		'category_id' => $category_id,
+		'amount'      => $amount,
+	);
+
+	// Expense from source wallet.
+	$expense_id = DB::insert_transaction(
+		$user_id,
+		array_merge(
+			$shared,
+			array(
+				'wallet_id'   => $from_id,
+				/* translators: %s: target wallet name */
+				'description' => sprintf( __( 'Transfer to %s', 'beruang' ), $to_wallet['name'] ),
+				'type'        => 'expense',
+			)
+		)
+	);
+
+	// Income to target wallet.
+	$income_id = DB::insert_transaction(
+		$user_id,
+		array_merge(
+			$shared,
+			array(
+				'wallet_id'   => $to_id,
+				/* translators: %s: source wallet name */
+				'description' => sprintf( __( 'Transfer from %s', 'beruang' ), $from_wallet['name'] ),
+				'type'        => 'income',
+			)
+		)
+	);
+
+	if ( ! $expense_id || ! $income_id ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang' ), 500 );
+	}
+
+	return rest_ensure_response(
+		array(
+			'success' => true,
+			'data'    => array(
+				'expense_id' => $expense_id,
+				'income_id'  => $income_id,
 			),
 		)
 	);

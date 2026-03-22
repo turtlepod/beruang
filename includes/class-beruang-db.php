@@ -942,7 +942,7 @@ class DB {
 	}
 
 	/**
-	 * Sum expense amount for given user, date range, and optional category ids.
+	 * Sum net budget amount (expenses minus income) for given user, date range, and optional category ids.
 	 *
 	 * @param int    $user_id      User ID.
 	 * @param string $date_from    Start date Y-m-d.
@@ -953,7 +953,7 @@ class DB {
 	public static function sum_expenses( $user_id, $date_from, $date_to, $category_ids = array() ) {
 		$table   = self::table_transaction();
 		$user_id = absint( $user_id );
-		$where   = "user_id = %d AND type = 'expense' AND date >= %s AND date <= %s";
+		$where   = 'user_id = %d AND date >= %s AND date <= %s';
 		$values  = array( $user_id, $date_from, $date_to );
 		if ( ! empty( $category_ids ) ) {
 			$ids          = array_map( 'absint', $category_ids );
@@ -961,7 +961,8 @@ class DB {
 			$where       .= " AND category_id IN ($placeholders)";
 			$values       = array_merge( $values, $ids );
 		}
-		$sum = self::wpdb()->get_var( self::wpdb()->prepare( "SELECT COALESCE(SUM(amount),0) FROM $table WHERE $where", $values ) );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $where is built from safe values above.
+		$sum = self::wpdb()->get_var( self::wpdb()->prepare( "SELECT COALESCE(SUM(CASE WHEN type='expense' THEN amount ELSE -amount END),0) FROM $table WHERE $where", $values ) );
 		return (float) $sum;
 	}
 

@@ -160,6 +160,9 @@ function shortcode_render_wallet( $atts ) { // phpcs:ignore Generic.CodeAnalysis
 		array(
 			'wallets'           => $wallets,
 			'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
+			'categories'        => DB::get_categories_flat( $user_id, true ),
+			'today'             => current_time( 'Y-m-d' ),
+			'time'              => current_time( 'H:i' ),
 		)
 	);
 	return ob_get_clean();

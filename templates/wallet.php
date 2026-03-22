@@ -3,8 +3,11 @@
  * Template for [beruang-wallet] shortcode.
  *
  * @package Beruang
- * @var array $wallets Wallets from DB.
- * @var int   $default_wallet_id Default wallet ID.
+ * @var array  $wallets           Wallets from DB.
+ * @var int    $default_wallet_id Default wallet ID.
+ * @var array  $categories        Flat categories for transfer form.
+ * @var string $today             Current date (Y-m-d).
+ * @var string $time              Current time (H:i).
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,6 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="beruang-wallet-header">
 		<h2 class="beruang-section-title"><?php esc_html_e( 'Wallets', 'beruang' ); ?></h2>
 		<div class="beruang-wallet-header-actions">
+			<?php if ( count( $wallets ) >= 2 ) : ?>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-wallet-transfer-open" title="<?php esc_attr_e( 'Transfer between wallets', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Transfer between wallets', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'transfer', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<?php endif; ?>
 			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-wallet-add" title="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		</div>
 	</div>
@@ -50,6 +56,68 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php
 		}
 		?>
+	</div>
+	<div class="beruang-wallet-transfer-modal beruang-modal" id="beruang-wallet-transfer-modal" hidden>
+		<div class="beruang-modal-dialog">
+			<button type="button" class="beruang-modal-close-x beruang-wallet-transfer-close" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<div class="beruang-modal-inner">
+				<h4><?php esc_html_e( 'Transfer between wallets', 'beruang' ); ?></h4>
+				<div class="beruang-form-wrapper">
+					<form id="beruang-wallet-transfer-form" class="beruang-form">
+						<div class="beruang-form-row beruang-form-row--split">
+							<div class="beruang-form-field">
+								<label for="beruang-transfer-date"><?php esc_html_e( 'Date', 'beruang' ); ?></label>
+								<input type="date" id="beruang-transfer-date" name="date" value="<?php echo esc_attr( $today ); ?>" required />
+							</div>
+							<div class="beruang-form-field">
+								<label for="beruang-transfer-time"><?php esc_html_e( 'Time', 'beruang' ); ?></label>
+								<input type="time" id="beruang-transfer-time" name="time" value="<?php echo esc_attr( $time ); ?>" required />
+							</div>
+						</div>
+						<div class="beruang-form-row beruang-form-row--split">
+							<div class="beruang-form-field">
+								<label for="beruang-transfer-from"><?php esc_html_e( 'From wallet', 'beruang' ); ?></label>
+								<select id="beruang-transfer-from" name="from_wallet_id" required>
+									<?php foreach ( $wallets as $wallet ) : ?>
+										<option value="<?php echo esc_attr( (string) $wallet['id'] ); ?>"><?php echo esc_html( $wallet['name'] ); ?></option>
+									<?php endforeach; ?>
+								</select>
+							</div>
+							<div class="beruang-form-field">
+								<label for="beruang-transfer-to"><?php esc_html_e( 'To wallet', 'beruang' ); ?></label>
+								<select id="beruang-transfer-to" name="to_wallet_id" required>
+									<?php foreach ( $wallets as $wallet ) : ?>
+										<option value="<?php echo esc_attr( (string) $wallet['id'] ); ?>"><?php echo esc_html( $wallet['name'] ); ?></option>
+									<?php endforeach; ?>
+								</select>
+							</div>
+						</div>
+						<div class="beruang-form-row">
+							<label for="beruang-transfer-amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label>
+							<input type="number" id="beruang-transfer-amount" name="amount" step="any" min="0" required />
+						</div>
+						<div class="beruang-form-row">
+							<label for="beruang-transfer-category"><?php esc_html_e( 'Category', 'beruang' ); ?></label>
+							<select id="beruang-transfer-category" name="category_id">
+								<option value=""><?php esc_html_e( 'No category', 'beruang' ); ?></option>
+								<?php foreach ( $categories as $cat ) : ?>
+									<option value="<?php echo esc_attr( (string) $cat['id'] ); ?>"><?php echo esc_html( str_repeat( '— ', max( 0, (int) $cat['depth'] ) ) . $cat['name'] ); ?></option>
+								<?php endforeach; ?>
+							</select>
+						</div>
+						<div class="beruang-form-row">
+							<label for="beruang-transfer-note"><?php esc_html_e( 'Note', 'beruang' ); ?></label>
+							<input type="text" id="beruang-transfer-note" name="note" />
+						</div>
+						<div class="beruang-form-row beruang-modal-actions">
+							<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit beruang-modal-save"><?php esc_html_e( 'Transfer', 'beruang' ); ?></button>
+							<button type="button" class="beruang-btn beruang-btn--secondary beruang-modal-cancel beruang-wallet-transfer-close"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+							<span class="beruang-form-message" aria-live="polite"></span>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
 	</div>
 	<div class="beruang-wallet-modal beruang-modal" id="beruang-wallet-modal" hidden>
 		<div class="beruang-modal-dialog">
