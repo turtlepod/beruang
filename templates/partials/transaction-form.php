@@ -95,8 +95,8 @@ $default_wallet = null === $default_wallet_id ? '' : (string) $default_wallet_id
 		</div>
 		<input type="hidden" name="type" id="<?php echo esc_attr( $type_id ); ?>" value="expense" />
 	</div>
-	<div class="beruang-form-row beruang-submit-row<?php echo $is_edit ? ' beruang-modal-actions' : ''; ?>">
-		<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit<?php echo $is_edit ? ' beruang-modal-save' : ''; ?>"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
+	<div class="beruang-form-row beruang-submit-row<?php echo esc_attr( $is_edit ? ' beruang-modal-actions' : '' ); ?>">
+		<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit<?php echo esc_attr( $is_edit ? ' beruang-modal-save' : '' ); ?>"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
 		<?php if ( $is_edit ) : ?>
 			<button type="button" class="beruang-btn beruang-btn--secondary beruang-modal-cancel beruang-edit-tx-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
 		<?php endif; ?>

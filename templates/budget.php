@@ -51,8 +51,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 			}
 			?>
 		</select>
-		<button type="button" class="beruang-btn beruang-btn--primary beruang-filter-apply"><?php esc_html_e( 'Apply', 'beruang' ); ?></button>
-		<button type="button" class="beruang-btn beruang-btn--secondary beruang-filter-reset"><?php esc_html_e( 'Reset', 'beruang' ); ?></button>
+		<div class="beruang-filter-actions">
+			<button type="button" class="beruang-btn beruang-btn--primary beruang-filter-apply"><?php esc_html_e( 'Apply', 'beruang' ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--secondary beruang-filter-reset"><?php esc_html_e( 'Reset', 'beruang' ); ?></button>
+		</div>
 	</div>
 	<div class="beruang-budget-list" id="beruang-budget-list" data-year="<?php echo esc_attr( $year ); ?>" data-month="<?php echo esc_attr( $month ); ?>">
 		<p class="beruang-loading"><?php esc_html_e( 'Loading…', 'beruang' ); ?></p>

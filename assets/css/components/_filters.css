@@ -20,6 +20,12 @@
 		display: none !important;
 	}
 
+	& .beruang-filter-actions {
+		flex-basis: 100%;
+		display: flex;
+		gap: 0.5em;
+	}
+
 	& input[type="text"] {
 		padding: 0.4em;
 		height: var(--br-control-height);
