@@ -39,9 +39,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="beruang-wallet-card" data-id="<?php echo esc_attr( $wallet['id'] ); ?>" data-name="<?php echo esc_attr( $wallet['name'] ); ?>" data-default="<?php echo esc_attr( $is_default ); ?>" data-initial-amount="<?php echo esc_attr( (string) $initial_amount ); ?>" data-initial-date="<?php echo esc_attr( $initial_date ); ?>">
 				<h4><?php echo esc_html( $wallet['name'] ); ?></h4>
 				<?php /* translators: %s: current wallet amount. */ ?>
-				<div class="beruang-wallet-card-balance <?php echo esc_attr( $balance_class ); ?>"><?php echo esc_html( sprintf( __( 'Current: %s', 'beruang' ), number_format_i18n( $current_amount, 2 ) ) ); ?></div>
+				<div class="beruang-wallet-card-balance <?php echo esc_attr( $balance_class ); ?>"><?php echo esc_html( sprintf( __( 'Current: %s', 'beruang' ), number_format_i18n( $current_amount, (int) get_option( 'beruang_decimal_places', 2 ) ) ) ); ?></div>
 				<?php /* translators: 1: amount, 2: date (Y-m-d). */ ?>
-				<div class="beruang-wallet-card-meta"><?php echo esc_html( sprintf( __( 'Baseline: %1$s on %2$s', 'beruang' ), number_format_i18n( $initial_amount, 2 ), $initial_date ) ); ?></div>
+				<div class="beruang-wallet-card-meta"><?php echo esc_html( sprintf( __( 'Baseline: %1$s on %2$s', 'beruang' ), number_format_i18n( $initial_amount, (int) get_option( 'beruang_decimal_places', 2 ) ), $initial_date ) ); ?></div>
 				<span class="beruang-wallet-card-actions">
 					<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-action-edit" title="<?php esc_attr_e( 'Edit', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Edit', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'edit', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 					<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--danger beruang-action-delete" title="<?php esc_attr_e( 'Delete', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Delete', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'trash', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>

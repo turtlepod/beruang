@@ -3,7 +3,7 @@ Contributors: turtlepod
 Tags: budget, finance, transactions, expense, income, personal finance
 Requires at least: 6.0
 Tested up to: 6.9
-Stable tag: 0.4.0-beta
+Stable tag: 0.5.0-beta
 Requires PHP: 8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -44,6 +44,7 @@ Use on pages where users are logged in:
 * `[beruang-list]` – Monthly transaction list in an accordion with filter
 * `[beruang-graph]` – Chart (by month or by category) with year selector
 * `[beruang-budget]` – List budgets with progress; add/edit budget modal
+* `[beruang-wallet]` – List and manage your wallets.
 
 == Resources ==
 
@@ -54,12 +55,16 @@ Font Awesome Free Icons
 
 == Changelog ==
 
+= 0.5.0-beta =
+* Transfer wallet.
+* Various fixes.
+
 = 0.4.0-beta =
 * Several fixes
 * Wallet feature
 * Notes feature
-* Add Unit test
-* Add playwright test
+* Add unit tests
+* Add Playwright tests
 * Restructure CSS and HTML using component based approach.
 
 = 0.3.0-beta =

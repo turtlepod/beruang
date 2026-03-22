@@ -646,10 +646,21 @@ function rest_update_transaction( $request ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang' ), 400 );
 	}
 
-	$existing_time       = isset( $existing['time'] ) && '' !== trim( (string) $existing['time'] ) ? $existing['time'] : null;
+	$existing_time = isset( $existing['time'] ) && '' !== trim( (string) $existing['time'] ) ? $existing['time'] : null;
+	// Normalize time to HH:MM so MySQL's HH:MM:SS and input's HH:MM compare equal.
+	$normalize_time      = function ( $t ) {
+		if ( null === $t ) {
+			return null;
+		}
+		$parts = explode( ':', (string) $t );
+		if ( count( $parts ) >= 2 ) {
+			return sprintf( '%02d:%02d', (int) $parts[0], (int) $parts[1] );
+		}
+		return $t;
+	};
 	$existing_normalized = array(
 		'date'        => (string) ( $existing['date'] ?? '' ),
-		'time'        => $existing_time,
+		'time'        => $normalize_time( $existing_time ),
 		'description' => (string) ( $existing['description'] ?? '' ),
 		'note'        => (string) ( $existing['note'] ?? '' ),
 		'wallet_id'   => $existing_wallet_id,
@@ -659,7 +670,7 @@ function rest_update_transaction( $request ) {
 	);
 	$data_normalized     = array(
 		'date'        => $data['date'],
-		'time'        => $data['time'],
+		'time'        => $normalize_time( $data['time'] ),
 		'description' => $data['description'],
 		'note'        => $data['note'],
 		'wallet_id'   => $data['wallet_id'],

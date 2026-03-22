@@ -198,8 +198,10 @@ export function initWallet() {
 		if ( ! item || ! item.dataset.id || item.dataset.default === '1' ) return;
 		if ( ! confirm( i18n.confirm_delete_wallet || 'Delete this wallet?' ) ) return;
 		request( 'DELETE', '/wallets/' + item.dataset.id ).then( function ( r ) {
-			if ( r.success ) {
+			if ( r.success && r.data && r.data.deleted !== false ) {
 				refreshWallets();
+			} else if ( r.success && r.data && r.data.deleted === false ) {
+				alert( i18n.error_delete_wallet || 'Failed to delete wallet.' );
 			}
 		} );
 	} );

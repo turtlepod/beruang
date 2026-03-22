@@ -45,6 +45,9 @@ function on_plugins_loaded() {
 	DB::maybe_upgrade();
 	load_plugin_textdomain( 'beruang', false, dirname( plugin_basename( BERUANG_PLUGIN_FILE ) ) . '/languages' );
 	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_front_scripts' );
+	if ( ! beruang_dist_exists() ) {
+		add_action( 'admin_notices', __NAMESPACE__ . '\admin_notice_dist_missing' );
+	}
 	manifest_setup();
 }
 

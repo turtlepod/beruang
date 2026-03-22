@@ -3,7 +3,10 @@ import { execSync } from 'child_process';
 import { mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-const WP_PATH = process.env.WP_PATH ?? '/Users/davidchandra/Sites/beruang/app/public';
+const WP_PATH = process.env.WP_PATH;
+if ( ! WP_PATH ) {
+	throw new Error( 'WP_PATH environment variable is required. Set it to the absolute path of your WordPress install.' );
+}
 const BASE_URL = process.env.WP_BASE_URL ?? 'https://beruang.test';
 const TEST_USER = process.env.WP_TEST_USER ?? 'test';
 const TEST_PASS = process.env.WP_TEST_PASS ?? 'test123';
@@ -32,6 +35,9 @@ export default async function globalSetup() {
 	// -----------------------------------------------------------------------
 	const pageData: Record<string, string> = {};
 
+	// Resolve the author ID from the configured test user login.
+	const authorId = wp( `user get "${ TEST_USER }" --field=ID` );
+
 	for ( const [ key, shortcode ] of Object.entries( SHORTCODES ) ) {
 		const title = `E2E Beruang ${ key }`;
 
@@ -44,7 +50,7 @@ export default async function globalSetup() {
 		}
 
 		const id = wp(
-			`post create --post_type=page --post_status=publish --post_title="${ title }" --post_content="${ shortcode }" --post_author=2 --porcelain`
+			`post create --post_type=page --post_status=publish --post_title="${ title }" --post_content="${ shortcode }" --post_author=${ authorId } --porcelain`
 		);
 		const url = wp( `post get ${ id } --field=guid` );
 

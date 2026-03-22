@@ -450,8 +450,21 @@ class DB {
 			),
 			array( '%d', '%d' )
 		);
-		if ( $deleted && absint( self::get_default_wallet_id( $user_id ) ) === $id ) {
-			self::set_default_wallet_id( $user_id, null );
+		if ( $deleted ) {
+			// Nullify wallet_id on transactions that referenced the deleted wallet.
+			self::wpdb()->update(
+				self::table_transaction(),
+				array( 'wallet_id' => null ),
+				array(
+					'wallet_id' => $id,
+					'user_id'   => absint( $user_id ),
+				),
+				array( '%s' ),
+				array( '%d', '%d' )
+			);
+			if ( absint( self::get_default_wallet_id( $user_id ) ) === $id ) {
+				self::set_default_wallet_id( $user_id, null );
+			}
 		}
 		return $deleted;
 	}

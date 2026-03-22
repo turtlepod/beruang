@@ -87,17 +87,4 @@
 	gap: 0.5em;
 }
 
-.beruang-wallet-modal {
-	position: fixed;
-	inset: 0;
-	background: var(--br-overlay);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 100000;
-	padding: 1em;
-
-	&[hidden] {
-		display: none !important;
-	}
-}
+/* .beruang-wallet-modal base overlay styles are defined in _modals.css */

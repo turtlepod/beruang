@@ -2,6 +2,7 @@ example-plugin/
 vendor/
 node_modules/
 dist/
+.phpunit.result.cache
 tests/e2e/.auth/
 tests/e2e/.test-pages.json
 tests/e2e/report/

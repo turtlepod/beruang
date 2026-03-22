@@ -501,7 +501,11 @@ function admin_handle_import() {
 		}
 		$new_id = DB::save_wallet(
 			$user_id,
-			array( 'name' => $name ),
+			array(
+				'name'           => $name,
+				'initial_amount' => isset( $wallet['initial_amount'] ) ? (float) $wallet['initial_amount'] : 0.0,
+				'initial_date'   => isset( $wallet['initial_date'] ) ? sanitize_text_field( $wallet['initial_date'] ) : current_time( 'Y-m-d' ),
+			),
 			0
 		);
 		if ( $new_id && $old_id ) {
