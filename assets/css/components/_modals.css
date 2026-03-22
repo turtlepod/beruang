@@ -1,8 +1,10 @@
 /**
- * Beruang – manage categories modal.
+ * Beruang – modals (categories, wallets, notes).
  */
 
-.beruang-categories-modal {
+.beruang-note-modal,
+.beruang-categories-modal,
+.beruang-wallet-modal {
 	position: fixed;
 	inset: 0;
 	background: var(--br-overlay, rgb(0 0 0 / 40%));
@@ -18,7 +20,7 @@
 	}
 }
 
-.beruang-categories-modal-inner {
+.beruang-modal-inner {
 	position: relative;
 	background: var(--br-bg);
 	color: var(--br-text);
@@ -75,42 +77,6 @@
 	gap: 0.5em;
 }
 
-.beruang-categories-form .beruang-submit {
-	padding: 0.5em 1.2em;
-	height: var(--br-control-height);
-	background: var(--br-primary) !important;
-	color: var(--br-bg) !important;
-	border: none !important;
-	border-radius: var(--br-radius-sm);
-	cursor: pointer;
-	line-height: 1.4;
-	font-weight: 600;
-
-	&:hover {
-		background: var(--br-primary-hover) !important;
-		color: var(--br-bg) !important;
-	}
-}
-
-.beruang-cat-cancel-edit {
-	padding: 0.5em 1em;
-	height: var(--br-control-height);
-	background: var(--br-bg-muted) !important;
-	color: var(--br-text) !important;
-	border: 1px solid var(--br-border) !important;
-	border-radius: var(--br-radius-sm);
-	cursor: pointer;
-	line-height: 1.4;
-	font-family: inherit;
-	font-size: inherit;
-
-	&:hover {
-		background: var(--br-bg-hover) !important;
-		color: var(--br-text) !important;
-		border-color: var(--br-border-hover) !important;
-	}
-}
-
 .beruang-categories-list-wrap {
 	margin: 1em 0;
 	border: 1px solid var(--br-border-alt);
@@ -146,20 +112,35 @@
 	color: var(--br-text);
 }
 
+/* Full-width close button at bottom of categories modal */
 .beruang-categories-modal .beruang-categories-modal-close {
 	margin-top: 0.75em;
 	width: 100%;
-	padding: 0.5em;
-	background: var(--br-bg-muted);
-	color: var(--br-text);
-	border: 1px solid var(--br-border);
-	border-radius: var(--br-radius-sm);
-	cursor: pointer;
+}
 
-	&:hover {
-		background: var(--br-bg-hover-alt);
-		border-color: var(--br-border-hover);
-	}
+.beruang-note-modal-inner textarea {
+	width: 100%;
+	min-height: 7.5em;
+	resize: vertical;
+	margin-bottom: 1em;
+	padding: 0.5em 0.6em;
+	background: var(--br-bg) !important;
+	color: var(--br-text) !important;
+	border: 1px solid var(--br-border) !important;
+	border-radius: var(--br-radius-sm);
+	font-family: inherit;
+	font-size: inherit;
+}
+
+.beruang-wallet-list-wrap {
+	margin: 1em 0;
+	border: 1px solid var(--br-border-alt);
+	border-radius: var(--br-radius-sm);
+	padding: 0.5em;
+	max-height: 14em;
+	overflow-y: auto;
+	background: var(--br-bg);
+	color: var(--br-text);
 }
 
 .beruang-cat-empty {

@@ -1,14 +1,14 @@
 === Beruang Budget ===
-Contributors: beruang
+Contributors: turtlepod
 Tags: budget, finance, transactions, expense, income, personal finance
 Requires at least: 6.0
-Tested up to: 6.8
-Stable tag: 0.3.0-beta
+Tested up to: 6.9
+Stable tag: 0.4.0-beta
 Requires PHP: 8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Track money, transactions, and budgets. Per-user data with shortcodes and admin pages.
+Track money, transactions, and budgets.
 
 == Description ==
 
@@ -53,6 +53,13 @@ Font Awesome Free Icons
 * The plugin uses inline SVG paths derived from Font Awesome Free icons: xmark (close), calculator (calc), list-ul (list), filter (filter), file-circle-plus (add), pen-to-square (edit), trash-can (trash).
 
 == Changelog ==
+
+= 0.4.0-beta =
+* Several fixes
+* Wallet feature
+* Notes feature
+* Add Unit test
+* Add playwright test
 
 = 0.3.0-beta =
 * Refactored front-end CSS into component-based stylesheets and improved responsive rules.

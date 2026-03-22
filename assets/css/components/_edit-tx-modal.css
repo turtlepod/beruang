@@ -1,5 +1,8 @@
 /**
  * Beruang – edit transaction modal.
+ *
+ * Shared form elements (type-btn, datetime-wrap, beruang-wrap, icon buttons)
+ * come from _form.css and _components.css.
  */
 
 .beruang-edit-tx-modal {
@@ -18,175 +21,9 @@
 	}
 }
 
-.beruang-edit-tx-modal-inner {
-	position: relative;
-	background: var(--br-bg);
-	padding: 1.5em;
-	border-radius: var(--br-radius-md);
-	width: 100%;
-	max-height: 90vh;
-	overflow-y: auto;
-	color: var(--br-text);
-
-	& h4 {
-		margin-top: 0;
-		color: var(--br-text);
-	}
-
-	& input[type="text"],
-	& input[type="number"],
-	& input[type="date"],
-	& input[type="time"] {
-		width: 100%;
-		padding: 0.5em 0.6em;
-		height: var(--br-control-height);
-		background: var(--br-bg) !important;
-		color: var(--br-text) !important;
-		border: 1px solid var(--br-border) !important;
-		border-radius: var(--br-radius-sm);
-		font-family: inherit;
-		font-size: inherit;
-	}
-
-	& select {
-		width: 100%;
-		padding: 0.5em 0.6em;
-		padding-right: 2em;
-		height: var(--br-control-height);
-		background-color: var(--br-bg) !important;
-		color: var(--br-text) !important;
-		border: 1px solid var(--br-border) !important;
-		border-radius: var(--br-radius-sm);
-		font-family: inherit;
-		font-size: inherit;
-	}
-}
-
 /* High-specificity override for Edit modal selects - prevents theme tiling */
 #beruang-edit-tx-modal select {
 	background: var(--br-bg) var(--br-dropdown-arrow) no-repeat right 0.6em center / 12px 12px !important;
-}
-
-/* Shared transaction form styling (type toggle, category wrap, datetime, etc.) */
-.beruang-edit-tx-modal-inner .beruang-type-toggle {
-	display: flex;
-	gap: 0;
-	width: 100%;
-}
-
-.beruang-edit-tx-modal-inner .beruang-type-btn {
-	flex: 1;
-	padding: 0.5em 1em;
-	height: var(--br-control-height);
-	border: 1px solid var(--br-border) !important;
-	background: var(--br-bg-subtle) !important;
-	color: var(--br-text) !important;
-	cursor: pointer;
-	line-height: 1.4;
-	font-weight: 500;
-
-	&:first-child {
-		border-radius: var(--br-radius-sm) 0 0 var(--br-radius-sm);
-	}
-
-	&:last-child {
-		border-radius: 0 var(--br-radius-sm) var(--br-radius-sm) 0;
-	}
-
-	&:hover:not(.active) {
-		background: var(--br-bg-hover) !important;
-		color: var(--br-text) !important;
-		border-color: var(--br-border-hover) !important;
-	}
-
-	&.active {
-		background: var(--br-primary) !important;
-		color: var(--br-bg) !important;
-		border-color: var(--br-primary) !important;
-	}
-
-	&[data-type="expense"].active {
-		background: var(--br-error) !important;
-		border-color: var(--br-error) !important;
-		color: #fff !important;
-	}
-
-	&[data-type="income"].active {
-		background: var(--br-success) !important;
-		border-color: var(--br-success) !important;
-		color: #fff !important;
-	}
-}
-
-.beruang-edit-tx-modal-inner .beruang-datetime-wrap {
-	display: flex;
-	flex-direction: row;
-	gap: 1em;
-	align-items: stretch;
-	width: 100%;
-}
-
-.beruang-edit-tx-modal-inner .beruang-datetime-wrap input[type="date"]::-webkit-calendar-picker-indicator {
-	background: transparent;
-	color: transparent;
-	cursor: pointer;
-}
-
-.beruang-edit-tx-modal-inner .beruang-datetime-wrap input[type="date"] {
-	padding-right: 0;
-	background: var(--br-bg) var(--br-calendar-icon) no-repeat right 0.5em center / 1em 1em !important;
-}
-
-.beruang-edit-tx-modal-inner .beruang-datetime-wrap input[type="time"]::-webkit-calendar-picker-indicator {
-	background: transparent;
-	color: transparent;
-	cursor: pointer;
-}
-
-.beruang-edit-tx-modal-inner .beruang-datetime-wrap input[type="time"] {
-	padding-right: 0;
-	background: var(--br-bg) var(--br-clock-icon) no-repeat right 0.5em center / 1em 1em !important;
-}
-
-.beruang-edit-tx-modal-inner .beruang-category-wrap {
-	display: flex;
-	align-items: stretch;
-	gap: 0.5em;
-	width: 100%;
-}
-
-.beruang-edit-tx-modal-inner .beruang-category-wrap select {
-	flex: 1;
-	min-width: 0;
-}
-
-.beruang-edit-tx-modal-inner .beruang-manage-categories-btn,
-.beruang-edit-tx-modal-inner .beruang-calc-btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-	width: var(--br-control-height);
-	height: var(--br-control-height);
-	padding: 0;
-	background: var(--br-bg-muted) !important;
-	color: var(--br-text) !important;
-	border: 1px solid var(--br-border) !important;
-	border-radius: var(--br-radius-sm);
-	cursor: pointer;
-}
-
-.beruang-edit-tx-modal-inner .beruang-amount-wrap {
-	display: flex;
-	align-items: stretch;
-	gap: 0.5em;
-	flex: 1;
-	min-width: 0;
-}
-
-.beruang-edit-tx-modal-inner .beruang-amount-wrap input {
-	flex: 1;
-	min-width: 6em;
 }
 
 .beruang-edit-tx-modal-inner .beruang-submit-row {

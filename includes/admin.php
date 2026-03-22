@@ -32,7 +32,7 @@ function admin_setup() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\admin_setup' );
 
 /**
- * Add beruang-admin-table body class on Transactions, Categories, and Budgets pages.
+ * Add beruang-admin-table body class on table-based Beruang admin pages.
  *
  * @param string $classes Space-separated body classes.
  * @return string
@@ -42,7 +42,7 @@ function admin_body_class_table_pages( $classes ) {
 	if ( ! $screen || strpos( $screen->id, 'beruang' ) === false ) {
 		return $classes;
 	}
-	$table_pages = array( 'beruang_page_beruang-transactions', 'beruang_page_beruang-categories', 'beruang_page_beruang-budgets', 'beruang-budget_page_beruang-transactions', 'beruang-budget_page_beruang-categories', 'beruang-budget_page_beruang-budgets' );
+	$table_pages = array( 'beruang_page_beruang-transactions', 'beruang_page_beruang-categories', 'beruang_page_beruang-budgets', 'beruang_page_beruang-wallets', 'beruang-budget_page_beruang-transactions', 'beruang-budget_page_beruang-categories', 'beruang-budget_page_beruang-budgets', 'beruang-budget_page_beruang-wallets' );
 	if ( in_array( $screen->id, $table_pages, true ) ) {
 		$classes .= ' beruang-admin-table';
 	}
@@ -97,7 +97,7 @@ function admin_enqueue_styles( $hook ) {
 }
 
 /**
- * Register top-level Beruang menu and submenus (Settings, Transactions, Categories, Budgets).
+ * Register top-level Beruang menu and submenus (Settings, Transactions, Categories, Budgets, Wallets).
  */
 function admin_register_menu() {
 	add_menu_page(
@@ -113,6 +113,7 @@ function admin_register_menu() {
 	add_submenu_page( ADMIN_SLUG, __( 'Transactions', 'beruang' ), __( 'Transactions', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-transactions', __NAMESPACE__ . '\admin_page_transactions' );
 	add_submenu_page( ADMIN_SLUG, __( 'Categories', 'beruang' ), __( 'Categories', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-categories', __NAMESPACE__ . '\admin_page_categories' );
 	add_submenu_page( ADMIN_SLUG, __( 'Budgets', 'beruang' ), __( 'Budgets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-budgets', __NAMESPACE__ . '\admin_page_budgets' );
+	add_submenu_page( ADMIN_SLUG, __( 'Wallets', 'beruang' ), __( 'Wallets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-wallets', __NAMESPACE__ . '\admin_page_wallets' );
 }
 
 /**
@@ -124,6 +125,7 @@ function admin_register_settings() {
 	add_action( 'admin_post_beruang_update_transaction', __NAMESPACE__ . '\admin_handle_update_transaction' );
 	add_action( 'admin_post_beruang_update_category', __NAMESPACE__ . '\admin_handle_update_category' );
 	add_action( 'admin_post_beruang_update_budget', __NAMESPACE__ . '\admin_handle_update_budget' );
+	add_action( 'admin_post_beruang_update_wallet', __NAMESPACE__ . '\admin_handle_update_wallet' );
 	register_setting(
 		'beruang_settings',
 		'beruang_currency',
@@ -356,6 +358,7 @@ function admin_handle_export() {
 	}
 	$user         = get_userdata( $user_id );
 	$categories   = DB::get_categories_flat( $user_id, false );
+	$wallets      = DB::get_wallets( $user_id );
 	$transactions = DB::get_transactions( $user_id, array( 'per_page' => 99999 ) );
 	$budgets      = DB::get_budgets( $user_id );
 	$data         = array(
@@ -366,6 +369,7 @@ function admin_handle_export() {
 		'user_email'   => $user ? $user->user_email : '',
 		'display_name' => $user ? $user->display_name : '',
 		'categories'   => $categories,
+		'wallets'      => $wallets,
 		'transactions' => $transactions['items'],
 		'budgets'      => $budgets,
 	);
@@ -399,19 +403,26 @@ function admin_handle_export_csv() {
 	$transactions = DB::get_transactions( $user_id, array( 'per_page' => 99999 ) );
 	$items        = $transactions['items'];
 	$categories   = DB::get_categories_flat( $user_id, false );
+	$wallets      = DB::get_wallets( $user_id );
 	$cat_names    = array();
+	$wallet_names = array();
 	foreach ( $categories as $c ) {
 		$cat_names[ (int) $c['id'] ] = $c['name'] ?? '';
+	}
+	foreach ( $wallets as $wallet ) {
+		$wallet_names[ (int) $wallet['id'] ] = $wallet['name'] ?? '';
 	}
 	header( 'Content-Type: text/csv; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename="beruang-transactions-' . gmdate( 'Y-m-d' ) . '.csv"' );
 	$output = fopen( 'php://output', 'w' );
 	// UTF-8 BOM for Excel compatibility.
 	fprintf( $output, "\xEF\xBB\xBF" );
-	fputcsv( $output, array( 'id', 'user_id', 'user_login', 'user_email', 'display_name', 'date', 'time', 'description', 'category_id', 'category_name', 'amount', 'type' ) );
+	fputcsv( $output, array( 'id', 'user_id', 'user_login', 'user_email', 'display_name', 'date', 'time', 'description', 'note', 'wallet_id', 'wallet_name', 'category_id', 'category_name', 'amount', 'type' ) );
 	foreach ( $items as $row ) {
-		$cat_id   = isset( $row['category_id'] ) ? (int) $row['category_id'] : 0;
-		$cat_name = $cat_id && isset( $cat_names[ $cat_id ] ) ? $cat_names[ $cat_id ] : '';
+		$cat_id      = isset( $row['category_id'] ) ? (int) $row['category_id'] : 0;
+		$cat_name    = $cat_id && isset( $cat_names[ $cat_id ] ) ? $cat_names[ $cat_id ] : '';
+		$wallet_id   = isset( $row['wallet_id'] ) ? (int) $row['wallet_id'] : 0;
+		$wallet_name = $wallet_id && isset( $wallet_names[ $wallet_id ] ) ? $wallet_names[ $wallet_id ] : __( 'No Wallet', 'beruang' );
 		fputcsv(
 			$output,
 			array(
@@ -423,6 +434,9 @@ function admin_handle_export_csv() {
 				$row['date'] ?? '',
 				$row['time'] ?? '',
 				$row['description'] ?? '',
+				$row['note'] ?? '',
+				$row['wallet_id'] ?? '',
+				$wallet_name,
 				$row['category_id'] ?? '',
 				$cat_name,
 				$row['amount'] ?? '',
@@ -458,7 +472,8 @@ function admin_handle_import() {
 		add_settings_error( 'beruang_import', 'beruang_import', __( 'Invalid or empty import file.', 'beruang' ), 'error' );
 		return;
 	}
-	$map_cat = array();
+	$map_cat    = array();
+	$map_wallet = array();
 	foreach ( $data['categories'] ?? array() as $cat ) {
 		$old_id    = isset( $cat['id'] ) ? (int) $cat['id'] : 0;
 		$parent_id = isset( $cat['parent_id'] ) ? (int) $cat['parent_id'] : 0;
@@ -478,10 +493,30 @@ function admin_handle_import() {
 			$map_cat[ $old_id ] = $new_id;
 		}
 	}
+	foreach ( $data['wallets'] ?? array() as $wallet ) {
+		$old_id = isset( $wallet['id'] ) ? (int) $wallet['id'] : 0;
+		$name   = isset( $wallet['name'] ) ? sanitize_text_field( $wallet['name'] ) : '';
+		if ( '' === $name ) {
+			continue;
+		}
+		$new_id = DB::save_wallet(
+			$user_id,
+			array( 'name' => $name ),
+			0
+		);
+		if ( $new_id && $old_id ) {
+			$map_wallet[ $old_id ] = $new_id;
+		}
+	}
+
 	foreach ( $data['transactions'] ?? array() as $tx ) {
-		$cat_id = isset( $tx['category_id'] ) ? (int) $tx['category_id'] : 0;
+		$cat_id    = isset( $tx['category_id'] ) ? (int) $tx['category_id'] : 0;
+		$wallet_id = isset( $tx['wallet_id'] ) ? (int) $tx['wallet_id'] : 0;
 		if ( $cat_id && isset( $map_cat[ $cat_id ] ) ) {
 			$cat_id = $map_cat[ $cat_id ];
+		}
+		if ( $wallet_id && isset( $map_wallet[ $wallet_id ] ) ) {
+			$wallet_id = $map_wallet[ $wallet_id ];
 		}
 		DB::insert_transaction(
 			$user_id,
@@ -489,6 +524,8 @@ function admin_handle_import() {
 				'date'        => $tx['date'] ?? '',
 				'time'        => $tx['time'] ?? null,
 				'description' => $tx['description'] ?? '',
+				'note'        => $tx['note'] ?? '',
+				'wallet_id'   => $wallet_id,
 				'category_id' => $cat_id,
 				'amount'      => $tx['amount'] ?? 0,
 				'type'        => 'income' === ( $tx['type'] ?? 'expense' ) ? 'income' : 'expense',
@@ -735,6 +772,80 @@ function admin_handle_update_budget() {
 		add_query_arg(
 			array(
 				'page'            => 'beruang-budgets',
+				'user_id'         => $user_id,
+				'beruang_updated' => '1',
+			),
+			admin_url( 'admin.php' )
+		)
+	);
+	exit;
+}
+
+/**
+ * Handle admin-post form submission to update a wallet.
+ *
+ * Expects POST: beruang_wallet_id, beruang_wallet_user_id, beruang_wallet_name.
+ * Redirects on success or error.
+ */
+function admin_handle_update_wallet() {
+	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+	}
+	check_admin_referer( 'beruang_edit_wallet' );
+	$id      = isset( $_POST['beruang_wallet_id'] ) ? absint( $_POST['beruang_wallet_id'] ) : 0;
+	$user_id = isset( $_POST['beruang_wallet_user_id'] ) ? absint( $_POST['beruang_wallet_user_id'] ) : 0;
+	if ( ! $id || ! $user_id ) {
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'          => 'beruang-wallets',
+					'beruang_error' => 'invalid',
+				),
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
+	}
+	$existing = DB::get_wallet_by_id( $id );
+	if ( ! $existing || $user_id !== (int) $existing['user_id'] ) {
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'          => 'beruang-wallets',
+					'user_id'       => $user_id,
+					'beruang_error' => 'notfound',
+				),
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
+	}
+	$name = isset( $_POST['beruang_wallet_name'] ) ? sanitize_text_field( wp_unslash( $_POST['beruang_wallet_name'] ) ) : '';
+	if ( '' === $name ) {
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'          => 'beruang-wallets',
+					'user_id'       => $user_id,
+					'edit'          => $id,
+					'beruang_error' => 'name',
+				),
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
+	}
+	DB::save_wallet(
+		$user_id,
+		array(
+			'name' => $name,
+		),
+		$id
+	);
+	wp_safe_redirect(
+		add_query_arg(
+			array(
+				'page'            => 'beruang-wallets',
 				'user_id'         => $user_id,
 				'beruang_updated' => '1',
 			),
@@ -1021,6 +1132,101 @@ function admin_page_budgets() {
 		<form id="beruang-budgets-filter" method="get">
 			<input type="hidden" name="page" value="beruang-budgets" />
 			<div class="beruang-admin-table-wrap beruang-budgets-table-wrap">
+				<?php $list_table->display(); ?>
+			</div>
+		</form>
+	</div>
+	<?php
+}
+
+/**
+ * Render admin wallets list page.
+ *
+ * Supports user filter, edit form, and WP_List_Table with pagination, sorting, delete links.
+ */
+function admin_page_wallets() {
+	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+		return;
+	}
+	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
+	$edit_id     = isset( $_GET['edit'] ) ? absint( $_GET['edit'] ) : 0;
+	$edit_row    = $edit_id ? DB::get_wallet_by_id( $edit_id ) : null;
+	if ( $edit_row ) {
+		$edit_user_filter = $user_filter ? $user_filter : (int) $edit_row['user_id'];
+	} else {
+		$edit_id          = 0;
+		$edit_row         = null;
+		$edit_user_filter = $user_filter;
+	}
+	if ( isset( $_GET['delete'] ) && check_admin_referer( 'beruang_delete_wallet_' . absint( $_GET['delete'] ) ) ) {
+		$del_user = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
+		if ( $del_user < 1 ) {
+			$wallet   = DB::get_wallet_by_id( absint( $_GET['delete'] ) );
+			$del_user = $wallet ? (int) $wallet['user_id'] : get_current_user_id();
+		}
+		$deleted = DB::delete_wallet( $del_user, absint( $_GET['delete'] ) );
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'            => 'beruang-wallets',
+					'user_id'         => $del_user ? $del_user : null,
+					'beruang_deleted' => $deleted ? '1' : null,
+					'beruang_error'   => $deleted ? null : 'default',
+				),
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
+	}
+	?>
+	<div class="wrap">
+		<h1><?php esc_html_e( 'Wallets', 'beruang' ); ?></h1>
+		<?php
+		if ( isset( $_GET['beruang_updated'] ) ) {
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Wallet updated.', 'beruang' ) . '</p></div>';
+		}
+		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) {
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Wallet not found.', 'beruang' ) . '</p></div>';
+		}
+		if ( isset( $_GET['beruang_deleted'] ) ) {
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Wallet deleted.', 'beruang' ) . '</p></div>';
+		}
+		if ( isset( $_GET['beruang_error'] ) && 'name' === $_GET['beruang_error'] ) {
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Name is required.', 'beruang' ) . '</p></div>';
+		}
+		?>
+		<?php if ( $edit_row ) { ?>
+			<?php
+			$wallets_cancel_url = add_query_arg(
+				array(
+					'page'    => 'beruang-wallets',
+					'user_id' => $edit_user_filter ? $edit_user_filter : null,
+				),
+				admin_url( 'admin.php' )
+			);
+			?>
+		<div class="beruang-admin-edit-box" style="margin:1em 0;padding:1em;background:#f0f0f1;border-left:4px solid #2271b1;">
+			<h2><?php esc_html_e( 'Edit wallet', 'beruang' ); ?> #<?php echo (int) $edit_row['id']; ?></h2>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="beruang_update_wallet" />
+				<?php wp_nonce_field( 'beruang_edit_wallet' ); ?>
+				<input type="hidden" name="beruang_wallet_id" value="<?php echo (int) $edit_row['id']; ?>" />
+				<input type="hidden" name="beruang_wallet_user_id" value="<?php echo (int) $edit_row['user_id']; ?>" />
+				<table class="form-table">
+					<tr><th scope="row"><label for="beruang_edit_wallet_name"><?php esc_html_e( 'Name', 'beruang' ); ?></label></th><td><input type="text" id="beruang_edit_wallet_name" name="beruang_wallet_name" value="<?php echo esc_attr( $edit_row['name'] ); ?>" class="regular-text" required /></td></tr>
+				</table>
+				<p><button type="submit" class="button button-primary"><?php esc_html_e( 'Update', 'beruang' ); ?></button>
+				<a href="<?php echo esc_url( $wallets_cancel_url ); ?>" class="button"><?php esc_html_e( 'Cancel', 'beruang' ); ?></a></p>
+			</form>
+		</div>
+		<?php } ?>
+		<?php
+		$list_table = new Wallets_List_Table( $user_filter );
+		$list_table->prepare_items();
+		?>
+		<form id="beruang-wallets-filter" method="get">
+			<input type="hidden" name="page" value="beruang-wallets" />
+			<div class="beruang-admin-table-wrap beruang-wallets-table-wrap">
 				<?php $list_table->display(); ?>
 			</div>
 		</form>

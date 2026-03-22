@@ -4,11 +4,7 @@
 
 /* stylelint-disable-next-line media-feature-range-notation */
 @media (max-width: 600px) {
-	.beruang-form-wrapper .beruang-form {
-		max-width: 100%;
-	}
-
-	.beruang-datetime-wrap {
+.beruang-datetime-wrap {
 		flex-wrap: nowrap;
 
 		& input[type="date"],
@@ -27,7 +23,7 @@
 	}
 
 	.beruang-datetime-wrap,
-	.beruang-category-wrap,
+	.beruang-wrap,
 	.beruang-amount-row,
 	.beruang-type-toggle,
 	.beruang-form-wrapper .beruang-submit-row,

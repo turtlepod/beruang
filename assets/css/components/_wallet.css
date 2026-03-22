@@ -1,0 +1,103 @@
+/**
+ * Beruang – wallet section and cards.
+ */
+
+.beruang-wallet-wrapper {
+	padding: 1em 0;
+}
+
+.beruang-wallet-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5em;
+	margin-bottom: 1em;
+}
+
+.beruang-wallet-header-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	margin-left: auto;
+}
+
+.beruang-wallet-list {
+	margin-top: 0.5em;
+}
+
+.beruang-wallet-card {
+	padding: 1em;
+	margin-bottom: 0.75em;
+	background: var(--br-bg);
+	border-radius: var(--br-radius-sm);
+	border-left: 4px solid var(--br-primary);
+	color: var(--br-text);
+
+	&[data-default="1"] {
+		border-left-color: var(--br-success);
+	}
+
+	& h4 {
+		margin: 0 0 0.5em;
+		font-size: 1em;
+		color: var(--br-text);
+	}
+}
+
+.beruang-wallet-card-balance {
+	font-size: 1.1em;
+	font-weight: 600;
+	margin: 0.25em 0;
+	color: var(--br-text);
+
+	&.positive {
+		color: var(--br-success);
+	}
+
+	&.negative {
+		color: var(--br-error);
+	}
+}
+
+.beruang-wallet-card-meta {
+	font-size: 0.9em;
+	opacity: 0.85;
+	color: var(--br-text-muted);
+}
+
+.beruang-wallet-card-actions {
+	display: inline-flex;
+	gap: 0.5em;
+	margin-top: 0.5em;
+}
+
+.beruang-wallet-default-row {
+	margin-top: 1em;
+
+	& select {
+		max-width: var(--br-control-width);
+	}
+}
+
+.beruang-wallet-form .beruang-form-row {
+	margin-bottom: 0.75em;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5em;
+}
+
+.beruang-wallet-modal {
+	position: fixed;
+	inset: 0;
+	background: var(--br-overlay);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 100000;
+	padding: 1em;
+
+	&[hidden] {
+		display: none !important;
+	}
+}

@@ -17,6 +17,7 @@ require_once BERUANG_PLUGIN_DIR . 'includes/seed.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-transactions-list-table.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-categories-list-table.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-budgets-list-table.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-wallets-list-table.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/admin.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/rest.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/manifest.php';
@@ -41,6 +42,7 @@ function on_activation() {
  * Fires on plugins_loaded: load text domain, register shortcodes, and hook actions.
  */
 function on_plugins_loaded() {
+	DB::maybe_upgrade();
 	load_plugin_textdomain( 'beruang', false, dirname( plugin_basename( BERUANG_PLUGIN_FILE ) ) . '/languages' );
 	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_front_scripts' );
 	manifest_setup();
@@ -122,6 +124,7 @@ function enqueue_front_scripts() {
 				'decimal_places' => (int) get_option( 'beruang_decimal_places', 2 ),
 				'i18n'           => array(
 					'uncategorized'              => __( 'Uncategorized', 'beruang' ),
+					'no_wallet'                  => __( 'No Wallet', 'beruang' ),
 					'expense'                    => __( 'Expense', 'beruang' ),
 					'income'                     => __( 'Income', 'beruang' ),
 					'saved'                      => __( 'Saved.', 'beruang' ),
@@ -144,9 +147,17 @@ function enqueue_front_scripts() {
 					'manage_categories'          => __( 'Manage categories', 'beruang' ),
 					'add_category'               => __( 'Add category', 'beruang' ),
 					'update_category'            => __( 'Update category', 'beruang' ),
+					'add_wallet'                 => __( 'Add wallet', 'beruang' ),
+					'update_wallet'              => __( 'Update wallet', 'beruang' ),
+					'confirm_delete_wallet'      => __( 'Delete this wallet?', 'beruang' ),
+					'no_wallets'                 => __( 'No wallets yet.', 'beruang' ),
 					'confirm_delete_category'    => __( 'Delete this category?', 'beruang' ),
 					'confirm_delete_transaction' => __( 'Delete this transaction?', 'beruang' ),
 					'no_categories'              => __( 'No categories yet.', 'beruang' ),
+					/* translators: 1: amount, 2: date (Y-m-d). */
+					'wallet_baseline'            => __( 'Baseline: %1$s on %2$s', 'beruang' ),
+					/* translators: %s: current wallet amount. */
+					'wallet_current'             => __( 'Current: %s', 'beruang' ),
 				),
 				'edit_icon'      => beruang_get_icon( 'edit' ),
 				'delete_icon'    => beruang_get_icon( 'trash' ),

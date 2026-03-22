@@ -5,16 +5,12 @@
 
 /* Theme isolation: reset form elements */
 .beruang-form-wrapper label,
-.beruang-categories-modal-inner label,
-.beruang-budget-modal-inner label,
-.beruang-edit-tx-modal-inner label {
+.beruang-modal-inner label {
 	font-weight: bold;
 }
 
 .beruang-form-wrapper,
-.beruang-categories-modal-inner,
-.beruang-budget-modal-inner,
-.beruang-edit-tx-modal-inner {
+.beruang-modal-inner {
 	& input:not([type="checkbox"], [type="radio"]),
 	& select,
 	& button {
@@ -29,16 +25,12 @@
 }
 
 .beruang-form-wrapper select,
-.beruang-categories-modal-inner select,
-.beruang-budget-modal-inner select,
-.beruang-edit-tx-modal-inner select {
+.beruang-modal-inner select {
 	background: var(--br-bg) var(--br-dropdown-arrow) no-repeat right 0.6em center / 12px 12px !important;
 }
 
 .beruang-form-wrapper button,
-.beruang-categories-modal-inner button,
-.beruang-budget-modal-inner button,
-.beruang-edit-tx-modal-inner button {
+.beruang-modal-inner button {
 	cursor: pointer;
 	overflow: visible;
 }

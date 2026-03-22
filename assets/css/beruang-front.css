@@ -5,12 +5,15 @@
 
 @import url("./components/_variables.css");
 @import url("./components/_base.css");
+@import url("./components/_components.css");
+@import url("./components/_buttons.css");
+@import url("./components/_filters.css");
 @import url("./components/_form.css");
 @import url("./components/_calc-modal.css");
-@import url("./components/_categories-modal.css");
+@import url("./components/_modals.css");
 @import url("./components/_list.css");
 @import url("./components/_graph.css");
 @import url("./components/_budget.css");
+@import url("./components/_wallet.css");
 @import url("./components/_edit-tx-modal.css");
-@import url("./components/_components.css");
 @import url("./components/_responsive.css");
