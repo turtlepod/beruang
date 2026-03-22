@@ -27,15 +27,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="beruang beruang-note-modal beruang-modal" id="beruang-note-modal" hidden>
 	<div class="beruang-modal-dialog">
 		<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-		<div class="beruang-note-modal-inner">
+		<div class="beruang-modal-inner beruang-note-modal-inner">
 			<h4><?php esc_html_e( 'Transaction note', 'beruang' ); ?></h4>
 			<div class="beruang-form-row">
 				<label for="beruang-note-modal-text"><?php esc_html_e( 'Note', 'beruang' ); ?></label>
 				<textarea id="beruang-note-modal-text" rows="5" placeholder="<?php esc_attr_e( 'Optional details...', 'beruang' ); ?>"></textarea>
 			</div>
 			<div class="beruang-form-row beruang-modal-actions">
-				<button type="button" class="beruang-submit beruang-modal-save beruang-note-save"><?php esc_html_e( 'Save note', 'beruang' ); ?></button>
-				<button type="button" class="beruang-modal-cancel beruang-note-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+				<button type="button" class="beruang-btn beruang-btn--primary beruang-submit beruang-modal-save beruang-note-save"><?php esc_html_e( 'Save note', 'beruang' ); ?></button>
+				<button type="button" class="beruang-btn beruang-btn--secondary beruang-modal-cancel beruang-note-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
 			</div>
 		</div>
 	</div>
@@ -43,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="beruang beruang-categories-modal beruang-modal" id="beruang-categories-modal" hidden>
 	<div class="beruang-modal-dialog">
 		<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-		<div class="beruang-categories-modal-inner">
+		<div class="beruang-modal-inner beruang-categories-modal-inner">
 		<h4><?php esc_html_e( 'Manage categories', 'beruang' ); ?></h4>
 		<form id="beruang-category-form" class="beruang-categories-form">
 			<input type="hidden" id="beruang-cat-edit-id" name="id" value="" />
@@ -58,8 +58,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</select>
 			</div>
 			<div class="beruang-form-row">
-				<button type="submit" class="beruang-submit beruang-cat-submit-add"><?php esc_html_e( 'Add category', 'beruang' ); ?></button>
-				<button type="button" class="beruang-cat-cancel-edit" style="display:none;"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+				<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit beruang-cat-submit-add"><?php esc_html_e( 'Add category', 'beruang' ); ?></button>
+				<button type="button" class="beruang-btn beruang-btn--secondary beruang-cat-cancel-edit" style="display:none;"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
 				<span class="beruang-form-message" aria-live="polite"></span>
 			</div>
 		</form>
@@ -67,7 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<p class="beruang-loading beruang-cat-loading"><?php esc_html_e( 'Loading…', 'beruang' ); ?></p>
 			<ul class="beruang-categories-list" id="beruang-categories-list"></ul>
 		</div>
-		<button type="button" class="beruang-categories-modal-close"><?php esc_html_e( 'Close', 'beruang' ); ?></button>
+		<button type="button" class="beruang-btn beruang-btn--secondary beruang-categories-modal-close"><?php esc_html_e( 'Close', 'beruang' ); ?></button>
 		</div>
 	</div>
 </div>

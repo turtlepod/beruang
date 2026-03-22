@@ -17,11 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="beruang-budget-header">
 		<h2 class="beruang-section-title"><?php esc_html_e( 'Budgets', 'beruang' ); ?></h2>
 		<div class="beruang-budget-header-actions">
-			<button type="button" class="beruang-budget-add" title="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-			<button type="button" class="beruang-filter-btn" title="<?php esc_attr_e( 'Filter', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'filter', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-budget-add" title="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-filter-btn" title="<?php esc_attr_e( 'Filter', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'filter', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		</div>
 	</div>
-	<div class="beruang-budget-filters" id="beruang-budget-filters" hidden>
+	<div class="beruang-filters beruang-budget-filters" id="beruang-budget-filters" hidden>
 		<select class="beruang-filter-year" aria-label="<?php esc_attr_e( 'Year', 'beruang' ); ?>">
 			<?php
 			$current_year = (int) current_time( 'Y' );
@@ -51,8 +51,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			}
 			?>
 		</select>
-		<button type="button" class="beruang-filter-apply"><?php esc_html_e( 'Apply', 'beruang' ); ?></button>
-		<button type="button" class="beruang-filter-reset"><?php esc_html_e( 'Reset', 'beruang' ); ?></button>
+		<button type="button" class="beruang-btn beruang-btn--primary beruang-filter-apply"><?php esc_html_e( 'Apply', 'beruang' ); ?></button>
+		<button type="button" class="beruang-btn beruang-btn--secondary beruang-filter-reset"><?php esc_html_e( 'Reset', 'beruang' ); ?></button>
 	</div>
 	<div class="beruang-budget-list" id="beruang-budget-list" data-year="<?php echo esc_attr( $year ); ?>" data-month="<?php echo esc_attr( $month ); ?>">
 		<p class="beruang-loading"><?php esc_html_e( 'Loading…', 'beruang' ); ?></p>
@@ -60,7 +60,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="beruang-budget-modal beruang-modal" id="beruang-budget-modal" hidden>
 		<div class="beruang-modal-dialog">
 			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-			<div class="beruang-budget-modal-inner">
+			<div class="beruang-modal-inner beruang-budget-modal-inner">
 			<h4><?php esc_html_e( 'Add / Edit budget', 'beruang' ); ?></h4>
 			<form id="beruang-budget-form">
 				<input type="hidden" name="id" value="" />
@@ -92,8 +92,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 				</div>
 				<div class="beruang-form-row beruang-modal-actions">
-					<button type="submit" class="beruang-submit beruang-modal-save"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
-					<button type="button" class="beruang-modal-cancel beruang-budget-modal-close"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+					<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit beruang-modal-save"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
+					<button type="button" class="beruang-btn beruang-btn--secondary beruang-modal-cancel beruang-budget-modal-close"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
 				</div>
 			</form>
 			</div>

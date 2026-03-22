@@ -21,29 +21,6 @@
 	margin-left: auto;
 }
 
-.beruang-wallet-add {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: var(--br-control-height);
-	height: var(--br-control-height);
-	padding: 0;
-	background: var(--br-primary);
-	color: var(--br-bg);
-	border: none;
-	border-radius: var(--br-radius-sm);
-	cursor: pointer;
-	transition: background-color 0.2s ease, color 0.2s ease;
-
-	& .beruang-icon {
-		color: inherit;
-	}
-
-	&:hover {
-		background: var(--br-primary-hover);
-	}
-}
-
 .beruang-wallet-list {
 	margin-top: 0.5em;
 }
@@ -98,7 +75,7 @@
 	margin-top: 1em;
 
 	& select {
-		max-width: 20em;
+		max-width: var(--br-control-width);
 	}
 }
 
@@ -108,23 +85,6 @@
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 0.5em;
-}
-
-.beruang-wallet-form .beruang-submit {
-	padding: 0.5em 1.2em;
-	height: var(--br-control-height);
-	background: var(--br-primary) !important;
-	color: var(--br-bg) !important;
-	border: none !important;
-	border-radius: var(--br-radius-sm);
-	cursor: pointer;
-	line-height: 1.4;
-	font-weight: 600;
-
-	&:hover {
-		background: var(--br-primary-hover) !important;
-		color: var(--br-bg) !important;
-	}
 }
 
 .beruang-wallet-modal {
@@ -139,49 +99,5 @@
 
 	&[hidden] {
 		display: none !important;
-	}
-}
-
-.beruang-wallet-modal-inner {
-	position: relative;
-	background: var(--br-bg);
-	color: var(--br-text);
-	padding: 1.5em;
-	border-radius: var(--br-radius-md);
-	width: 100%;
-	max-height: 90vh;
-	overflow-y: auto;
-
-	& h4 {
-		margin-top: 0;
-		color: var(--br-text);
-	}
-
-	& input[type="text"],
-	& input[type="number"],
-	& input[type="date"],
-	& input[type="time"] {
-		width: 100%;
-		padding: 0.5em 0.6em;
-		height: var(--br-control-height);
-		background: var(--br-bg) !important;
-		color: var(--br-text) !important;
-		border: 1px solid var(--br-border) !important;
-		border-radius: var(--br-radius-sm);
-		font-family: inherit;
-		font-size: inherit;
-	}
-
-	& select {
-		width: 100%;
-		padding: 0.5em 0.6em;
-		padding-right: 2em;
-		height: var(--br-control-height);
-		background-color: var(--br-bg) !important;
-		color: var(--br-text) !important;
-		border: 1px solid var(--br-border) !important;
-		border-radius: var(--br-radius-sm);
-		font-family: inherit;
-		font-size: inherit;
 	}
 }

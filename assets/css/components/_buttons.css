@@ -1,0 +1,73 @@
+/**
+ * Beruang – button components.
+ *
+ * Base class `.beruang-btn` + modifier classes.
+ * Semantic JS-hook classes (beruang-submit, beruang-action-edit, etc.) remain
+ * on elements for JavaScript selectors; visual styling lives here.
+ */
+
+.beruang-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--br-control-height);
+	padding: 0.5em 1em;
+	border-radius: var(--br-radius-sm);
+	cursor: pointer;
+	line-height: 1.4;
+	font-family: inherit;
+	font-size: 1em;
+	font-weight: 500;
+
+	& .beruang-icon,
+	& svg {
+		width: 1em;
+		height: 1em;
+		color: inherit;
+		flex-shrink: 0;
+	}
+}
+
+/* Primary: blue background */
+.beruang-btn--primary {
+	background: var(--br-primary) !important;
+	color: var(--br-bg) !important;
+	border: none !important;
+
+	&:hover {
+		background: var(--br-primary-hover) !important;
+	}
+}
+
+/* Secondary: muted background with border */
+.beruang-btn--secondary {
+	background: var(--br-bg-muted) !important;
+	color: var(--br-text) !important;
+	border: 1px solid var(--br-border) !important;
+
+	&:hover {
+		background: var(--br-bg-hover-alt) !important;
+		color: var(--br-text) !important;
+		border-color: var(--br-border-hover) !important;
+	}
+}
+
+/* Danger: secondary at rest, red on hover — for destructive actions */
+.beruang-btn--danger {
+	background: var(--br-bg-muted) !important;
+	color: var(--br-text) !important;
+	border: 1px solid var(--br-border) !important;
+
+	&:hover {
+		background: var(--br-error) !important;
+		color: var(--br-bg) !important;
+		border-color: var(--br-error) !important;
+	}
+}
+
+/* Icon-only: square, no padding */
+.beruang-btn--icon {
+	width: var(--br-control-height);
+	padding: 0;
+	flex-shrink: 0;
+}

@@ -87,8 +87,8 @@ export function initWallet() {
 		const defaultId = defaultWalletId ? String( defaultWalletId ) : '';
 		let html = '';
 		wallets.forEach( function ( wallet ) {
-			const actionsHtml = '<button type="button" class="beruang-action-edit" title="' + ( i18n.edit || 'Edit' ) + '" aria-label="' + ( i18n.edit || 'Edit' ) + '">' + editIcon + '</button>' +
-				'<button type="button" class="beruang-action-delete" title="' + ( i18n.delete || 'Delete' ) + '" aria-label="' + ( i18n.delete || 'Delete' ) + '">' + deleteIcon + '</button>';
+			const actionsHtml = '<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-action-edit" title="' + ( i18n.edit || 'Edit' ) + '" aria-label="' + ( i18n.edit || 'Edit' ) + '">' + editIcon + '</button>' +
+				'<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--danger beruang-action-delete" title="' + ( i18n.delete || 'Delete' ) + '" aria-label="' + ( i18n.delete || 'Delete' ) + '">' + deleteIcon + '</button>';
 			const walletId = String( wallet.id );
 			const initialAmount = wallet.initial_amount !== undefined ? wallet.initial_amount : 0;
 			const initialDate = wallet.initial_date || '';

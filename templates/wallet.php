@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="beruang-wallet-header">
 		<h2 class="beruang-section-title"><?php esc_html_e( 'Wallets', 'beruang' ); ?></h2>
 		<div class="beruang-wallet-header-actions">
-			<button type="button" class="beruang-wallet-add" title="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-wallet-add" title="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		</div>
 	</div>
 	<div class="beruang-form-row beruang-wallet-default-row"<?php echo count( $wallets ) >= 1 ? '' : ' hidden'; ?>>
@@ -43,8 +43,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php /* translators: 1: amount, 2: date (Y-m-d). */ ?>
 				<div class="beruang-wallet-card-meta"><?php echo esc_html( sprintf( __( 'Baseline: %1$s on %2$s', 'beruang' ), number_format_i18n( $initial_amount, 2 ), $initial_date ) ); ?></div>
 				<span class="beruang-wallet-card-actions">
-					<button type="button" class="beruang-action-edit" title="<?php esc_attr_e( 'Edit', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Edit', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'edit', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-					<button type="button" class="beruang-action-delete" title="<?php esc_attr_e( 'Delete', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Delete', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'trash', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+					<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-action-edit" title="<?php esc_attr_e( 'Edit', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Edit', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'edit', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+					<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--danger beruang-action-delete" title="<?php esc_attr_e( 'Delete', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Delete', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'trash', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 				</span>
 			</div>
 			<?php
@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="beruang-wallet-modal beruang-modal" id="beruang-wallet-modal" hidden>
 		<div class="beruang-modal-dialog">
 			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-			<div class="beruang-wallet-modal-inner">
+			<div class="beruang-modal-inner beruang-wallet-modal-inner">
 				<h4><?php esc_html_e( 'Add / Edit wallet', 'beruang' ); ?></h4>
 				<form id="beruang-wallet-form" class="beruang-wallet-form">
 					<input type="hidden" id="beruang-wallet-edit-id" name="id" value="" />
@@ -75,8 +75,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<input type="checkbox" id="beruang-wallet-set-default" name="set_as_default" value="1" />
 					</div>
 					<div class="beruang-form-row beruang-modal-actions">
-						<button type="submit" class="beruang-submit beruang-wallet-submit-add beruang-modal-save"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
-						<button type="button" class="beruang-modal-cancel beruang-wallet-cancel-edit"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+						<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit beruang-wallet-submit-add beruang-modal-save"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
+						<button type="button" class="beruang-btn beruang-btn--secondary beruang-modal-cancel beruang-wallet-cancel-edit"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
 						<span class="beruang-form-message" aria-live="polite"></span>
 					</div>
 				</form>

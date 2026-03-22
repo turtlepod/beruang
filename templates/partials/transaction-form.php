@@ -56,17 +56,17 @@ $default_wallet = null === $default_wallet_id ? '' : (string) $default_wallet_id
 			<input type="time" id="<?php echo esc_attr( $time_id ); ?>" name="time" value="<?php echo esc_attr( $time ); ?>" />
 		</span>
 	</div>
-	<div class="beruang-form-row">
+	<div class="beruang-form-row beruang-description-row">
 		<label for="<?php echo esc_attr( $desc_id ); ?>"><?php esc_html_e( 'Description', 'beruang' ); ?></label>
-		<span class="beruang-description-wrap">
+		<span class="beruang-wrap">
 			<input type="text" id="<?php echo esc_attr( $desc_id ); ?>" name="description" placeholder="<?php esc_attr_e( 'Meal, Gas, etc...', 'beruang' ); ?>" required />
-			<button type="button" class="beruang-note-btn" title="<?php esc_attr_e( 'Add note', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add note', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'note', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-note-btn" title="<?php esc_attr_e( 'Add note', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add note', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'note', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		</span>
 		<textarea id="<?php echo esc_attr( $note_id ); ?>" name="note" rows="3" hidden aria-hidden="true" tabindex="-1"></textarea>
 	</div>
-	<div class="beruang-form-row">
+	<div class="beruang-form-row beruang-category-row">
 		<label for="<?php echo esc_attr( $cat_id ); ?>"><?php esc_html_e( 'Category', 'beruang' ); ?></label>
-		<span class="beruang-category-wrap">
+		<span class="beruang-wrap">
 			<select id="<?php echo esc_attr( $cat_id ); ?>" name="category_id">
 				<option value="0"><?php esc_html_e( 'Uncategorized', 'beruang' ); ?></option>
 				<?php
@@ -77,14 +77,14 @@ $default_wallet = null === $default_wallet_id ? '' : (string) $default_wallet_id
 				}
 				?>
 			</select>
-			<button type="button" class="beruang-manage-categories-btn" title="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'list' ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-manage-categories-btn" title="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'list' ); ?></button>
 		</span>
 	</div>
 	<div class="beruang-form-row beruang-amount-row">
 		<label for="<?php echo esc_attr( $amt_id ); ?>"><?php esc_html_e( 'Amount', 'beruang' ); ?> <span class="beruang-label-currency">(<?php echo esc_html( $currency ); ?>)</span></label>
-		<span class="beruang-amount-wrap">
+		<span class="beruang-wrap">
 			<input type="number" id="<?php echo esc_attr( $amt_id ); ?>" name="amount" step="1" min="0" value="" required placeholder="0" />
-			<button type="button" class="beruang-calc-btn" title="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'calc' ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-calc-btn" title="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'calc' ); ?></button>
 		</span>
 	</div>
 	<div class="beruang-form-row beruang-type-row">
@@ -96,9 +96,9 @@ $default_wallet = null === $default_wallet_id ? '' : (string) $default_wallet_id
 		<input type="hidden" name="type" id="<?php echo esc_attr( $type_id ); ?>" value="expense" />
 	</div>
 	<div class="beruang-form-row beruang-submit-row<?php echo $is_edit ? ' beruang-modal-actions' : ''; ?>">
-		<button type="submit" class="beruang-submit<?php echo $is_edit ? ' beruang-modal-save' : ''; ?>"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
+		<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit<?php echo $is_edit ? ' beruang-modal-save' : ''; ?>"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
 		<?php if ( $is_edit ) : ?>
-			<button type="button" class="beruang-modal-cancel beruang-edit-tx-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--secondary beruang-modal-cancel beruang-edit-tx-cancel"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
 		<?php endif; ?>
 		<span class="beruang-form-message" aria-live="polite"></span>
 	</div>

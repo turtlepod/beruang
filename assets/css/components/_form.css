@@ -6,7 +6,8 @@
 	padding: 1em 0;
 
 	& .beruang-form {
-		max-width: var(--br-control-width);
+		width: var(--br-control-width);
+		max-width: 100%;
 		margin-left: auto;
 		margin-right: auto;
 	}
@@ -57,28 +58,6 @@
 		resize: vertical;
 	}
 
-	& .beruang-form-row .beruang-datetime-wrap input[type="date"] {
-		padding-right: 0;
-		background: var(--br-bg) var(--br-calendar-icon) no-repeat right 0.5em center / 1em 1em !important;
-
-		&::-webkit-calendar-picker-indicator {
-			background: transparent;
-			color: transparent;
-			cursor: pointer;
-		}
-	}
-
-	& .beruang-form-row .beruang-datetime-wrap input[type="time"] {
-		padding-right: 0;
-		background: var(--br-bg) var(--br-clock-icon) no-repeat right 0.5em center / 1em 1em !important;
-
-		&::-webkit-calendar-picker-indicator {
-			background: transparent;
-			color: transparent;
-			cursor: pointer;
-		}
-	}
-
 	& .beruang-form-row select {
 		width: 100%;
 		max-width: var(--br-control-width);
@@ -100,74 +79,6 @@
 		}
 	}
 
-	& .beruang-manage-categories-btn,
-	& .beruang-calc-btn,
-	& .beruang-note-btn {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		flex-shrink: 0;
-		width: var(--br-control-height);
-		height: var(--br-control-height);
-		padding: 0;
-		font-size: 1em;
-		background: var(--br-bg-muted) !important;
-		color: var(--br-text) !important;
-		border: 1px solid var(--br-border) !important;
-		border-radius: var(--br-radius-sm);
-		cursor: pointer;
-
-		&:hover {
-			background: var(--br-bg-hover-alt) !important;
-			color: var(--br-text) !important;
-			border-color: var(--br-border-hover) !important;
-		}
-	}
-
-	& .beruang-type-btn {
-		flex: 1;
-		padding: 0.5em 1em;
-		height: var(--br-control-height);
-		border: 1px solid var(--br-border) !important;
-		background: var(--br-bg-subtle) !important;
-		color: var(--br-text) !important;
-		cursor: pointer;
-		line-height: 1.4;
-		font-weight: 500;
-
-		&:first-child {
-			border-radius: var(--br-radius-sm) 0 0 var(--br-radius-sm);
-		}
-
-		&:last-child {
-			border-radius: 0 var(--br-radius-sm) var(--br-radius-sm) 0;
-		}
-
-		&:hover:not(.active) {
-			background: var(--br-bg-hover) !important;
-			color: var(--br-text) !important;
-			border-color: var(--br-border-hover) !important;
-		}
-
-		&.active {
-			background: var(--br-primary) !important;
-			color: var(--br-bg) !important;
-			border-color: var(--br-primary) !important;
-		}
-
-		&[data-type="expense"].active {
-			background: var(--br-error) !important;
-			border-color: var(--br-error) !important;
-			color: #fff !important;
-		}
-
-		&[data-type="income"].active {
-			background: var(--br-success) !important;
-			border-color: var(--br-success) !important;
-			color: #fff !important;
-		}
-	}
-
 	& .beruang-submit-row {
 		display: flex;
 		align-items: center;
@@ -180,23 +91,6 @@
 			width: 100%;
 		}
 	}
-
-	& .beruang-submit {
-		padding: 0.5em 1.2em;
-		height: var(--br-control-height);
-		background: var(--br-primary) !important;
-		color: var(--br-bg) !important;
-		border: none !important;
-		border-radius: var(--br-radius-sm);
-		cursor: pointer;
-		line-height: 1.4;
-		font-weight: 600;
-
-		&:hover {
-			background: var(--br-primary-hover) !important;
-			color: var(--br-bg) !important;
-		}
-	}
 }
 
 .beruang-form-row label .beruang-label-currency {
@@ -205,67 +99,55 @@
 	opacity: 0.8;
 }
 
-.beruang-datetime-wrap {
+/* Type toggle — shared between add form and edit modal */
+.beruang-type-toggle {
 	display: flex;
-	flex-direction: row;
-	gap: 1em;
-	align-items: stretch;
-	max-width: var(--br-control-width);
-	width: 100%;
-
-	& input[type="date"] {
-		flex: 1;
-		min-width: 10em;
-	}
-
-	& input[type="time"] {
-		flex: 1;
-		min-width: 7em;
-	}
-
-	& input[type="date"],
-	& input[type="time"] {
-		height: var(--br-control-height) !important;
-		margin: 0 !important;
-	}
-}
-
-.beruang-description-wrap,
-.beruang-category-wrap {
-	display: flex;
-	align-items: stretch;
-	gap: 0.5em;
+	gap: 0;
 	max-width: var(--br-control-width);
 	width: 100%;
 }
 
-.beruang-description-wrap {
-	& input {
-		flex: 1;
-		min-width: 0;
-		height: var(--br-control-height) !important;
-		margin: 0 !important;
+.beruang-type-btn {
+	flex: 1;
+	padding: 0.5em 1em;
+	height: var(--br-control-height);
+	border: 1px solid var(--br-border) !important;
+	background: var(--br-bg-subtle) !important;
+	color: var(--br-text) !important;
+	cursor: pointer;
+	line-height: 1.4;
+	font-weight: 500;
+
+	&:first-child {
+		border-radius: var(--br-radius-sm) 0 0 var(--br-radius-sm);
 	}
 
-	& .beruang-note-btn {
-		height: var(--br-control-height) !important;
-		margin: 0 !important;
+	&:last-child {
+		border-radius: 0 var(--br-radius-sm) var(--br-radius-sm) 0;
 	}
-}
 
-.beruang-category-wrap {
-	& select {
-		flex: 1;
-		min-width: 0;
-		background: var(--br-bg) var(--br-dropdown-arrow) no-repeat right 0.6em center / 12px 12px !important;
+	&:hover:not(.active) {
+		background: var(--br-bg-hover) !important;
 		color: var(--br-text) !important;
-		height: var(--br-control-height) !important;
-		margin: 0 !important;
+		border-color: var(--br-border-hover) !important;
 	}
 
-	& .beruang-manage-categories-btn {
-		height: var(--br-control-height) !important;
-		margin: 0 !important;
+	&.active {
+		background: var(--br-primary) !important;
+		color: var(--br-bg) !important;
+		border-color: var(--br-primary) !important;
+	}
+
+	&[data-type="expense"].active {
+		background: var(--br-error) !important;
+		border-color: var(--br-error) !important;
+		color: #fff !important;
+	}
+
+	&[data-type="income"].active {
+		background: var(--br-success) !important;
+		border-color: var(--br-success) !important;
+		color: #fff !important;
 	}
 }
 
@@ -280,26 +162,16 @@
 		margin-bottom: 0;
 	}
 
-	& .beruang-amount-wrap {
-		display: flex;
-		align-items: stretch;
+	& > span {
 		flex: 1;
 		min-width: 0;
-		gap: 0.5em;
+		max-width: none;
+	}
 
-		& input {
-			flex: 1;
-			min-width: 6em;
-			background: var(--br-bg) !important;
-			color: var(--br-text) !important;
-			height: var(--br-control-height) !important;
-			margin: 0 !important;
-		}
-
-		& .beruang-calc-btn {
-			height: var(--br-control-height) !important;
-			margin: 0 !important;
-		}
+	& .beruang-wrap input {
+		min-width: 6em;
+		background: var(--br-bg) !important;
+		color: var(--br-text) !important;
 	}
 
 	& .beruang-currency-label {
@@ -312,13 +184,6 @@
 	color: var(--br-text);
 	opacity: 0.8;
 	line-height: var(--br-control-height);
-}
-
-.beruang-type-toggle {
-	display: flex;
-	gap: 0;
-	max-width: var(--br-control-width);
-	width: 100%;
 }
 
 .beruang-form-message {

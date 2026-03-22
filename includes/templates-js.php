@@ -19,8 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/html" id="tmpl-beruang-cat-item">
 	<li class="beruang-cat-item" data-id="{{ data.id }}" data-name="{{ data.name }}" data-parent="{{ data.parent }}">
 		<span class="beruang-cat-item-name">{{ data.displayName }}</span>
-		<button type="button" class="beruang-action-edit" title="{{ data.editLabel }}" aria-label="{{ data.editLabel }}">{{{ data.editIcon }}}</button>
-		<button type="button" class="beruang-action-delete" title="{{ data.deleteLabel }}" aria-label="{{ data.deleteLabel }}">{{{ data.deleteIcon }}}</button>
+		<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-action-edit" title="{{ data.editLabel }}" aria-label="{{ data.editLabel }}">{{{ data.editIcon }}}</button>
+		<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--danger beruang-action-delete" title="{{ data.deleteLabel }}" aria-label="{{ data.deleteLabel }}">{{{ data.deleteIcon }}}</button>
 	</li>
 </script>
 
@@ -54,8 +54,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<span class="beruang-tx-desc">{{ data.description }}</span>
 		<span class="beruang-tx-amount {{ data.type }}">{{ data.amountDisplay }}</span>
 		<span class="beruang-tx-actions">
-			<button type="button" class="beruang-action-edit" title="{{ data.editLabel }}" aria-label="{{ data.editLabel }}">{{{ data.editIcon }}}</button>
-			<button type="button" class="beruang-action-delete" title="{{ data.deleteLabel }}" aria-label="{{ data.deleteLabel }}">{{{ data.deleteIcon }}}</button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-action-edit" title="{{ data.editLabel }}" aria-label="{{ data.editLabel }}">{{{ data.editIcon }}}</button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--danger beruang-action-delete" title="{{ data.deleteLabel }}" aria-label="{{ data.deleteLabel }}">{{{ data.deleteIcon }}}</button>
 		</span>
 	</div>
 </script>
@@ -83,8 +83,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="beruang-budget-progress-wrap"><div class="beruang-budget-progress-bar {{ data.progressClass }}" style="width:{{ data.progressWidth }}%"></div></div>
 		<div class="beruang-budget-meta">{{ data.spentFormatted }} / {{ data.targetFormatted }} ({{ data.pct }}%) &mdash; <span class="{{ data.remainingClass }}">{{ data.remainingLabel }}: {{ data.remainingFormatted }}</span></div>
 		<span class="beruang-budget-actions">
-			<button type="button" class="beruang-action-edit" data-id="{{ data.id }}" title="{{ data.editLabel }}" aria-label="{{ data.editLabel }}">{{{ data.editIcon }}}</button>
-			<button type="button" class="beruang-action-delete" data-id="{{ data.id }}" title="{{ data.deleteLabel }}" aria-label="{{ data.deleteLabel }}">{{{ data.deleteIcon }}}</button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-action-edit" data-id="{{ data.id }}" title="{{ data.editLabel }}" aria-label="{{ data.editLabel }}">{{{ data.editIcon }}}</button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--danger beruang-action-delete" data-id="{{ data.id }}" title="{{ data.deleteLabel }}" aria-label="{{ data.deleteLabel }}">{{{ data.deleteIcon }}}</button>
 		</span>
 	</div>
 </script>

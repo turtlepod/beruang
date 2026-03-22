@@ -1,0 +1,59 @@
+/**
+ * Beruang – filter panel component.
+ *
+ * Used on .beruang-list-filters, .beruang-graph-filters, .beruang-budget-filters.
+ * Those classes stay as JS hooks; CSS lives here via .beruang-filters.
+ */
+
+.beruang-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+	margin-bottom: 1em;
+	padding: 0.75em;
+	background: var(--br-bg-subtle);
+	border: 1px solid var(--br-border-alt);
+	border-radius: var(--br-radius-sm);
+	color: var(--br-text);
+
+	&[hidden] {
+		display: none !important;
+	}
+
+	& input[type="text"] {
+		padding: 0.4em;
+		height: var(--br-control-height);
+		border: 1px solid var(--br-border) !important;
+		border-radius: var(--br-radius-sm);
+		background: var(--br-bg) !important;
+		color: var(--br-text) !important;
+		appearance: none;
+		font-family: inherit;
+		font-size: inherit;
+
+		&:focus {
+			background: var(--br-bg) !important;
+			outline: 2px solid var(--br-primary);
+			outline-offset: 2px;
+		}
+	}
+
+	& select {
+		padding: 0.4em;
+		padding-right: 1.75em;
+		height: var(--br-control-height);
+		border: 1px solid var(--br-border) !important;
+		border-radius: var(--br-radius-sm);
+		background: var(--br-bg) var(--br-dropdown-arrow) no-repeat right 0.5em center / 10px 10px !important;
+		color: var(--br-text) !important;
+		appearance: none;
+		font-family: inherit;
+		font-size: inherit;
+
+		&:focus {
+			background-color: var(--br-bg) !important;
+			outline: 2px solid var(--br-primary);
+			outline-offset: 2px;
+		}
+	}
+}
