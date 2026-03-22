@@ -60,6 +60,7 @@ Font Awesome Free Icons
 * Notes feature
 * Add Unit test
 * Add playwright test
+* Restructure CSS and HTML using component based approach.
 
 = 0.3.0-beta =
 * Refactored front-end CSS into component-based stylesheets and improved responsive rules.
