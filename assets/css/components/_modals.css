@@ -122,6 +122,7 @@
 	width: 100%;
 	min-height: 7.5em;
 	resize: vertical;
+	margin-bottom: 1em;
 	padding: 0.5em 0.6em;
 	background: var(--br-bg) !important;
 	color: var(--br-text) !important;
