@@ -18,9 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="beruang-wallet-header">
 		<h2 class="beruang-section-title"><?php esc_html_e( 'Wallets', 'beruang' ); ?></h2>
 		<div class="beruang-wallet-header-actions">
-			<?php if ( count( $wallets ) >= 2 ) : ?>
 			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-wallet-transfer-open" title="<?php esc_attr_e( 'Transfer between wallets', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Transfer between wallets', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'transfer', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-			<?php endif; ?>
 			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-wallet-add" title="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		</div>
 	</div>
@@ -35,6 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div class="beruang-wallet-list" id="beruang-wallet-list" data-default-wallet-id="<?php echo esc_attr( (string) $default_wallet_id ); ?>">
 		<?php
+		$decimal_places = (int) get_option( 'beruang_decimal_places', 2 );
 		foreach ( $wallets as $wallet ) {
 			$initial_amount = isset( $wallet['initial_amount'] ) ? (float) $wallet['initial_amount'] : 0.0;
 			$initial_date   = isset( $wallet['initial_date'] ) ? (string) $wallet['initial_date'] : current_time( 'Y-m-d' );
@@ -45,9 +44,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="beruang-wallet-card" data-id="<?php echo esc_attr( $wallet['id'] ); ?>" data-name="<?php echo esc_attr( $wallet['name'] ); ?>" data-default="<?php echo esc_attr( $is_default ); ?>" data-initial-amount="<?php echo esc_attr( (string) $initial_amount ); ?>" data-initial-date="<?php echo esc_attr( $initial_date ); ?>">
 				<h4><?php echo esc_html( $wallet['name'] ); ?></h4>
 				<?php /* translators: %s: current wallet amount. */ ?>
-				<div class="beruang-wallet-card-balance <?php echo esc_attr( $balance_class ); ?>"><?php echo esc_html( sprintf( __( 'Current: %s', 'beruang' ), number_format_i18n( $current_amount, (int) get_option( 'beruang_decimal_places', 2 ) ) ) ); ?></div>
+				<div class="beruang-wallet-card-balance <?php echo esc_attr( $balance_class ); ?>"><?php echo esc_html( sprintf( __( 'Current: %s', 'beruang' ), number_format_i18n( $current_amount, $decimal_places ) ) ); ?></div>
 				<?php /* translators: 1: amount, 2: date (Y-m-d). */ ?>
-				<div class="beruang-wallet-card-meta"><?php echo esc_html( sprintf( __( 'Baseline: %1$s on %2$s', 'beruang' ), number_format_i18n( $initial_amount, (int) get_option( 'beruang_decimal_places', 2 ) ), $initial_date ) ); ?></div>
+				<div class="beruang-wallet-card-meta"><?php echo esc_html( sprintf( __( 'Baseline: %1$s on %2$s', 'beruang' ), number_format_i18n( $initial_amount, $decimal_places ), $initial_date ) ); ?></div>
 				<span class="beruang-wallet-card-actions">
 					<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-action-edit" title="<?php esc_attr_e( 'Edit', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Edit', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'edit', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 					<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--danger beruang-action-delete" title="<?php esc_attr_e( 'Delete', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Delete', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'trash', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>

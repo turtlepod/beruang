@@ -36,7 +36,11 @@ export default async function globalSetup() {
 	const pageData: Record<string, string> = {};
 
 	// Resolve the author ID from the configured test user login.
-	const authorId = wp( `user get "${ TEST_USER }" --field=ID` );
+	const rawAuthorId = wp( `user get "${ TEST_USER }" --field=ID` );
+	const authorId = Number.parseInt( rawAuthorId, 10 );
+	if ( ! Number.isFinite( authorId ) || authorId <= 0 ) {
+		throw new Error( `Could not resolve a valid user ID for WP_TEST_USER="${ TEST_USER }". WP-CLI returned: "${ rawAuthorId }"` );
+	}
 
 	for ( const [ key, shortcode ] of Object.entries( SHORTCODES ) ) {
 		const title = `E2E Beruang ${ key }`;
@@ -50,7 +54,7 @@ export default async function globalSetup() {
 		}
 
 		const id = wp(
-			`post create --post_type=page --post_status=publish --post_title="${ title }" --post_content="${ shortcode }" --post_author=${ authorId } --porcelain`
+			`post create --post_type=page --post_status=publish --post_title="${ title }" --post_content="${ shortcode }" --post_author=${ authorId.toString() } --porcelain`
 		);
 		const url = wp( `post get ${ id } --field=guid` );
 

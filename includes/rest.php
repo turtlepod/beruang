@@ -1034,6 +1034,9 @@ function rest_transfer_wallet( $request ) {
 	if ( ! $to_wallet ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Target wallet not found.', 'beruang' ), 404 );
 	}
+	if ( $category_id > 0 && ! DB::get_category_for_user( $user_id, $category_id ) ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang' ), 400 );
+	}
 
 	$shared = array(
 		'date'        => $date,
@@ -1057,6 +1060,10 @@ function rest_transfer_wallet( $request ) {
 		)
 	);
 
+	if ( ! $expense_id ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang' ), 500 );
+	}
+
 	// Income to target wallet.
 	$income_id = DB::insert_transaction(
 		$user_id,
@@ -1071,7 +1078,9 @@ function rest_transfer_wallet( $request ) {
 		)
 	);
 
-	if ( ! $expense_id || ! $income_id ) {
+	if ( ! $income_id ) {
+		// Compensate: roll back the expense already inserted.
+		DB::delete_transaction( $user_id, $expense_id );
 		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang' ), 500 );
 	}
 
@@ -1124,7 +1133,7 @@ function rest_get_budgets( $request ) {
 	foreach ( $groups as $group_id => $group ) {
 		$date_from                = 'yearly' === $group['type'] ? $yearly_from : $monthly_from;
 		$date_to                  = 'yearly' === $group['type'] ? $yearly_to : $monthly_to;
-		$group_spent[ $group_id ] = DB::sum_expenses( $user_id, $date_from, $date_to, $group['cat_ids'] );
+		$group_spent[ $group_id ] = DB::sum_net_amount( $user_id, $date_from, $date_to, $group['cat_ids'] );
 	}
 
 	foreach ( $budgets as &$b ) {

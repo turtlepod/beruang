@@ -459,7 +459,7 @@ class DB {
 					'wallet_id' => $id,
 					'user_id'   => absint( $user_id ),
 				),
-				array( '%s' ),
+				array( null ),
 				array( '%d', '%d' )
 			);
 			if ( absint( self::get_default_wallet_id( $user_id ) ) === $id ) {
@@ -950,7 +950,7 @@ class DB {
 	 * @param int[]  $category_ids Category IDs to include, empty for all.
 	 * @return float
 	 */
-	public static function sum_expenses( $user_id, $date_from, $date_to, $category_ids = array() ) {
+	public static function sum_net_amount( $user_id, $date_from, $date_to, $category_ids = array() ) {
 		$table   = self::table_transaction();
 		$user_id = absint( $user_id );
 		$where   = 'user_id = %d AND date >= %s AND date <= %s';

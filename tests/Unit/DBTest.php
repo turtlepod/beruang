@@ -183,6 +183,92 @@ class DBTest extends TestCase {
 	}
 
 	// -----------------------------------------------------------------------
+	// sum_net_amount
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Inject a $wpdb mock that supports prepare() and get_var().
+	 *
+	 * @param string $prefix     DB table prefix.
+	 * @param string $get_var_return Value get_var() should return.
+	 * @return object The mock.
+	 */
+	private function setUpQueryWpdb( string $prefix = 'wp_', string $get_var_return = '0' ): object {
+		$wpdb         = $this->getMockBuilder( \stdClass::class )
+			->addMethods( [ 'prepare', 'get_var' ] )
+			->getMock();
+		$wpdb->prefix = $prefix;
+		$wpdb->method( 'prepare' )->willReturnCallback(
+			function ( $query ) {
+				return $query;
+			}
+		);
+		$wpdb->method( 'get_var' )->willReturn( $get_var_return );
+
+		$GLOBALS['wpdb'] = $wpdb;
+
+		$prop = new ReflectionProperty( DB::class, 'wpdb' );
+		$prop->setAccessible( true );
+		$prop->setValue( null, null );
+
+		return $wpdb;
+	}
+
+	/**
+	 * @covers \Beruang\DB::sum_net_amount
+	 */
+	public function test_sum_net_amount_returns_float(): void {
+		$this->setUpQueryWpdb( 'wp_', '150.50' );
+		$result = DB::sum_net_amount( 1, '2024-01-01', '2024-01-31' );
+		$this->assertSame( 150.50, $result );
+	}
+
+	/**
+	 * @covers \Beruang\DB::sum_net_amount
+	 */
+	public function test_sum_net_amount_returns_zero_when_no_transactions(): void {
+		$this->setUpQueryWpdb( 'wp_', '0' );
+		$result = DB::sum_net_amount( 1, '2024-01-01', '2024-01-31' );
+		$this->assertSame( 0.0, $result );
+	}
+
+	/**
+	 * Net amount can be negative when income exceeds expenses.
+	 *
+	 * @covers \Beruang\DB::sum_net_amount
+	 */
+	public function test_sum_net_amount_returns_negative_when_income_exceeds_expenses(): void {
+		$this->setUpQueryWpdb( 'wp_', '-50.00' );
+		$result = DB::sum_net_amount( 1, '2024-01-01', '2024-01-31' );
+		$this->assertSame( -50.0, $result );
+	}
+
+	/**
+	 * @covers \Beruang\DB::sum_net_amount
+	 */
+	public function test_sum_net_amount_with_category_ids_calls_prepare(): void {
+		$wpdb = $this->setUpQueryWpdb( 'wp_', '200.00' );
+		$wpdb->expects( $this->once() )
+			->method( 'prepare' )
+			->with( $this->stringContains( 'category_id IN' ) )
+			->willReturn( 'SELECT ...' );
+		$result = DB::sum_net_amount( 1, '2024-01-01', '2024-01-31', [ 3, 7 ] );
+		$this->assertSame( 200.0, $result );
+	}
+
+	/**
+	 * @covers \Beruang\DB::sum_net_amount
+	 */
+	public function test_sum_net_amount_without_category_ids_omits_category_filter(): void {
+		$wpdb = $this->setUpQueryWpdb( 'wp_', '75.00' );
+		$wpdb->expects( $this->once() )
+			->method( 'prepare' )
+			->with( $this->logicalNot( $this->stringContains( 'category_id IN' ) ) )
+			->willReturn( 'SELECT ...' );
+		DB::sum_net_amount( 1, '2024-01-01', '2024-01-31' );
+	}
+
+	// -----------------------------------------------------------------------
 	// normalize_wallet_id (private static)
 	// -----------------------------------------------------------------------
 
