@@ -116,12 +116,12 @@ function enqueue_front_scripts() {
 			array(
 				'rest_url'       => get_rest_url( null, 'beruang/v1' ),
 				'rest_nonce'     => wp_create_nonce( 'wp_rest' ),
-				'currency'       => get_option( 'beruang_currency', 'IDR' ),
+				'currency'       => get_effective_currency(),
 				'date_format'    => get_option( 'date_format', 'F j, Y' ),
 				'locale'         => str_replace( '_', '-', get_locale() ),
-				'decimal_sep'    => get_option( 'beruang_decimal_sep', ',' ),
-				'thousands_sep'  => get_option( 'beruang_thousands_sep', '.' ),
-				'decimal_places' => (int) get_option( 'beruang_decimal_places', 2 ),
+				'decimal_sep'    => get_effective_decimal_sep(),
+				'thousands_sep'  => get_effective_thousands_sep(),
+				'decimal_places' => get_effective_decimal_places(),
 				'i18n'           => array(
 					'uncategorized'              => __( 'Uncategorized', 'beruang' ),
 					'no_wallet'                  => __( 'No Wallet', 'beruang' ),
