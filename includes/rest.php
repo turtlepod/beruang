@@ -1143,7 +1143,7 @@ function rest_get_budgets( $request ) {
 		$group_id      = $type . '|' . implode( ',', $cat_ids );
 		$spent         = isset( $group_spent[ $group_id ] ) ? $group_spent[ $group_id ] : 0;
 		$b['spent']    = $spent;
-		$b['progress'] = (float) $b['target_amount'] > 0 ? min( 100, ( $spent / (float) $b['target_amount'] ) * 100 ) : 0; // phpcs:ignore WordPress.PHP.YodaConditions.NotYoda
+		$b['progress'] = (float) $b['target_amount'] > 0 ? min( 100, ( max( 0, $spent ) / (float) $b['target_amount'] ) * 100 ) : 0; // phpcs:ignore WordPress.PHP.YodaConditions.NotYoda
 	}
 	unset( $b );
 

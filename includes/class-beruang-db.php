@@ -459,7 +459,7 @@ class DB {
 					'wallet_id' => $id,
 					'user_id'   => absint( $user_id ),
 				),
-				array( null ),
+				array( '%d' ),
 				array( '%d', '%d' )
 			);
 			if ( absint( self::get_default_wallet_id( $user_id ) ) === $id ) {
