@@ -98,7 +98,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="beruang-form-row">
 							<label for="beruang-transfer-category"><?php esc_html_e( 'Category', 'beruang' ); ?></label>
 							<select id="beruang-transfer-category" name="category_id">
-								<option value=""><?php esc_html_e( 'No category', 'beruang' ); ?></option>
+								<option value="0"><?php esc_html_e( 'No category', 'beruang' ); ?></option>
 								<?php foreach ( $categories as $cat ) : ?>
 									<option value="<?php echo esc_attr( (string) $cat['id'] ); ?>"><?php echo esc_html( str_repeat( '— ', max( 0, (int) $cat['depth'] ) ) . $cat['name'] ); ?></option>
 								<?php endforeach; ?>

@@ -31,10 +31,28 @@ class IconHelpersTest extends TestCase {
 	 */
 	public function test_get_icons_has_all_expected_keys(): void {
 		$icons    = \Beruang\beruang_get_icons();
-		$expected = array( 'close', 'calc', 'list', 'filter', 'add', 'edit', 'note', 'trash' );
+		$expected = array( 'close', 'calc', 'list', 'filter', 'add', 'edit', 'note', 'trash', 'backspace', 'transfer' );
 		foreach ( $expected as $key ) {
 			$this->assertArrayHasKey( $key, $icons, "Expected icon key '$key' not found." );
 		}
+	}
+
+	/**
+	 * @covers ::beruang_get_icons
+	 */
+	public function test_get_icons_has_backspace_icon(): void {
+		$icons = \Beruang\beruang_get_icons();
+		$this->assertArrayHasKey( 'backspace', $icons );
+		$this->assertStringContainsString( '<svg', $icons['backspace'] );
+	}
+
+	/**
+	 * @covers ::beruang_get_icons
+	 */
+	public function test_get_icons_has_transfer_icon(): void {
+		$icons = \Beruang\beruang_get_icons();
+		$this->assertArrayHasKey( 'transfer', $icons );
+		$this->assertStringContainsString( '<svg', $icons['transfer'] );
 	}
 
 	/**
