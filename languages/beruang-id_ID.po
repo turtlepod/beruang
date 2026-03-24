@@ -1,0 +1,916 @@
+# Copyright (C) 2026 David Chandra Purnama
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Beruang Budget 0.5.0-beta\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/beruang\n"
+"Last-Translator: David Chandra Purnama <turtlepod.xyz@gmail.com>\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-03-23T17:55:03+00:00\n"
+"PO-Revision-Date: 2026-03-24T00:00:00+00:00\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: beruang\n"
+
+#. Plugin Name of the plugin
+#: beruang.php
+#: includes/admin.php:104
+#: includes/admin.php:105
+msgid "Beruang Budget"
+msgstr "Beruang Budget"
+
+#. Plugin URI of the plugin
+#: beruang.php
+msgid "https://beruang.web.id/"
+msgstr "https://beruang.web.id/"
+
+#. Description of the plugin
+#: beruang.php
+msgid "Track money, transactions, and budgets."
+msgstr "Lacak uang, transaksi, dan anggaran."
+
+#. Author of the plugin
+#: beruang.php
+msgid "David Chandra Purnama"
+msgstr "David Chandra Purnama"
+
+#. Author URI of the plugin
+#: beruang.php
+msgid "https://turtlepod.xyz/"
+msgstr "https://turtlepod.xyz/"
+
+#. translators: %s: npm build command
+#: includes/admin.php:61
+#, php-format
+msgid "Beruang: Built assets are missing. Run %s in the plugin directory."
+msgstr "Beruang: Aset yang dibangun tidak ditemukan. Jalankan %s di direktori plugin."
+
+#: includes/admin.php:112
+msgid "Settings"
+msgstr "Pengaturan"
+
+#: includes/admin.php:113
+#: includes/admin.php:885
+#: templates/list.php:22
+msgid "Transactions"
+msgstr "Transaksi"
+
+#: includes/admin.php:114
+#: includes/admin.php:998
+#: includes/admin.php:1117
+#: includes/core.php:139
+#: templates/budget.php:85
+msgid "Categories"
+msgstr "Kategori"
+
+#: includes/admin.php:115
+#: includes/admin.php:1084
+#: templates/budget.php:18
+msgid "Budgets"
+msgstr "Anggaran"
+
+#: includes/admin.php:116
+#: includes/admin.php:1187
+#: templates/wallet.php:19
+msgid "Wallets"
+msgstr "Dompet"
+
+#: includes/admin.php:232
+msgid "Beruang Budget Settings"
+msgstr "Pengaturan Beruang Budget"
+
+#: includes/admin.php:237
+msgid "Currency"
+msgstr "Mata Uang"
+
+#: includes/admin.php:241
+msgid "Decimal separator"
+msgstr "Pemisah desimal"
+
+#: includes/admin.php:245
+msgid "Thousands separator"
+msgstr "Pemisah ribuan"
+
+#: includes/admin.php:249
+msgid "Decimal places"
+msgstr "Angka desimal"
+
+#: includes/admin.php:252
+msgid "None (integers only)"
+msgstr "Tidak ada (bilangan bulat saja)"
+
+#: includes/admin.php:258
+msgid "Number of digits after the decimal in amount fields."
+msgstr "Jumlah digit setelah desimal pada kolom jumlah."
+
+#: includes/admin.php:262
+msgid "Web app"
+msgstr "Aplikasi web"
+
+#: includes/admin.php:263
+msgid "Allow visitors to install your site as an app on their device (Add to Home Screen)."
+msgstr "Izinkan pengunjung menginstal situs Anda sebagai aplikasi di perangkat mereka (Tambahkan ke Layar Utama)."
+
+#: includes/admin.php:266
+msgid "Enable web app install"
+msgstr "Aktifkan instalasi aplikasi web"
+
+#: includes/admin.php:270
+msgid "Enable"
+msgstr "Aktifkan"
+
+#: includes/admin.php:275
+msgid "App name"
+msgstr "Nama aplikasi"
+
+#: includes/admin.php:278
+msgid "Display name when installed. Leave blank to use site title."
+msgstr "Nama tampilan saat diinstal. Kosongkan untuk menggunakan judul situs."
+
+#: includes/admin.php:282
+msgid "Short name"
+msgstr "Nama singkat"
+
+#: includes/admin.php:285
+msgid "Shown on home screen when space is limited (max 12 chars). Leave blank to auto-truncate app name."
+msgstr "Ditampilkan di layar utama saat ruang terbatas (maks 12 karakter). Kosongkan untuk memotong nama aplikasi secara otomatis."
+
+#: includes/admin.php:289
+msgid "Theme color"
+msgstr "Warna tema"
+
+#: includes/admin.php:298
+msgid "Export / Import"
+msgstr "Ekspor / Impor"
+
+#: includes/admin.php:303
+#: includes/admin.php:318
+msgid "User"
+msgstr "Pengguna"
+
+#: includes/admin.php:313
+msgid "Export data (JSON)"
+msgstr "Ekspor data (JSON)"
+
+#: includes/admin.php:328
+msgid "Export transactions (CSV)"
+msgstr "Ekspor transaksi (CSV)"
+
+#: includes/admin.php:335
+msgid "Import from JSON"
+msgstr "Impor dari JSON"
+
+#: includes/admin.php:349
+#: includes/admin.php:357
+#: includes/admin.php:389
+#: includes/admin.php:397
+#: includes/admin.php:461
+#: includes/admin.php:570
+#: includes/admin.php:639
+#: includes/admin.php:716
+#: includes/admin.php:796
+msgid "Not allowed."
+msgstr "Tidak diizinkan."
+
+#: includes/admin.php:425
+#: includes/core.php:127
+#: templates/partials/transaction-form.php:41
+#: templates/wallet.php:28
+msgid "No Wallet"
+msgstr "Tanpa Dompet"
+
+#: includes/admin.php:465
+msgid "Invalid file upload."
+msgstr "Unggahan file tidak valid."
+
+#: includes/admin.php:472
+msgid "Invalid or empty import file."
+msgstr "File impor tidak valid atau kosong."
+
+#: includes/admin.php:559
+msgid "Import completed."
+msgstr "Impor selesai."
+
+#: includes/admin.php:888
+msgid "Transaction updated."
+msgstr "Transaksi diperbarui."
+
+#: includes/admin.php:891
+#: includes/rest.php:624
+#: includes/rest.php:651
+msgid "Transaction not found."
+msgstr "Transaksi tidak ditemukan."
+
+#: includes/admin.php:896
+#: templates/list.php:75
+msgid "Edit transaction"
+msgstr "Edit transaksi"
+
+#: includes/admin.php:902
+#: includes/class-beruang-budgets-list-table.php:84
+#: includes/class-beruang-categories-list-table.php:91
+#: includes/class-beruang-transactions-list-table.php:85
+#: includes/class-beruang-wallets-list-table.php:84
+msgid "User ID"
+msgstr "ID Pengguna"
+
+#: includes/admin.php:903
+#: includes/class-beruang-transactions-list-table.php:86
+#: templates/partials/transaction-form.php:53
+#: templates/wallet.php:68
+msgid "Date"
+msgstr "Tanggal"
+
+#: includes/admin.php:904
+#: includes/class-beruang-transactions-list-table.php:87
+#: templates/wallet.php:72
+msgid "Time"
+msgstr "Waktu"
+
+#: includes/admin.php:905
+#: includes/class-beruang-transactions-list-table.php:83
+#: templates/partials/transaction-form.php:60
+msgid "Description"
+msgstr "Keterangan"
+
+#: includes/admin.php:906
+#: templates/partials/transaction-form.php:68
+#: templates/wallet.php:99
+msgid "Category"
+msgstr "Kategori"
+
+#: includes/admin.php:908
+#: includes/core.php:126
+#: templates/list.php:37
+#: templates/partials/transaction-form.php:71
+msgid "Uncategorized"
+msgstr "Tidak Berkategori"
+
+#: includes/admin.php:916
+#: includes/class-beruang-transactions-list-table.php:89
+#: templates/partials/transaction-form.php:84
+#: templates/wallet.php:95
+msgid "Amount"
+msgstr "Jumlah"
+
+#: includes/admin.php:917
+#: includes/admin.php:1116
+#: includes/class-beruang-budgets-list-table.php:87
+#: includes/class-beruang-transactions-list-table.php:90
+#: templates/budget.php:78
+#: templates/partials/transaction-form.php:91
+msgid "Type"
+msgstr "Jenis"
+
+#: includes/admin.php:919
+#: includes/class-beruang-transactions-list-table.php:306
+#: includes/core.php:128
+#: templates/partials/transaction-form.php:93
+msgid "Expense"
+msgstr "Pengeluaran"
+
+#: includes/admin.php:920
+#: includes/class-beruang-transactions-list-table.php:307
+#: includes/core.php:129
+#: templates/partials/transaction-form.php:94
+msgid "Income"
+msgstr "Pemasukan"
+
+#: includes/admin.php:923
+#: includes/admin.php:1042
+#: includes/admin.php:1127
+#: includes/admin.php:1222
+msgid "Update"
+msgstr "Perbarui"
+
+#: includes/admin.php:936
+#: includes/admin.php:1043
+#: includes/admin.php:1128
+#: includes/admin.php:1223
+#: templates/budget.php:98
+#: templates/partials/modals.php:38
+#: templates/partials/modals.php:62
+#: templates/partials/transaction-form.php:101
+#: templates/wallet.php:113
+#: templates/wallet.php:146
+msgid "Cancel"
+msgstr "Batal"
+
+#: includes/admin.php:1001
+msgid "Category updated."
+msgstr "Kategori diperbarui."
+
+#: includes/admin.php:1004
+#: includes/rest.php:812
+msgid "Category not found."
+msgstr "Kategori tidak ditemukan."
+
+#: includes/admin.php:1007
+msgid "Category deleted."
+msgstr "Kategori dihapus."
+
+#: includes/admin.php:1010
+#: includes/admin.php:1093
+#: includes/admin.php:1199
+msgid "Name is required."
+msgstr "Nama wajib diisi."
+
+#: includes/admin.php:1024
+msgid "Edit category"
+msgstr "Edit kategori"
+
+#: includes/admin.php:1031
+#: includes/admin.php:1114
+#: includes/admin.php:1220
+#: includes/class-beruang-budgets-list-table.php:85
+#: includes/class-beruang-categories-list-table.php:92
+#: includes/class-beruang-wallets-list-table.php:85
+#: templates/partials/modals.php:51
+#: templates/wallet.php:129
+msgid "Name"
+msgstr "Nama"
+
+#: includes/admin.php:1032
+#: templates/partials/modals.php:55
+msgid "Parent"
+msgstr "Induk"
+
+#: includes/admin.php:1087
+msgid "Budget updated."
+msgstr "Anggaran diperbarui."
+
+#: includes/admin.php:1090
+#: includes/rest.php:1172
+#: includes/rest.php:1202
+msgid "Budget not found."
+msgstr "Anggaran tidak ditemukan."
+
+#: includes/admin.php:1107
+msgid "Edit budget"
+msgstr "Edit anggaran"
+
+#: includes/admin.php:1115
+#: includes/class-beruang-budgets-list-table.php:86
+#: includes/core.php:138
+#: templates/budget.php:74
+msgid "Target"
+msgstr "Target"
+
+#: includes/admin.php:1116
+#: includes/core.php:134
+#: templates/budget.php:80
+msgid "Monthly"
+msgstr "Bulanan"
+
+#: includes/admin.php:1116
+#: includes/core.php:135
+#: templates/budget.php:81
+msgid "Yearly"
+msgstr "Tahunan"
+
+#: includes/admin.php:1190
+msgid "Wallet updated."
+msgstr "Dompet diperbarui."
+
+#: includes/admin.php:1193
+#: includes/rest.php:907
+#: includes/rest.php:956
+#: includes/rest.php:982
+msgid "Wallet not found."
+msgstr "Dompet tidak ditemukan."
+
+#: includes/admin.php:1196
+msgid "Wallet deleted."
+msgstr "Dompet dihapus."
+
+#: includes/admin.php:1213
+msgid "Edit wallet"
+msgstr "Edit dompet"
+
+#: includes/class-beruang-budgets-list-table.php:83
+#: includes/class-beruang-categories-list-table.php:90
+#: includes/class-beruang-transactions-list-table.php:84
+#: includes/class-beruang-wallets-list-table.php:83
+msgid "ID"
+msgstr "ID"
+
+#: includes/class-beruang-budgets-list-table.php:88
+msgid "Category IDs"
+msgstr "ID Kategori"
+
+#: includes/class-beruang-budgets-list-table.php:89
+#: includes/class-beruang-categories-list-table.php:95
+#: includes/class-beruang-transactions-list-table.php:91
+#: includes/class-beruang-wallets-list-table.php:86
+msgid "Actions"
+msgstr "Aksi"
+
+#: includes/class-beruang-budgets-list-table.php:211
+#: includes/class-beruang-categories-list-table.php:233
+#: includes/class-beruang-transactions-list-table.php:214
+#: includes/class-beruang-wallets-list-table.php:192
+#: includes/core.php:146
+#: templates/wallet.php:51
+msgid "Edit"
+msgstr "Edit"
+
+#: includes/class-beruang-budgets-list-table.php:250
+#: includes/core.php:142
+msgid "No budgets."
+msgstr "Tidak ada anggaran."
+
+#: includes/class-beruang-budgets-list-table.php:266
+#: includes/class-beruang-categories-list-table.php:278
+#: includes/class-beruang-transactions-list-table.php:275
+#: includes/class-beruang-wallets-list-table.php:235
+msgid "Filter by user"
+msgstr "Filter berdasarkan pengguna"
+
+#: includes/class-beruang-budgets-list-table.php:268
+#: includes/class-beruang-categories-list-table.php:280
+#: includes/class-beruang-transactions-list-table.php:277
+#: includes/class-beruang-wallets-list-table.php:237
+msgid "All users"
+msgstr "Semua pengguna"
+
+#: includes/class-beruang-budgets-list-table.php:277
+#: includes/class-beruang-categories-list-table.php:289
+#: includes/class-beruang-transactions-list-table.php:309
+#: includes/class-beruang-wallets-list-table.php:246
+#: includes/core.php:132
+#: templates/budget.php:21
+#: templates/graph.php:16
+#: templates/list.php:23
+msgid "Filter"
+msgstr "Filter"
+
+#: includes/class-beruang-categories-list-table.php:93
+msgid "Parent ID"
+msgstr "ID Induk"
+
+#: includes/class-beruang-categories-list-table.php:94
+msgid "Sort Order"
+msgstr "Urutan"
+
+#: includes/class-beruang-categories-list-table.php:233
+#: includes/class-beruang-wallets-list-table.php:192
+#: includes/core.php:145
+#: templates/wallet.php:52
+msgid "Delete"
+msgstr "Hapus"
+
+#: includes/class-beruang-categories-list-table.php:262
+msgid "No categories."
+msgstr "Tidak ada kategori."
+
+#: includes/class-beruang-transactions-list-table.php:88
+msgid "Category ID"
+msgstr "ID Kategori"
+
+#: includes/class-beruang-transactions-list-table.php:254
+#: includes/core.php:141
+msgid "No transactions."
+msgstr "Tidak ada transaksi."
+
+#: includes/class-beruang-transactions-list-table.php:290
+msgid "Filter by category"
+msgstr "Filter berdasarkan kategori"
+
+#: includes/class-beruang-transactions-list-table.php:292
+#: templates/list.php:36
+msgid "All categories"
+msgstr "Semua kategori"
+
+#: includes/class-beruang-transactions-list-table.php:303
+msgid "Filter by type"
+msgstr "Filter berdasarkan jenis"
+
+#: includes/class-beruang-transactions-list-table.php:305
+msgid "All types"
+msgstr "Semua jenis"
+
+#: includes/class-beruang-wallets-list-table.php:219
+msgid "No wallets."
+msgstr "Tidak ada dompet."
+
+#: includes/core.php:130
+msgid "Saved."
+msgstr "Tersimpan."
+
+#: includes/core.php:131
+msgid "Something went wrong."
+msgstr "Terjadi kesalahan."
+
+#: includes/core.php:133
+msgid "Search"
+msgstr "Cari"
+
+#: includes/core.php:136
+#: templates/budget.php:20
+msgid "Add budget"
+msgstr "Tambah anggaran"
+
+#: includes/core.php:137
+#: templates/budget.php:70
+msgid "Budget name"
+msgstr "Nama anggaran"
+
+#: includes/core.php:140
+#: templates/budget.php:60
+#: templates/list.php:69
+#: templates/partials/modals.php:67
+msgid "Loading…"
+msgstr "Memuat…"
+
+#: includes/core.php:143
+msgid "No data"
+msgstr "Tidak ada data"
+
+#: includes/core.php:144
+msgid "Delete this budget?"
+msgstr "Hapus anggaran ini?"
+
+#: includes/core.php:147
+#: templates/partials/modals.php:47
+#: templates/partials/transaction-form.php:80
+msgid "Manage categories"
+msgstr "Kelola kategori"
+
+#: includes/core.php:148
+#: templates/partials/modals.php:61
+msgid "Add category"
+msgstr "Tambah kategori"
+
+#: includes/core.php:149
+msgid "Update category"
+msgstr "Perbarui kategori"
+
+#: includes/core.php:150
+#: templates/wallet.php:22
+msgid "Add wallet"
+msgstr "Tambah dompet"
+
+#: includes/core.php:151
+msgid "Update wallet"
+msgstr "Perbarui dompet"
+
+#: includes/core.php:152
+msgid "Delete this wallet?"
+msgstr "Hapus dompet ini?"
+
+#: includes/core.php:153
+msgid "No wallets yet."
+msgstr "Belum ada dompet."
+
+#: includes/core.php:154
+msgid "Delete this category?"
+msgstr "Hapus kategori ini?"
+
+#: includes/core.php:155
+msgid "Delete this transaction?"
+msgstr "Hapus transaksi ini?"
+
+#: includes/core.php:156
+msgid "No categories yet."
+msgstr "Belum ada kategori."
+
+#. translators: 1: amount, 2: date (Y-m-d).
+#: includes/core.php:158
+#: templates/wallet.php:49
+#, php-format
+msgid "Baseline: %1$s on %2$s"
+msgstr "Baseline: %1$s pada %2$s"
+
+#. translators: %s: current wallet amount.
+#: includes/core.php:160
+#: templates/wallet.php:47
+#, php-format
+msgid "Current: %s"
+msgstr "Saat ini: %s"
+
+#: includes/rest.php:26
+msgid "Not logged in."
+msgstr "Belum masuk."
+
+#: includes/rest.php:510
+#: includes/rest.php:674
+msgid "Invalid wallet."
+msgstr "Dompet tidak valid."
+
+#: includes/rest.php:514
+#: includes/rest.php:679
+#: includes/rest.php:1038
+#: includes/rest.php:1206
+msgid "Invalid category."
+msgstr "Kategori tidak valid."
+
+#: includes/rest.php:538
+msgid "Failed to save."
+msgstr "Gagal menyimpan."
+
+#: includes/rest.php:620
+#: includes/rest.php:647
+#: includes/rest.php:740
+#: includes/rest.php:846
+#: includes/rest.php:951
+#: includes/rest.php:1168
+#: includes/rest.php:1240
+msgid "Invalid ID."
+msgstr "ID tidak valid."
+
+#: includes/rest.php:715
+msgid "No changes were made."
+msgstr "Tidak ada perubahan."
+
+#: includes/rest.php:727
+msgid "Failed to update."
+msgstr "Gagal memperbarui."
+
+#: includes/rest.php:809
+#: includes/rest.php:901
+#: includes/rest.php:1199
+msgid "Name required."
+msgstr "Nama wajib diisi."
+
+#: includes/rest.php:815
+msgid "Invalid parent category."
+msgstr "Kategori induk tidak valid."
+
+#: includes/rest.php:833
+msgid "Failed to save category."
+msgstr "Gagal menyimpan kategori."
+
+#: includes/rest.php:937
+msgid "Failed to save wallet."
+msgstr "Gagal menyimpan dompet."
+
+#: includes/rest.php:986
+msgid "Failed to set default wallet."
+msgstr "Gagal mengatur dompet default."
+
+#: includes/rest.php:1019
+msgid "Both wallets are required."
+msgstr "Kedua dompet wajib dipilih."
+
+#: includes/rest.php:1022
+msgid "Source and target wallets must be different."
+msgstr "Dompet sumber dan tujuan harus berbeda."
+
+#: includes/rest.php:1025
+msgid "Amount must be greater than zero."
+msgstr "Jumlah harus lebih dari nol."
+
+#: includes/rest.php:1032
+msgid "Source wallet not found."
+msgstr "Dompet sumber tidak ditemukan."
+
+#: includes/rest.php:1035
+msgid "Target wallet not found."
+msgstr "Dompet tujuan tidak ditemukan."
+
+#. translators: %s: target wallet name
+#: includes/rest.php:1057
+#, php-format
+msgid "Transfer to %s"
+msgstr "Transfer ke %s"
+
+#: includes/rest.php:1064
+#: includes/rest.php:1084
+msgid "Transfer failed."
+msgstr "Transfer gagal."
+
+#. translators: %s: source wallet name
+#: includes/rest.php:1075
+#, php-format
+msgid "Transfer from %s"
+msgstr "Transfer dari %s"
+
+#: includes/rest.php:1227
+msgid "Failed to save budget."
+msgstr "Gagal menyimpan anggaran."
+
+#: includes/shortcodes.php:115
+msgid "Please log in to add transactions."
+msgstr "Silakan masuk untuk menambah transaksi."
+
+#: includes/shortcodes.php:141
+msgid "Please log in to view transactions."
+msgstr "Silakan masuk untuk melihat transaksi."
+
+#: includes/shortcodes.php:169
+msgid "Please log in to view graphs."
+msgstr "Silakan masuk untuk melihat grafik."
+
+#: includes/shortcodes.php:189
+msgid "Please log in to view budgets."
+msgstr "Silakan masuk untuk melihat anggaran."
+
+#: includes/shortcodes.php:212
+msgid "Please log in to manage wallets."
+msgstr "Silakan masuk untuk mengelola dompet."
+
+#: templates/budget.php:25
+#: templates/list.php:26
+msgid "Year"
+msgstr "Tahun"
+
+#: templates/budget.php:33
+msgid "Month"
+msgstr "Bulan"
+
+#: templates/budget.php:36
+msgid "January"
+msgstr "Januari"
+
+#: templates/budget.php:37
+msgid "February"
+msgstr "Februari"
+
+#: templates/budget.php:38
+msgid "March"
+msgstr "Maret"
+
+#: templates/budget.php:39
+msgid "April"
+msgstr "April"
+
+#: templates/budget.php:40
+msgid "May"
+msgstr "Mei"
+
+#: templates/budget.php:41
+msgid "June"
+msgstr "Juni"
+
+#: templates/budget.php:42
+msgid "July"
+msgstr "Juli"
+
+#: templates/budget.php:43
+msgid "August"
+msgstr "Agustus"
+
+#: templates/budget.php:44
+msgid "September"
+msgstr "September"
+
+#: templates/budget.php:45
+msgid "October"
+msgstr "Oktober"
+
+#: templates/budget.php:46
+msgid "November"
+msgstr "November"
+
+#: templates/budget.php:47
+msgid "December"
+msgstr "Desember"
+
+#: templates/budget.php:55
+#: templates/list.php:64
+msgid "Apply"
+msgstr "Terapkan"
+
+#: templates/budget.php:56
+#: templates/list.php:65
+msgid "Reset"
+msgstr "Atur Ulang"
+
+#: templates/budget.php:64
+#: templates/list.php:73
+#: templates/partials/modals.php:14
+#: templates/partials/modals.php:29
+#: templates/partials/modals.php:45
+#: templates/partials/modals.php:70
+#: templates/wallet.php:61
+#: templates/wallet.php:123
+msgid "Close"
+msgstr "Tutup"
+
+#: templates/budget.php:66
+msgid "Add / Edit budget"
+msgstr "Tambah / Edit anggaran"
+
+#: templates/budget.php:97
+#: templates/partials/transaction-form.php:99
+#: templates/wallet.php:145
+msgid "Save"
+msgstr "Simpan"
+
+#: templates/graph.php:15
+msgid "Graph"
+msgstr "Grafik"
+
+#: templates/graph.php:25
+msgid "By month"
+msgstr "Per bulan"
+
+#: templates/graph.php:26
+msgid "By category"
+msgstr "Per kategori"
+
+#: templates/list.php:34
+msgid "Search description"
+msgstr "Cari keterangan"
+
+#: templates/list.php:47
+msgid "All budgets"
+msgstr "Semua anggaran"
+
+#: templates/list.php:55
+msgid "All wallets"
+msgstr "Semua dompet"
+
+#: templates/list.php:56
+msgid "No wallet"
+msgstr "Tanpa dompet"
+
+#: templates/partials/modals.php:19
+msgid "Clear"
+msgstr "Hapus"
+
+#: templates/partials/modals.php:20
+msgid "Backspace"
+msgstr "Hapus"
+
+#: templates/partials/modals.php:23
+msgid "Insert & Close"
+msgstr "Masukkan & Tutup"
+
+#: templates/partials/modals.php:31
+msgid "Transaction note"
+msgstr "Catatan transaksi"
+
+#: templates/partials/modals.php:33
+#: templates/wallet.php:108
+msgid "Note"
+msgstr "Catatan"
+
+#: templates/partials/modals.php:34
+msgid "Optional details..."
+msgstr "Detail opsional..."
+
+#: templates/partials/modals.php:37
+msgid "Save note"
+msgstr "Simpan catatan"
+
+#: templates/partials/transaction-form.php:39
+msgid "Wallet"
+msgstr "Dompet"
+
+#: templates/partials/transaction-form.php:62
+msgid "Meal, Gas, etc..."
+msgstr "Makan, Bensin, dll..."
+
+#: templates/partials/transaction-form.php:63
+msgid "Add note"
+msgstr "Tambah catatan"
+
+#: templates/partials/transaction-form.php:87
+msgid "Calculator"
+msgstr "Kalkulator"
+
+#: templates/wallet.php:21
+#: templates/wallet.php:63
+msgid "Transfer between wallets"
+msgstr "Transfer antar dompet"
+
+#: templates/wallet.php:26
+msgid "Default wallet"
+msgstr "Dompet default"
+
+#: templates/wallet.php:78
+msgid "From wallet"
+msgstr "Dari dompet"
+
+#: templates/wallet.php:86
+msgid "To wallet"
+msgstr "Ke dompet"
+
+#: templates/wallet.php:101
+msgid "No category"
+msgstr "Tanpa kategori"
+
+#: templates/wallet.php:112
+msgid "Transfer"
+msgstr "Transfer"
+
+#: templates/wallet.php:125
+msgid "Add / Edit wallet"
+msgstr "Tambah / Edit dompet"
+
+#: templates/wallet.php:133
+msgid "Amount on selected date"
+msgstr "Jumlah pada tanggal yang dipilih"
+
+#: templates/wallet.php:137
+msgid "Selected date"
+msgstr "Tanggal yang dipilih"
+
+#: templates/wallet.php:141
+msgid "Set as default wallet"
+msgstr "Jadikan dompet default"
