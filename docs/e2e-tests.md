@@ -235,14 +235,14 @@ Running these tests against the live WordPress instance exposed two real bugs th
 
 ## CI / zip integration
 
-E2E tests are included in the `npm run zip` pipeline:
+The `npm run zip` pipeline runs only the unit tests (not E2E):
 
 ```
-npm run build  →  composer run test  →  npx playwright test  →  zip
+npm run build  →  composer run test  →  zip
 ```
 
-For CI environments where a live WordPress site is not available, skip E2E tests and run only unit tests:
+To run E2E tests separately (requires a live WordPress install with `WP_PATH` set):
 
 ```bash
-npm run build && composer run test
+WP_PATH=/path/to/wordpress npx playwright test
 ```

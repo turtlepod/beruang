@@ -72,7 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<div class="beruang-form-row">
 					<label for="beruang-budget-target"><?php esc_html_e( 'Target', 'beruang' ); ?> <span class="beruang-label-currency">(<?php echo esc_html( $currency ); ?>)</span></label>
-					<input type="number" id="beruang-budget-target" name="target_amount" step="1" min="0" required />
+					<input type="number" id="beruang-budget-target" name="target_amount" step="any" min="0" required />
 				</div>
 				<div class="beruang-form-row">
 					<label><?php esc_html_e( 'Type', 'beruang' ); ?></label>

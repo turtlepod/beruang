@@ -83,7 +83,7 @@ $default_wallet = null === $default_wallet_id ? '' : (string) $default_wallet_id
 	<div class="beruang-form-row beruang-amount-row">
 		<label for="<?php echo esc_attr( $amt_id ); ?>"><?php esc_html_e( 'Amount', 'beruang' ); ?> <span class="beruang-label-currency">(<?php echo esc_html( $currency ); ?>)</span></label>
 		<span class="beruang-wrap">
-			<input type="number" id="<?php echo esc_attr( $amt_id ); ?>" name="amount" step="1" min="0" value="" required placeholder="0" />
+			<input type="number" id="<?php echo esc_attr( $amt_id ); ?>" name="amount" step="any" min="0" value="" required placeholder="0" />
 			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-calc-btn" title="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'calc' ); ?></button>
 		</span>
 	</div>

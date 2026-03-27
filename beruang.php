@@ -3,7 +3,7 @@
  * Plugin Name: Beruang Budget
  * Description: Track money, transactions, and budgets.
  * Plugin URI: https://beruang.web.id/
- * Version: 0.4.0-beta
+ * Version: 0.5.0-beta
  * Requires at least: 6.0
  * Requires PHP: 8.2
  * Author: David Chandra Purnama

@@ -270,6 +270,39 @@ function rest_register_routes() {
 	);
 	register_rest_route(
 		$ns,
+		'/wallets/transfer',
+		array(
+			'methods'             => 'POST',
+			'permission_callback' => $perm,
+			'callback'            => __NAMESPACE__ . '\rest_transfer_wallet',
+			'args'                => array(
+				'from_wallet_id' => array(
+					'required' => true,
+					'type'     => 'integer',
+				),
+				'to_wallet_id'   => array(
+					'required' => true,
+					'type'     => 'integer',
+				),
+				'amount'         => array(
+					'required' => true,
+					'type'     => 'number',
+				),
+				'category_id'    => array(
+					'default' => 0,
+					'type'    => 'integer',
+				),
+				'note'           => array( 'type' => 'string' ),
+				'date'           => array(
+					'required' => true,
+					'type'     => 'string',
+				),
+				'time'           => array( 'type' => 'string' ),
+			),
+		)
+	);
+	register_rest_route(
+		$ns,
 		'/wallets/default',
 		array(
 			'methods'             => 'POST',
@@ -646,10 +679,21 @@ function rest_update_transaction( $request ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang' ), 400 );
 	}
 
-	$existing_time       = isset( $existing['time'] ) && '' !== trim( (string) $existing['time'] ) ? $existing['time'] : null;
+	$existing_time = isset( $existing['time'] ) && '' !== trim( (string) $existing['time'] ) ? $existing['time'] : null;
+	// Normalize time to HH:MM so MySQL's HH:MM:SS and input's HH:MM compare equal.
+	$normalize_time      = function ( $t ) {
+		if ( null === $t ) {
+			return null;
+		}
+		$parts = explode( ':', (string) $t );
+		if ( count( $parts ) >= 2 ) {
+			return sprintf( '%02d:%02d', (int) $parts[0], (int) $parts[1] );
+		}
+		return $t;
+	};
 	$existing_normalized = array(
 		'date'        => (string) ( $existing['date'] ?? '' ),
-		'time'        => $existing_time,
+		'time'        => $normalize_time( $existing_time ),
 		'description' => (string) ( $existing['description'] ?? '' ),
 		'note'        => (string) ( $existing['note'] ?? '' ),
 		'wallet_id'   => $existing_wallet_id,
@@ -659,7 +703,7 @@ function rest_update_transaction( $request ) {
 	);
 	$data_normalized     = array(
 		'date'        => $data['date'],
-		'time'        => $data['time'],
+		'time'        => $normalize_time( $data['time'] ),
 		'description' => $data['description'],
 		'note'        => $data['note'],
 		'wallet_id'   => $data['wallet_id'],
@@ -953,6 +997,105 @@ function rest_set_default_wallet( $request ) {
 }
 
 /**
+ * REST: Transfer between wallets — creates one expense and one income transaction.
+ *
+ * @param \WP_REST_Request $request Request.
+ * @return \WP_REST_Response
+ */
+function rest_transfer_wallet( $request ) {
+	$user_id = get_current_user_id();
+	$body    = $request->get_json_params();
+	$body    = is_array( $body ) ? $body : array();
+
+	$from_id     = absint( $body['from_wallet_id'] ?? 0 );
+	$to_id       = absint( $body['to_wallet_id'] ?? 0 );
+	$amount      = floatval( $body['amount'] ?? 0 );
+	$category_id = absint( $body['category_id'] ?? 0 );
+	$note        = sanitize_textarea_field( $body['note'] ?? '' );
+	$date        = sanitize_text_field( $body['date'] ?? '' );
+	$time        = isset( $body['time'] ) && '' !== (string) $body['time'] ? sanitize_text_field( $body['time'] ) : null;
+
+	if ( ! $from_id || ! $to_id ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Both wallets are required.', 'beruang' ), 400 );
+	}
+	if ( $from_id === $to_id ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Source and target wallets must be different.', 'beruang' ), 400 );
+	}
+	if ( $amount <= 0 ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Amount must be greater than zero.', 'beruang' ), 400 );
+	}
+
+	$from_wallet = DB::get_wallet_for_user( $user_id, $from_id );
+	$to_wallet   = DB::get_wallet_for_user( $user_id, $to_id );
+
+	if ( ! $from_wallet ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Source wallet not found.', 'beruang' ), 404 );
+	}
+	if ( ! $to_wallet ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Target wallet not found.', 'beruang' ), 404 );
+	}
+	if ( $category_id > 0 && ! DB::get_category_for_user( $user_id, $category_id ) ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang' ), 400 );
+	}
+
+	$shared = array(
+		'date'        => $date,
+		'time'        => $time,
+		'note'        => $note,
+		'category_id' => $category_id,
+		'amount'      => $amount,
+	);
+
+	// Expense from source wallet.
+	$expense_id = DB::insert_transaction(
+		$user_id,
+		array_merge(
+			$shared,
+			array(
+				'wallet_id'   => $from_id,
+				/* translators: %s: target wallet name */
+				'description' => sprintf( __( 'Transfer to %s', 'beruang' ), $to_wallet['name'] ),
+				'type'        => 'expense',
+			)
+		)
+	);
+
+	if ( ! $expense_id ) {
+		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang' ), 500 );
+	}
+
+	// Income to target wallet.
+	$income_id = DB::insert_transaction(
+		$user_id,
+		array_merge(
+			$shared,
+			array(
+				'wallet_id'   => $to_id,
+				/* translators: %s: source wallet name */
+				'description' => sprintf( __( 'Transfer from %s', 'beruang' ), $from_wallet['name'] ),
+				'type'        => 'income',
+			)
+		)
+	);
+
+	if ( ! $income_id ) {
+		// Compensate: roll back the expense already inserted.
+		DB::delete_transaction( $user_id, $expense_id );
+		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang' ), 500 );
+	}
+
+	return rest_ensure_response(
+		array(
+			'success' => true,
+			'data'    => array(
+				'expense_id' => $expense_id,
+				'income_id'  => $income_id,
+			),
+		)
+	);
+}
+
+/**
  * REST: Get budgets.
  *
  * @param \WP_REST_Request $request Request.
@@ -990,7 +1133,7 @@ function rest_get_budgets( $request ) {
 	foreach ( $groups as $group_id => $group ) {
 		$date_from                = 'yearly' === $group['type'] ? $yearly_from : $monthly_from;
 		$date_to                  = 'yearly' === $group['type'] ? $yearly_to : $monthly_to;
-		$group_spent[ $group_id ] = DB::sum_expenses( $user_id, $date_from, $date_to, $group['cat_ids'] );
+		$group_spent[ $group_id ] = DB::sum_net_amount( $user_id, $date_from, $date_to, $group['cat_ids'] );
 	}
 
 	foreach ( $budgets as &$b ) {
@@ -1000,7 +1143,7 @@ function rest_get_budgets( $request ) {
 		$group_id      = $type . '|' . implode( ',', $cat_ids );
 		$spent         = isset( $group_spent[ $group_id ] ) ? $group_spent[ $group_id ] : 0;
 		$b['spent']    = $spent;
-		$b['progress'] = (float) $b['target_amount'] > 0 ? min( 100, ( $spent / (float) $b['target_amount'] ) * 100 ) : 0; // phpcs:ignore WordPress.PHP.YodaConditions.NotYoda
+		$b['progress'] = (float) $b['target_amount'] > 0 ? min( 100, ( max( 0, $spent ) / (float) $b['target_amount'] ) * 100 ) : 0; // phpcs:ignore WordPress.PHP.YodaConditions.NotYoda
 	}
 	unset( $b );
 

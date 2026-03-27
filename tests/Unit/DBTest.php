@@ -183,6 +183,200 @@ class DBTest extends TestCase {
 	}
 
 	// -----------------------------------------------------------------------
+	// sum_net_amount
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Inject a $wpdb mock that supports prepare() and get_var().
+	 *
+	 * @param string $prefix     DB table prefix.
+	 * @param string $get_var_return Value get_var() should return.
+	 * @return object The mock.
+	 */
+	private function setUpQueryWpdb( string $prefix = 'wp_', string $get_var_return = '0' ): object {
+		$wpdb         = $this->getMockBuilder( \stdClass::class )
+			->addMethods( [ 'prepare', 'get_var' ] )
+			->getMock();
+		$wpdb->prefix = $prefix;
+		$wpdb->method( 'prepare' )->willReturnCallback(
+			function ( $query ) {
+				return $query;
+			}
+		);
+		$wpdb->method( 'get_var' )->willReturn( $get_var_return );
+
+		$GLOBALS['wpdb'] = $wpdb;
+
+		$prop = new ReflectionProperty( DB::class, 'wpdb' );
+		$prop->setAccessible( true );
+		$prop->setValue( null, null );
+
+		return $wpdb;
+	}
+
+	/**
+	 * @covers \Beruang\DB::sum_net_amount
+	 */
+	public function test_sum_net_amount_returns_float(): void {
+		$this->setUpQueryWpdb( 'wp_', '150.50' );
+		$result = DB::sum_net_amount( 1, '2024-01-01', '2024-01-31' );
+		$this->assertSame( 150.50, $result );
+	}
+
+	/**
+	 * @covers \Beruang\DB::sum_net_amount
+	 */
+	public function test_sum_net_amount_returns_zero_when_no_transactions(): void {
+		$this->setUpQueryWpdb( 'wp_', '0' );
+		$result = DB::sum_net_amount( 1, '2024-01-01', '2024-01-31' );
+		$this->assertSame( 0.0, $result );
+	}
+
+	/**
+	 * Net amount can be negative when income exceeds expenses.
+	 *
+	 * @covers \Beruang\DB::sum_net_amount
+	 */
+	public function test_sum_net_amount_returns_negative_when_income_exceeds_expenses(): void {
+		$this->setUpQueryWpdb( 'wp_', '-50.00' );
+		$result = DB::sum_net_amount( 1, '2024-01-01', '2024-01-31' );
+		$this->assertSame( -50.0, $result );
+	}
+
+	/**
+	 * @covers \Beruang\DB::sum_net_amount
+	 */
+	public function test_sum_net_amount_with_category_ids_calls_prepare(): void {
+		$wpdb = $this->setUpQueryWpdb( 'wp_', '200.00' );
+		$wpdb->expects( $this->once() )
+			->method( 'prepare' )
+			->with( $this->stringContains( 'category_id IN' ) )
+			->willReturn( 'SELECT ...' );
+		$result = DB::sum_net_amount( 1, '2024-01-01', '2024-01-31', [ 3, 7 ] );
+		$this->assertSame( 200.0, $result );
+	}
+
+	/**
+	 * @covers \Beruang\DB::sum_net_amount
+	 */
+	public function test_sum_net_amount_without_category_ids_omits_category_filter(): void {
+		$wpdb = $this->setUpQueryWpdb( 'wp_', '75.00' );
+		$wpdb->expects( $this->once() )
+			->method( 'prepare' )
+			->with( $this->logicalNot( $this->stringContains( 'category_id IN' ) ) )
+			->willReturn( 'SELECT ...' );
+		DB::sum_net_amount( 1, '2024-01-01', '2024-01-31' );
+	}
+
+	// -----------------------------------------------------------------------
+	// get_categories_flat (public static)
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Inject a $wpdb mock that supports prepare() and get_results().
+	 *
+	 * @param array $get_results_sequence  Consecutive return values for get_results().
+	 * @return object The mock.
+	 */
+	private function setUpCategoriesWpdb( array $get_results_sequence ): object {
+		$wpdb         = $this->getMockBuilder( \stdClass::class )
+			->addMethods( [ 'prepare', 'get_results' ] )
+			->getMock();
+		$wpdb->prefix = 'wp_';
+		$wpdb->method( 'prepare' )->willReturnCallback(
+			function ( $query ) {
+				return $query;
+			}
+		);
+		$wpdb->method( 'get_results' )->willReturnOnConsecutiveCalls( ...$get_results_sequence );
+
+		$GLOBALS['wpdb'] = $wpdb;
+
+		$prop = new ReflectionProperty( DB::class, 'wpdb' );
+		$prop->setAccessible( true );
+		$prop->setValue( null, null );
+
+		return $wpdb;
+	}
+
+	/**
+	 * @covers \Beruang\DB::get_categories_flat
+	 */
+	public function test_get_categories_flat_returns_empty_array_when_no_categories(): void {
+		$this->setUpCategoriesWpdb( [ null ] );
+		$result = DB::get_categories_flat( 1 );
+		$this->assertSame( [], $result );
+	}
+
+	/**
+	 * @covers \Beruang\DB::get_categories_flat
+	 */
+	public function test_get_categories_flat_returns_empty_array_when_get_results_returns_empty(): void {
+		$this->setUpCategoriesWpdb( [ [] ] );
+		$result = DB::get_categories_flat( 1 );
+		$this->assertSame( [], $result );
+	}
+
+	/**
+	 * @covers \Beruang\DB::get_categories_flat
+	 */
+	public function test_get_categories_flat_returns_top_level_category_with_depth_zero(): void {
+		// get_categories_flat fetches ALL categories in one query then builds depth in PHP.
+		$this->setUpCategoriesWpdb(
+			[
+				[ [ 'id' => 1, 'name' => 'Food', 'parent_id' => 0, 'sort_order' => 0 ] ],
+			]
+		);
+		$result = DB::get_categories_flat( 1 );
+		$this->assertCount( 1, $result );
+		$this->assertSame( 'Food', $result[0]['name'] );
+		$this->assertSame( 0, $result[0]['depth'] );
+	}
+
+	/**
+	 * @covers \Beruang\DB::get_categories_flat
+	 */
+	public function test_get_categories_flat_returns_child_category_with_incremented_depth(): void {
+		// All categories are fetched in a single query; flatten_categories assigns depth.
+		$this->setUpCategoriesWpdb(
+			[
+				[
+					[ 'id' => 1, 'name' => 'Food', 'parent_id' => 0, 'sort_order' => 0 ],
+					[ 'id' => 2, 'name' => 'Lunch', 'parent_id' => 1, 'sort_order' => 0 ],
+				],
+			]
+		);
+		$result = DB::get_categories_flat( 1 );
+		$this->assertCount( 2, $result );
+		$this->assertSame( 'Food', $result[0]['name'] );
+		$this->assertSame( 0, $result[0]['depth'] );
+		$this->assertSame( 'Lunch', $result[1]['name'] );
+		$this->assertSame( 1, $result[1]['depth'] );
+	}
+
+	/**
+	 * @covers \Beruang\DB::get_categories_flat
+	 */
+	public function test_get_categories_flat_multiple_top_level_categories(): void {
+		$this->setUpCategoriesWpdb(
+			[
+				[
+					[ 'id' => 1, 'name' => 'Food', 'parent_id' => 0, 'sort_order' => 0 ],
+					[ 'id' => 2, 'name' => 'Transport', 'parent_id' => 0, 'sort_order' => 1 ],
+				],
+			]
+		);
+		$result = DB::get_categories_flat( 1 );
+		$this->assertCount( 2, $result );
+		$names = array_column( $result, 'name' );
+		$this->assertContains( 'Food', $names );
+		$this->assertContains( 'Transport', $names );
+		foreach ( $result as $cat ) {
+			$this->assertSame( 0, $cat['depth'] );
+		}
+	}
+
+	// -----------------------------------------------------------------------
 	// normalize_wallet_id (private static)
 	// -----------------------------------------------------------------------
 

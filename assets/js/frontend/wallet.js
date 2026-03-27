@@ -28,6 +28,36 @@ export function initWallet() {
 	const message = form.querySelector( '.beruang-form-message' );
 	const defaultWalletSelect = document.getElementById( 'beruang-default-wallet-select' );
 	const defaultWalletRow = document.querySelector( '.beruang-wallet-default-row' );
+	const transferModal = document.getElementById( 'beruang-wallet-transfer-modal' );
+	const transferForm = document.getElementById( 'beruang-wallet-transfer-form' );
+	const transferFromEl = document.getElementById( 'beruang-transfer-from' );
+	const transferToEl = document.getElementById( 'beruang-transfer-to' );
+	const transferAmountEl = document.getElementById( 'beruang-transfer-amount' );
+	const transferCategoryEl = document.getElementById( 'beruang-transfer-category' );
+	const transferNoteEl = document.getElementById( 'beruang-transfer-note' );
+	const transferDateEl = document.getElementById( 'beruang-transfer-date' );
+	const transferTimeEl = document.getElementById( 'beruang-transfer-time' );
+	const transferMessage = transferForm ? transferForm.querySelector( '.beruang-form-message' ) : null;
+	const transferOpenBtns = document.querySelectorAll( '.beruang-wallet-transfer-open' );
+
+	function getCurrentTime() {
+		const now = new Date();
+		return String( now.getHours() ).padStart( 2, '0' ) + ':' + String( now.getMinutes() ).padStart( 2, '0' );
+	}
+
+	function closeTransferModal() {
+		if ( transferModal ) transferModal.hidden = true;
+	}
+
+	function openTransferModal() {
+		if ( ! transferModal ) return;
+		if ( transferTimeEl ) transferTimeEl.value = getCurrentTime();
+		if ( transferMessage ) {
+			transferMessage.textContent = '';
+			transferMessage.style.color = '';
+		}
+		transferModal.hidden = false;
+	}
 
 	function clearMessage() {
 		if ( ! message ) return;
@@ -131,17 +161,53 @@ export function initWallet() {
 		defaultWalletSelect.dataset.defaultWalletId = currentDefault;
 	}
 
+	function updateTransferSelects( wallets ) {
+		if ( ! transferFromEl || ! transferToEl ) return;
+		const prevFrom = transferFromEl.value;
+		const prevTo = transferToEl.value;
+		let html = '';
+		wallets.forEach( function ( wallet ) {
+			html += '<option value="' + escapeHtml( String( wallet.id ) ) + '">' + escapeHtml( wallet.name || '' ) + '</option>';
+		} );
+		transferFromEl.innerHTML = html;
+		transferToEl.innerHTML = html;
+		// Restore previous selection when the wallet still exists.
+		if ( prevFrom && transferFromEl.querySelector( '[value="' + prevFrom + '"]' ) ) {
+			transferFromEl.value = prevFrom;
+		}
+		if ( prevTo && transferToEl.querySelector( '[value="' + prevTo + '"]' ) ) {
+			transferToEl.value = prevTo;
+		}
+		transferOpenBtns.forEach( function ( btn ) {
+			btn.hidden = wallets.length < 2;
+		} );
+	}
+
 	function refreshWallets() {
 		request( 'GET', '/wallets' ).then( function ( r ) {
 			if ( ! r.success || ! r.data || ! r.data.wallets ) return;
 			renderWallets( r.data.wallets, r.data.default_wallet_id );
 			updateDefaultSelect( r.data.wallets, r.data.default_wallet_id );
+			updateTransferSelects( r.data.wallets );
 			document.dispatchEvent( new CustomEvent( 'beruang-wallets-updated' ) );
 		} );
 	}
 
 	if ( walletAddBtn ) {
 		walletAddBtn.addEventListener( 'click', openAddModal );
+	}
+
+	transferOpenBtns.forEach( function ( btn ) {
+		btn.addEventListener( 'click', openTransferModal );
+	} );
+
+	if ( transferModal ) {
+		transferModal.addEventListener( 'click', function ( e ) {
+			if ( e.target === transferModal ) closeTransferModal();
+		} );
+		transferModal.querySelectorAll( '.beruang-wallet-transfer-close' ).forEach( function ( btn ) {
+			btn.addEventListener( 'click', closeTransferModal );
+		} );
 	}
 
 	if ( cancelBtn ) {
@@ -198,8 +264,10 @@ export function initWallet() {
 		if ( ! item || ! item.dataset.id || item.dataset.default === '1' ) return;
 		if ( ! confirm( i18n.confirm_delete_wallet || 'Delete this wallet?' ) ) return;
 		request( 'DELETE', '/wallets/' + item.dataset.id ).then( function ( r ) {
-			if ( r.success ) {
+			if ( r.success && r.data && r.data.deleted !== false ) {
 				refreshWallets();
+			} else if ( r.success && r.data && r.data.deleted === false ) {
+				alert( i18n.error_delete_wallet || 'Failed to delete wallet.' );
 			}
 		} );
 	} );
@@ -211,6 +279,54 @@ export function initWallet() {
 				if ( r.success ) {
 					refreshWallets();
 				}
+			} );
+		} );
+	}
+
+	if ( transferForm ) {
+		transferForm.addEventListener( 'submit', function ( e ) {
+			e.preventDefault();
+			if ( ! transferMessage ) return;
+			transferMessage.textContent = '';
+			transferMessage.style.color = '';
+
+			const fromId = transferFromEl ? parseInt( transferFromEl.value, 10 ) : 0;
+			const toId = transferToEl ? parseInt( transferToEl.value, 10 ) : 0;
+
+			if ( fromId === toId ) {
+				transferMessage.textContent = i18n.transfer_same_wallet || 'Source and target wallets must be different.';
+				transferMessage.style.color = '#d63638';
+				return;
+			}
+
+			setFormLoading( transferForm, true );
+
+			const payload = {
+				from_wallet_id: fromId,
+				to_wallet_id:   toId,
+				amount:         transferAmountEl ? parseFloat( transferAmountEl.value ) || 0 : 0,
+				category_id:    transferCategoryEl ? parseInt( transferCategoryEl.value, 10 ) : 0,
+				note:           transferNoteEl ? transferNoteEl.value : '',
+				date:           transferDateEl ? transferDateEl.value : '',
+				time:           transferTimeEl ? transferTimeEl.value : '',
+			};
+
+			request( 'POST', '/wallets/transfer', payload ).then( function ( r ) {
+				if ( r.success ) {
+					closeTransferModal();
+					if ( transferAmountEl ) transferAmountEl.value = '';
+					if ( transferNoteEl ) transferNoteEl.value = '';
+					refreshWallets();
+					document.dispatchEvent( new CustomEvent( 'beruang-transaction-saved' ) );
+				} else {
+					transferMessage.textContent = ( r.data && r.data.message ) || i18n.error || 'Error';
+					transferMessage.style.color = '#d63638';
+				}
+			} ).catch( function () {
+				transferMessage.textContent = i18n.error || 'Error';
+				transferMessage.style.color = '#d63638';
+			} ).finally( function () {
+				setFormLoading( transferForm, false );
 			} );
 		} );
 	}

@@ -24,6 +24,69 @@ function shortcodes_setup() {
 add_action( 'init', __NAMESPACE__ . '\shortcodes_setup' );
 
 /**
+ * Get the effective currency for a user, with personal override support.
+ * User meta `beruang_user_currency` (set via account page) takes precedence.
+ *
+ * @param int $user_id Optional. Defaults to current user.
+ * @return string
+ */
+function get_effective_currency( $user_id = 0 ) {
+	if ( ! $user_id ) {
+		$user_id = get_current_user_id();
+	}
+	$override = get_user_meta( $user_id, 'beruang_user_currency', true );
+	return ( is_string( $override ) && '' !== $override ) ? $override : get_option( 'beruang_currency', 'IDR' );
+}
+
+/**
+ * Get the effective decimal separator for a user.
+ *
+ * @param int $user_id Optional. Defaults to current user.
+ * @return string
+ */
+function get_effective_decimal_sep( $user_id = 0 ) {
+	if ( ! $user_id ) {
+		$user_id = get_current_user_id();
+	}
+	$override = get_user_meta( $user_id, 'beruang_user_decimal_sep', true );
+	return ( is_string( $override ) && '' !== $override ) ? $override : get_option( 'beruang_decimal_sep', ',' );
+}
+
+/**
+ * Get the effective thousands separator for a user.
+ *
+ * @param int $user_id Optional. Defaults to current user.
+ * @return string
+ */
+function get_effective_thousands_sep( $user_id = 0 ) {
+	if ( ! $user_id ) {
+		$user_id = get_current_user_id();
+	}
+	$override = get_user_meta( $user_id, 'beruang_user_thousands_sep', true );
+	return ( is_string( $override ) && '' !== $override ) ? $override : get_option( 'beruang_thousands_sep', '.' );
+}
+
+/**
+ * Get the effective decimal places for a user.
+ *
+ * @param int $user_id Optional. Defaults to current user.
+ * @return int
+ */
+function get_effective_decimal_places( $user_id = 0 ) {
+	if ( ! $user_id ) {
+		$user_id = get_current_user_id();
+	}
+	$override = get_user_meta( $user_id, 'beruang_user_decimal_places', true );
+	if ( '' !== $override && false !== $override ) {
+		$places = (int) $override;
+		if ( $places >= 0 && $places <= 4 ) {
+			return $places;
+		}
+	}
+	return (int) get_option( 'beruang_decimal_places', 2 );
+}
+
+/**
  * Load a shortcode template.
  *
  * @param string $name Template filename (e.g. 'form.php').
@@ -58,7 +121,7 @@ function shortcode_render_form( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 		array(
 			'today'             => current_time( 'Y-m-d' ),
 			'time'              => current_time( 'H:i' ),
-			'currency'          => get_option( 'beruang_currency', 'IDR' ),
+			'currency'          => get_effective_currency( $user_id ),
 			'categories'        => DB::get_categories_flat( $user_id, true ),
 			'wallets'           => DB::get_wallets( $user_id ),
 			'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
@@ -85,7 +148,7 @@ function shortcode_render_list( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 			'year'              => (int) current_time( 'Y' ),
 			'today'             => current_time( 'Y-m-d' ),
 			'time'              => current_time( 'H:i' ),
-			'currency'          => get_option( 'beruang_currency', 'IDR' ),
+			'currency'          => get_effective_currency( $user_id ),
 			'categories'        => DB::get_categories_flat( $user_id, true ),
 			'budgets'           => DB::get_budgets( $user_id ),
 			'wallets'           => DB::get_wallets( $user_id ),
@@ -129,7 +192,7 @@ function shortcode_render_budget( $atts ) { // phpcs:ignore Generic.CodeAnalysis
 	shortcode_load_template(
 		'budget.php',
 		array(
-			'currency'   => get_option( 'beruang_currency', 'IDR' ),
+			'currency'   => get_effective_currency( get_current_user_id() ),
 			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
 			'year'       => (int) current_time( 'Y' ),
 			'month'      => (int) current_time( 'n' ),
@@ -160,6 +223,9 @@ function shortcode_render_wallet( $atts ) { // phpcs:ignore Generic.CodeAnalysis
 		array(
 			'wallets'           => $wallets,
 			'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
+			'categories'        => DB::get_categories_flat( $user_id, true ),
+			'today'             => current_time( 'Y-m-d' ),
+			'time'              => current_time( 'H:i' ),
 		)
 	);
 	return ob_get_clean();
@@ -172,7 +238,7 @@ function shortcode_render_wallet( $atts ) { // phpcs:ignore Generic.CodeAnalysis
  * @return string
  */
 function shortcode_format_amount_input_value( $amount ) {
-	$places = (int) get_option( 'beruang_decimal_places', 2 );
+	$places = get_effective_decimal_places();
 	$num    = (float) $amount;
 	return 0 === $places ? (string) (int) round( $num ) : number_format( $num, $places, '.', '' );
 }
@@ -200,11 +266,11 @@ function output_modals_once() {
  * @return string
  */
 function shortcode_format_amount( $amount, $currency = '' ) {
-	$dec    = get_option( 'beruang_decimal_sep', ',' );
-	$thou   = get_option( 'beruang_thousands_sep', '.' );
-	$places = (int) get_option( 'beruang_decimal_places', 2 );
+	$dec    = get_effective_decimal_sep();
+	$thou   = get_effective_thousands_sep();
+	$places = get_effective_decimal_places();
 	if ( '' === $currency ) {
-		$currency = get_option( 'beruang_currency', 'IDR' );
+		$currency = get_effective_currency();
 	}
 	$formatted = number_format( (float) $amount, $places, $dec, $thou );
 	return $formatted . ' ' . $currency;
