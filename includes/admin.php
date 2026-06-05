@@ -310,7 +310,13 @@ function admin_page_settings() {
 				);
 				?>
 				</label>
-				<button type="submit" name="beruang_export" class="button"><?php esc_html_e( 'Export data (JSON)', 'beruang' ); ?></button>
+				<fieldset style="margin:.5em 0;">
+				<label><input type="checkbox" name="beruang_export_sections[]" value="categories" checked /> <?php esc_html_e( 'Categories', 'beruang' ); ?></label>
+				<label style="margin-left:1em;"><input type="checkbox" name="beruang_export_sections[]" value="wallets" checked /> <?php esc_html_e( 'Wallets', 'beruang' ); ?></label>
+				<label style="margin-left:1em;"><input type="checkbox" name="beruang_export_sections[]" value="transactions" checked /> <?php esc_html_e( 'Transactions', 'beruang' ); ?></label>
+				<label style="margin-left:1em;"><input type="checkbox" name="beruang_export_sections[]" value="budgets" checked /> <?php esc_html_e( 'Budgets', 'beruang' ); ?></label>
+			</fieldset>
+			<button type="submit" name="beruang_export" class="button"><?php esc_html_e( 'Export data (JSON)', 'beruang' ); ?></button>
 			</form>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:block;margin-bottom:1em;">
 				<input type="hidden" name="action" value="beruang_export_csv" />
@@ -356,23 +362,31 @@ function admin_handle_export() {
 	if ( ! $user_id ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
 	}
-	$user         = get_userdata( $user_id );
-	$categories   = DB::get_categories_flat( $user_id, false );
-	$wallets      = DB::get_wallets( $user_id );
-	$transactions = DB::get_transactions( $user_id, array( 'per_page' => 99999 ) );
-	$budgets      = DB::get_budgets( $user_id );
-	$data         = array(
+	$user     = get_userdata( $user_id );
+	$sections = isset( $_POST['beruang_export_sections'] ) && is_array( $_POST['beruang_export_sections'] )
+		? array_map( 'sanitize_key', $_POST['beruang_export_sections'] ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		: array( 'categories', 'wallets', 'transactions', 'budgets' );
+	$data     = array(
 		'version'      => 1,
 		'exported'     => current_time( 'c' ),
 		'user_id'      => $user_id,
 		'user_login'   => $user ? $user->user_login : '',
 		'user_email'   => $user ? $user->user_email : '',
 		'display_name' => $user ? $user->display_name : '',
-		'categories'   => $categories,
-		'wallets'      => $wallets,
-		'transactions' => $transactions['items'],
-		'budgets'      => $budgets,
 	);
+	if ( in_array( 'categories', $sections, true ) ) {
+		$data['categories'] = DB::get_categories_flat( $user_id, false );
+	}
+	if ( in_array( 'wallets', $sections, true ) ) {
+		$data['wallets'] = DB::get_wallets( $user_id );
+	}
+	if ( in_array( 'transactions', $sections, true ) ) {
+		$result             = DB::get_transactions( $user_id, array( 'per_page' => 99999 ) );
+		$data['transactions'] = $result['items'];
+	}
+	if ( in_array( 'budgets', $sections, true ) ) {
+		$data['budgets'] = DB::get_budgets( $user_id );
+	}
 	header( 'Content-Type: application/json; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename="beruang-export-' . gmdate( 'Y-m-d' ) . '.json"' );
 	echo wp_json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
