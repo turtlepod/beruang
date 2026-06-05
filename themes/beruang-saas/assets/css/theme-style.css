@@ -1,0 +1,501 @@
+/* Beruang SaaS – theme styles */
+
+/* ── Reset & base ─────────────────────────────────── */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+:root {
+	--saas-header-bg: #1a1a1b;
+	--saas-header-height: 48px;
+	--saas-nav-height: 40px;
+	--saas-accent: #fff;
+	--saas-text: #fff;
+	--saas-text-muted: rgba(255 255 255 / 60%);
+	--saas-drawer-width: 260px;
+	--saas-overlay: rgba(0 0 0 / 55%);
+	--saas-transition: 0.25s ease;
+	--saas-font: -apple-system, blinkmacsystemfont, "Segoe UI", roboto, sans-serif;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: var(--saas-font);
+	font-size: 16px;
+	line-height: 1.5;
+	background: #f6f7f8;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	color: inherit;
+}
+
+/* ── Site header ──────────────────────────────────── */
+.site-header {
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	background: var(--saas-header-bg);
+	color: var(--saas-text);
+}
+
+.site-header-inner {
+	display: flex;
+	align-items: center;
+	height: var(--saas-header-height);
+	padding: 0 12px;
+	gap: 12px;
+}
+
+/* ── Hamburger ────────────────────────────────────── */
+.site-hamburger {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	flex-shrink: 0;
+	color: var(--saas-text);
+}
+
+.site-hamburger svg {
+	display: block;
+	width: 22px;
+	height: 22px;
+}
+
+/* ── Logo ─────────────────────────────────────────── */
+.site-logo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+	margin-right: auto;
+	color: var(--saas-text);
+	line-height: 1;
+}
+
+.site-logo-icon {
+	display: block;
+	width: 28px;
+	height: 28px;
+	color: #fff;
+}
+
+/* ── Profile ──────────────────────────────────────── */
+.site-profile {
+	flex-shrink: 0;
+}
+
+.site-profile-avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	color: var(--saas-text);
+}
+
+.site-profile-avatar svg {
+	display: block;
+	width: 24px;
+	height: 24px;
+}
+
+/* ── Nav tabs ─────────────────────────────────────── */
+.site-nav {
+	position: sticky;
+	top: var(--saas-header-height);
+	z-index: 90;
+	background: var(--saas-header-bg);
+	color: var(--saas-text);
+	border-top: 1px solid rgba(255 255 255 / 8%);
+	overflow-x: auto;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	& ul {
+		position: relative;
+		display: flex;
+		align-items: stretch;
+		justify-content: center;
+		height: var(--saas-nav-height);
+		padding: 0 4px;
+		gap: 2px;
+		white-space: nowrap;
+	}
+
+	& li .beruang-tab {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0 14px;
+		height: 100%;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--saas-text-muted);
+		border-bottom: 2px solid transparent;
+		border-top: 0;
+		border-left: 0;
+		border-right: 0;
+		transition: color var(--saas-transition), border-color var(--saas-transition);
+
+		&:hover {
+			color: var(--saas-text);
+		}
+
+		&.is-active {
+			color: var(--saas-text);
+		}
+	}
+
+	& .beruang-tab-indicator {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		height: 2px;
+		background: var(--saas-accent);
+		transition: transform var(--saas-transition), width var(--saas-transition);
+		pointer-events: none;
+		will-change: transform, width;
+	}
+}
+
+body.admin-bar .site-nav {
+	top: calc(var(--saas-header-height) + 32px);
+}
+
+body.admin-bar .beruang-tab-panel {
+	min-height: calc(100dvh - var(--saas-header-height) - var(--saas-nav-height) - 32px - 48px);
+}
+
+@media (width <= 782px) {
+	body.admin-bar .site-nav {
+		top: calc(var(--saas-header-height) + 46px);
+	}
+
+	body.admin-bar .beruang-tab-panel {
+		min-height: calc(100dvh - var(--saas-header-height) - var(--saas-nav-height) - 46px - 48px);
+	}
+}
+
+/* ── Drawer overlay ───────────────────────────────── */
+.site-drawer-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	background: var(--saas-overlay);
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity var(--saas-transition), visibility var(--saas-transition);
+
+	&.is-open {
+		opacity: 1;
+		visibility: visible;
+	}
+}
+
+/* ── Slide-out drawer ─────────────────────────────── */
+.site-drawer {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 300;
+	width: var(--saas-drawer-width);
+	height: 100%;
+	background: var(--saas-header-bg);
+	color: var(--saas-text);
+	transform: translateX(-100%);
+	transition: transform var(--saas-transition);
+	overflow-y: auto;
+	padding: 12px 0;
+
+	&.is-open {
+		transform: translateX(0);
+	}
+}
+
+.site-drawer-close {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	margin: 4px 8px 8px;
+	border-radius: 50%;
+	color: var(--saas-text);
+	transition: background var(--saas-transition);
+
+	&:hover {
+		background: rgba(255 255 255 / 10%);
+	}
+}
+
+.site-drawer-close svg {
+	display: block;
+	width: 20px;
+	height: 20px;
+}
+
+.site-drawer-close svg path {
+	fill: currentcolor;
+}
+
+.site-drawer-content {
+	padding: 8px 20px 16px;
+	color: var(--saas-text-muted);
+	font-size: 0.95rem;
+	line-height: 1.6;
+
+	& p {
+		margin: 0 0 12px;
+	}
+
+	& p:last-child {
+		margin-bottom: 0;
+	}
+
+	& a {
+		color: var(--saas-text);
+		text-decoration: none;
+	}
+
+	& .beruang-install-app-btn,
+	& [data-beruang-install-app] {
+		display: block;
+		align-items: center;
+		justify-content: center;
+		padding: 8px 12px;
+		border-radius: 8px;
+		border: 1px solid rgba(255 255 255 / 32%);
+		background: rgba(255 255 255 / 10%);
+		color: var(--saas-text);
+		text-decoration: none;
+		font-size: 0.9rem;
+		font-weight: 600;
+		cursor: pointer;
+		margin: 20px 0;
+	}
+
+	& .beruang-install-app-btn.is-hidden,
+	& [data-beruang-install-app].is-hidden {
+		display: none;
+	}
+}
+
+.site-drawer-nav {
+	& li a {
+		display: block;
+		padding: 12px 20px;
+		font-size: 0.95rem;
+		font-weight: 500;
+		color: var(--saas-text-muted);
+		transition: background var(--saas-transition), color var(--saas-transition);
+
+		&:hover {
+			background: rgba(255 255 255 / 8%);
+			color: var(--saas-text);
+		}
+	}
+}
+
+/* ── Main content ─────────────────────────────────── */
+.site-main {
+	max-width: 680px;
+	margin: 24px auto;
+	padding: 0 16px;
+}
+
+.beruang-tabs-content {
+	position: relative;
+	overflow: hidden;
+	transition: height var(--saas-transition);
+}
+
+.beruang-tabs-strip {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	width: 100%;
+}
+
+.beruang-tab-panel {
+	flex: 0 0 100%;
+	min-width: 0;
+	min-height: calc(100dvh - var(--saas-header-height) - var(--saas-nav-height) - 48px);
+}
+
+.account-tab-panel {
+	padding-top: 20px;
+}
+
+.account-panel-inner {
+	max-width: 400px;
+	margin-inline: auto;
+}
+
+.account-section-desc {
+	margin: 0 0 16px;
+	font-size: 0.875rem;
+	color: #666;
+}
+
+.account-alert {
+	padding: 10px 12px;
+	border-radius: 8px;
+	margin-bottom: 14px;
+}
+
+.account-alert p {
+	margin: 0;
+}
+
+.account-alert p + p {
+	margin-top: 6px;
+}
+
+.account-alert-error {
+	background: #fde8e8;
+	color: #8b1d1d;
+}
+
+.account-alert-success {
+	background: #e8f8ee;
+	color: #155c33;
+}
+
+.account-form {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.account-field {
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.account-field label {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #444;
+}
+
+.account-field input,
+.account-field select {
+	padding: 10px 12px;
+	border: 1px solid #d5d8dd;
+	border-radius: 8px;
+	font: inherit;
+	background: #fff;
+	color: #1a1a1b;
+	appearance: auto;
+}
+
+.account-field-hint {
+	font-size: 0.8rem;
+	color: #888;
+}
+
+.account-pw-wrap {
+	position: relative;
+	display: flex;
+	align-items: stretch;
+}
+
+.account-pw-wrap input {
+	flex: 1;
+	padding-right: 42px;
+}
+
+.account-pw-toggle {
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #aaa;
+	transition: color var(--saas-transition);
+
+	&:hover {
+		color: #555;
+	}
+
+	& svg {
+		display: block;
+		width: 16px;
+		height: 16px;
+		pointer-events: none;
+	}
+}
+
+.account-password-strength {
+	font-size: 0.8rem;
+	font-weight: 500;
+	min-height: 1.2em;
+}
+
+.account-password-strength.strength-0,
+.account-password-strength.strength-1 {
+	color: #c0392b;
+}
+
+.account-password-strength.strength-2 {
+	color: #e67e22;
+}
+
+.account-password-strength.strength-3 {
+	color: #27ae60;
+}
+
+.account-password-strength.strength-4 {
+	color: #2980b9;
+}
+
+.account-submit {
+	width: fit-content;
+	padding: 10px 16px;
+	border-radius: 8px;
+	background: #1a1a1b;
+	color: #fff;
+	font-weight: 600;
+	margin-top: 6px;
+}
+
+.account-logout-wrap {
+	margin: 16px 0 0;
+}
+
+.account-logout {
+	color: #1a1a1b;
+	text-decoration: underline;
+}
+
+
