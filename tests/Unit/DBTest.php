@@ -199,8 +199,8 @@ class DBTest extends TestCase {
 			->getMock();
 		$wpdb->prefix = $prefix;
 		$wpdb->method( 'prepare' )->willReturnCallback(
-			function ( $query ) {
-				return $query;
+			function ( ...$args ) {
+				return $args[0];
 			}
 		);
 		$wpdb->method( 'get_var' )->willReturn( $get_var_return );
@@ -250,7 +250,7 @@ class DBTest extends TestCase {
 		$wpdb = $this->setUpQueryWpdb( 'wp_', '200.00' );
 		$wpdb->expects( $this->once() )
 			->method( 'prepare' )
-			->with( $this->stringContains( 'category_id IN' ) )
+			->with( $this->stringContains( 'category_id IN' ), $this->anything() )
 			->willReturn( 'SELECT ...' );
 		$result = DB::sum_net_amount( 1, '2024-01-01', '2024-01-31', [ 3, 7 ] );
 		$this->assertSame( 200.0, $result );
@@ -263,7 +263,7 @@ class DBTest extends TestCase {
 		$wpdb = $this->setUpQueryWpdb( 'wp_', '75.00' );
 		$wpdb->expects( $this->once() )
 			->method( 'prepare' )
-			->with( $this->logicalNot( $this->stringContains( 'category_id IN' ) ) )
+			->with( $this->logicalNot( $this->stringContains( 'category_id IN' ) ), $this->anything() )
 			->willReturn( 'SELECT ...' );
 		DB::sum_net_amount( 1, '2024-01-01', '2024-01-31' );
 	}
@@ -284,8 +284,8 @@ class DBTest extends TestCase {
 			->getMock();
 		$wpdb->prefix = 'wp_';
 		$wpdb->method( 'prepare' )->willReturnCallback(
-			function ( $query ) {
-				return $query;
+			function ( ...$args ) {
+				return $args[0];
 			}
 		);
 		$wpdb->method( 'get_results' )->willReturnOnConsecutiveCalls( ...$get_results_sequence );

@@ -179,7 +179,7 @@ export function initWallet() {
 			transferToEl.value = prevTo;
 		}
 		transferOpenBtns.forEach( function ( btn ) {
-			btn.hidden = wallets.length < 2;
+			btn.disabled = wallets.length < 2;
 		} );
 	}
 

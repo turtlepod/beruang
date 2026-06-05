@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div class="beruang-wallet-list" id="beruang-wallet-list" data-default-wallet-id="<?php echo esc_attr( (string) $default_wallet_id ); ?>">
 		<?php
-		$decimal_places = (int) get_option( 'beruang_decimal_places', 2 );
+		$decimal_places = get_effective_decimal_places();
 		foreach ( $wallets as $wallet ) {
 			$initial_amount = isset( $wallet['initial_amount'] ) ? (float) $wallet['initial_amount'] : 0.0;
 			$initial_date   = isset( $wallet['initial_date'] ) ? (string) $wallet['initial_date'] : current_time( 'Y-m-d' );
@@ -93,7 +93,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 						<div class="beruang-form-row">
 							<label for="beruang-transfer-amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label>
-							<input type="number" id="beruang-transfer-amount" name="amount" step="any" min="0" required />
+							<input type="number" id="beruang-transfer-amount" name="amount" step="<?php echo $decimal_places > 0 ? esc_attr( '0.' . str_repeat( '0', $decimal_places - 1 ) . '1' ) : '1'; ?>" min="0" required />
 						</div>
 						<div class="beruang-form-row">
 							<label for="beruang-transfer-category"><?php esc_html_e( 'Category', 'beruang' ); ?></label>

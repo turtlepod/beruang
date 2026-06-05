@@ -125,6 +125,7 @@ function shortcode_render_form( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 			'categories'        => DB::get_categories_flat( $user_id, true ),
 			'wallets'           => DB::get_wallets( $user_id ),
 			'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
+			'decimal_places'    => get_effective_decimal_places( $user_id ),
 		)
 	);
 	return ob_get_clean();
@@ -192,10 +193,11 @@ function shortcode_render_budget( $atts ) { // phpcs:ignore Generic.CodeAnalysis
 	shortcode_load_template(
 		'budget.php',
 		array(
-			'currency'   => get_effective_currency( get_current_user_id() ),
-			'categories' => DB::get_categories_flat( get_current_user_id(), true ),
-			'year'       => (int) current_time( 'Y' ),
-			'month'      => (int) current_time( 'n' ),
+			'currency'       => get_effective_currency( get_current_user_id() ),
+			'categories'     => DB::get_categories_flat( get_current_user_id(), true ),
+			'year'           => (int) current_time( 'Y' ),
+			'month'          => (int) current_time( 'n' ),
+			'decimal_places' => get_effective_decimal_places( get_current_user_id() ),
 		)
 	);
 	return ob_get_clean();
@@ -226,6 +228,7 @@ function shortcode_render_wallet( $atts ) { // phpcs:ignore Generic.CodeAnalysis
 			'categories'        => DB::get_categories_flat( $user_id, true ),
 			'today'             => current_time( 'Y-m-d' ),
 			'time'              => current_time( 'H:i' ),
+			'decimal_places'    => get_effective_decimal_places( $user_id ),
 		)
 	);
 	return ob_get_clean();
