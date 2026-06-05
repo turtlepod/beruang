@@ -47,6 +47,18 @@ if ( ! function_exists( 'sanitize_text_field' ) ) {
 	}
 }
 
+if ( ! function_exists( 'sanitize_textarea_field' ) ) {
+	/**
+	 * Sanitize a multi-line string by stripping tags and trimming whitespace.
+	 *
+	 * @param string $str String to sanitize.
+	 * @return string
+	 */
+	function sanitize_textarea_field( $str ) {
+		return trim( wp_strip_all_tags( (string) $str ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions -- polyfill
+	}
+}
+
 if ( ! function_exists( 'wp_strip_all_tags' ) ) {
 	/**
 	 * Strip all HTML tags from a string.
@@ -112,3 +124,4 @@ if ( ! function_exists( 'current_time' ) ) {
 
 require_once dirname( __DIR__ ) . '/includes/icon-helpers.php';
 require_once dirname( __DIR__ ) . '/includes/class-beruang-db.php';
+require_once dirname( __DIR__ ) . '/includes/class-beruang-import.php';
