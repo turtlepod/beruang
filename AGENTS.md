@@ -119,6 +119,8 @@ Extended documentation lives in `docs/`:
 
 | File | Contents |
 |------|----------|
+| `docs/setup.md` | Step-by-step setup guide (pages, theme, settings, WP-CLI, import/export) |
+| `docs/api-endpoints.md` | Full REST API reference for all `beruang/v1` endpoints |
 | `docs/e2e-tests.md` | Playwright E2E test setup, configuration, coverage tables, CLI commands, bugs found |
 
 ## Build
