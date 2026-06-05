@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div class="beruang-wallet-list" id="beruang-wallet-list" data-default-wallet-id="<?php echo esc_attr( (string) $default_wallet_id ); ?>">
 		<?php
-		$decimal_places = get_effective_decimal_places();
+		$decimal_places = \Beruang\get_effective_decimal_places();
 		foreach ( $wallets as $wallet ) {
 			$initial_amount = isset( $wallet['initial_amount'] ) ? (float) $wallet['initial_amount'] : 0.0;
 			$initial_date   = isset( $wallet['initial_date'] ) ? (string) $wallet['initial_date'] : current_time( 'Y-m-d' );
