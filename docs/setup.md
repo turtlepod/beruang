@@ -96,6 +96,7 @@ If you are not using the `beruang-saas` theme, place these shortcodes on any pag
 | `[beruang-graph]` | Monthly / yearly charts |
 | `[beruang-budget]` | Budget cards with progress |
 | `[beruang-wallet]` | Wallet management (add, transfer, set default) |
+| `[beruang_install_button]` | PWA install button (enable PWA in Settings) |
 
 All shortcodes require the visitor to be logged in. Logged-out users see nothing.
 

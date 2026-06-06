@@ -45,6 +45,7 @@ Use on pages where users are logged in:
 * `[beruang-graph]` – Chart (by month or by category) with year selector
 * `[beruang-budget]` – List budgets with progress; add/edit budget modal
 * `[beruang-wallet]` – List and manage your wallets.
+* `[beruang_install_button]` – PWA install button/link (enable PWA in Settings first)
 
 == Resources ==
 
@@ -57,6 +58,8 @@ Font Awesome Free Icons
 
 = 0.5.0-beta =
 * Transfer wallet.
+* **Beruang Pro features absorbed:** `[beruang_install_button]` shortcode, user locale on frontend,
+  beruang-saas theme bundled, Theme Settings admin page.
 * Various fixes.
 
 = 0.4.0-beta =
