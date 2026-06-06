@@ -8,3 +8,4 @@ tests/e2e/.test-pages.json
 tests/e2e/report/
 playwright-report/
 test-results/
+.hermes-tmp*
