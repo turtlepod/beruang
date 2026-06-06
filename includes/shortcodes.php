@@ -15,11 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Register shortcodes.
  */
 function shortcodes_setup() {
-	add_shortcode( 'beruang-form', __NAMESPACE__ . '\shortcode_render_form' );
-	add_shortcode( 'beruang-list', __NAMESPACE__ . '\shortcode_render_list' );
-	add_shortcode( 'beruang-graph', __NAMESPACE__ . '\shortcode_render_graph' );
-	add_shortcode( 'beruang-budget', __NAMESPACE__ . '\shortcode_render_budget' );
-	add_shortcode( 'beruang-wallet', __NAMESPACE__ . '\shortcode_render_wallet' );
+	add_shortcode( 'beruang-form', __NAMESPACE__ . '\\shortcode_render_form' );
+	add_shortcode( 'beruang-list', __NAMESPACE__ . '\\shortcode_render_list' );
+	add_shortcode( 'beruang-graph', __NAMESPACE__ . '\\shortcode_render_graph' );
+	add_shortcode( 'beruang-budget', __NAMESPACE__ . '\\shortcode_render_budget' );
+	add_shortcode( 'beruang-wallet', __NAMESPACE__ . '\\shortcode_render_wallet' );
+	add_shortcode( 'beruang_install_button', __NAMESPACE__ . '\\shortcode_install_button' );
 }
 add_action( 'init', __NAMESPACE__ . '\shortcodes_setup' );
 
@@ -277,4 +278,49 @@ function shortcode_format_amount( $amount, $currency = '' ) {
 	}
 	$formatted = number_format( (float) $amount, $places, $dec, $thou );
 	return $formatted . ' ' . $currency;
+}
+
+/**
+ * [beruang_install_button]
+ *
+ * Usage:
+ * [beruang_install_button]
+ * [beruang_install_button label="Install App" tag="a"]
+ *
+ * @param array<string, string> $atts Shortcode attrs.
+ * @return string
+ */
+function shortcode_install_button( $atts ) {
+	if ( ! get_option( 'beruang_pwa_enabled', false ) ) {
+		return '';
+	}
+
+	$atts = shortcode_atts(
+		array(
+			'label' => __( 'Install App', 'beruang' ),
+			'tag'   => 'button',
+			'class' => '',
+		),
+		$atts,
+		'beruang_install_button'
+	);
+
+	$tag          = 'a' === strtolower( $atts['tag'] ) ? 'a' : 'button';
+	$label        = wp_strip_all_tags( (string) $atts['label'] );
+	$custom_class = sanitize_html_class( (string) $atts['class'] );
+	$class_attr   = trim( 'beruang-install-app-btn ' . $custom_class );
+
+	if ( 'a' === $tag ) {
+		return sprintf(
+			'<a href="#" class="%1$s" data-beruang-install-app="true">%2$s</a>',
+			esc_attr( $class_attr ),
+			esc_html( $label )
+		);
+	}
+
+	return sprintf(
+		'<button type="button" class="%1$s" data-beruang-install-app="true">%2$s</button>',
+		esc_attr( $class_attr ),
+		esc_html( $label )
+	);
 }
