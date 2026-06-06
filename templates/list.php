@@ -87,7 +87,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					'categories'        => $categories,
 					'wallets'           => $wallets,
 					'default_wallet_id' => $default_wallet_id,
-					'decimal_places' => $decimal_places,
+					'decimal_places'    => $decimal_places,
 				)
 			);
 			?>
