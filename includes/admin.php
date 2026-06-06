@@ -348,6 +348,16 @@ function admin_page_settings() {
 		<form method="post" enctype="multipart/form-data">
 			<?php wp_nonce_field( 'beruang_import' ); ?>
 			<p>
+				<label><?php esc_html_e( 'Import to user', 'beruang' ); ?>
+				<?php
+				wp_dropdown_users(
+					array(
+						'name'     => 'beruang_import_user_id',
+						'selected' => get_current_user_id(),
+					)
+				);
+				?>
+				</label>
 				<input type="file" name="beruang_import_file" accept=".json" />
 				<button type="submit" name="beruang_import" class="button"><?php esc_html_e( 'Import from JSON', 'beruang' ); ?></button>
 			</p>
@@ -467,15 +477,20 @@ function admin_handle_export_csv() {
 }
 
 /**
- * Import data from uploaded JSON file for current user.
+ * Import data from uploaded JSON file for a selected user.
  *
  * Handles categories (with ID mapping), transactions, and budgets.
+ * Reads beruang_import_user_id from POST; falls back to current user.
+ * Requires ADMIN_CAPABILITY.
  * Sets success or error via add_settings_error().
  */
 function admin_handle_import() {
-	$user_id = get_current_user_id();
+	$user_id = isset( $_POST['beruang_import_user_id'] ) ? absint( $_POST['beruang_import_user_id'] ) : 0;
 	if ( ! $user_id ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+		$user_id = get_current_user_id();
+	}
+	if ( ! $user_id || ! get_userdata( $user_id ) ) {
+		wp_die( esc_html__( 'Invalid user.', 'beruang' ) );
 	}
 	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- tmp_name validated by is_uploaded_file.
 	if ( ! isset( $_FILES['beruang_import_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['beruang_import_file']['tmp_name'] ) ) {
