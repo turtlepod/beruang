@@ -155,6 +155,7 @@ function shortcode_render_list( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
 			'budgets'           => DB::get_budgets( $user_id ),
 			'wallets'           => DB::get_wallets( $user_id ),
 			'default_wallet_id' => DB::get_default_wallet_id( $user_id ),
+			'decimal_places'    => get_effective_decimal_places( $user_id ),
 		)
 	);
 	return ob_get_clean();
