@@ -1314,6 +1314,7 @@ function render_account_page_field() {
 	$field_name = THEME_SETTINGS_OPTION . '[account_page_id]';
 	$none_label = __( 'Select a page', 'beruang' );
 
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- $field_name and $none_label are hardcoded strings; $dropdown is WP core output.
 	$dropdown = wp_dropdown_pages(
 		array(
 			'name'              => $field_name,
@@ -1326,8 +1327,9 @@ function render_account_page_field() {
 	);
 
 	if ( is_string( $dropdown ) ) {
-		echo $dropdown;
+		echo $dropdown; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
+	// phpcs:enable
 }
 
 /**
