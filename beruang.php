@@ -2,12 +2,12 @@
 /**
  * Plugin Name: Beruang Budget
  * Description: Track money, transactions, and budgets.
- * Plugin URI: https://beruang.web.id/
+ * Plugin URI: https://pandaplugin.com/beruang/
  * Version: 0.5.0-beta
  * Requires at least: 6.0
  * Requires PHP: 8.2
  * Author: David Chandra Purnama
- * Author URI: https://turtlepod.xyz/
+ * Author URI: https://pandaplugin.com/
  * License: GPLv2 or later
  * Text Domain: beruang
  * Domain Path: /languages/

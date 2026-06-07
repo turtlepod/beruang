@@ -25,8 +25,8 @@ msgstr "Beruang Budget"
 
 #. Plugin URI of the plugin
 #: beruang.php
-msgid "https://beruang.web.id/"
-msgstr "https://beruang.web.id/"
+msgid "https://pandaplugin.com/beruang/"
+msgstr "https://pandaplugin.com/beruang/"
 
 #. Description of the plugin
 #: beruang.php
@@ -40,8 +40,8 @@ msgstr "David Chandra Purnama"
 
 #. Author URI of the plugin
 #: beruang.php
-msgid "https://turtlepod.xyz/"
-msgstr "https://turtlepod.xyz/"
+msgid "https://pandaplugin.com/"
+msgstr "https://pandaplugin.com/"
 
 #. translators: %s: npm build command
 #: includes/admin.php:61

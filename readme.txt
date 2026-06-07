@@ -14,6 +14,8 @@ Track money, transactions, and budgets.
 
 Beruang Budget is a WordPress plugin for per-user money, transaction, and budget tracking. All data is scoped by logged-in user. Use shortcodes on front-end pages to add transactions, view lists, display charts, and manage budgets.
 
+Visit [pandaplugin.com/beruang](https://pandaplugin.com/beruang/) for the companion theme and setup guide.
+
 = Features =
 
 * **Transactions** – Add and list transactions with date, time, description, category, amount, and type (expense/income)
