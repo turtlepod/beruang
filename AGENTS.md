@@ -32,7 +32,7 @@
 beruang.php                    Entry; constants; loads core + WP-CLI
 includes/
   core.php                     Bootstrap; activation; enqueue; print templates;
-                               use_logged_in_user_locale_on_frontend; theme dir reg
+                               use_logged_in_user_locale_on_frontend; theme dir ref
   class-beruang-db.php         DB schema + CRUD (Category, Wallet, Transaction, Budget)
   class-beruang-import.php     JSON import handler
   icon-helpers.php             beruang_get_icons(), beruang_icon()
@@ -45,7 +45,6 @@ includes/
   class-beruang-cli.php        WP-CLI: beruang transaction|category|budget|seed|reset
   class-beruang-*-list-table.php  Transactions, Categories, Budgets, Wallets
 templates/                     [beruang-form], [beruang-list], [beruang-graph], [beruang-budget], [beruang-wallet]
-themes/beruang-saas/           Bundled SaaS theme (page templates, account page, CSV export)
 assets/js/frontend/            form, list, graph, budget, wallet modules
 dist/                          Built JS/CSS (10up-toolkit); required for front scripts
 ```
@@ -119,7 +118,7 @@ All require logged-in user. Frontend JS uses `window.beruangData` (restUrl, rest
 
 - `beruang_currency`, `beruang_decimal_sep`, `beruang_thousands_sep`, `beruang_decimal_places`
 - `beruang_pwa_enabled`, `beruang_pwa_app_name`, `beruang_pwa_short_name`, `beruang_pwa_theme_color`
-- `beruang_theme_settings` (drawer content, account page ID — for beruang-saas theme)
+- `beruang_theme_settings` (drawer content, account page ID — for Beruang Theme)
 - `beruang_db_version` (internal)
 
 ## Docs
@@ -135,7 +134,7 @@ Extended documentation lives in `docs/`:
 ## Build
 
 - `npm run build` → `dist/` (10up-toolkit)
-- `cd themes/beruang-saas && npm run build` → theme `dist/`
+- For the companion theme: https://github.com/turtlepod/BeruangTheme
 - Entry: `beruang-front.js` → `dist/js/front.js`
 - Front scripts only load when `dist/` exists.
 - **Always run `npm run build` after changing any file. The project must build successfully before marking work as ready for review.**

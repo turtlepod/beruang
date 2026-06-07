@@ -73,11 +73,9 @@ function on_plugins_loaded() {
 	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_front_scripts' );
 	manifest_setup();
 
-	// Register bundled themes directory (e.g. beruang-saas).
-	$themes_dir = BERUANG_PLUGIN_DIR . 'themes';
-	if ( is_dir( $themes_dir ) ) {
-		register_theme_directory( $themes_dir );
-	}
+	// Bundled themes have been decoupled into a separate repo:
+	// https://github.com/turtlepod/BeruangTheme
+	// Install as a standalone WordPress theme.
 }
 
 /**

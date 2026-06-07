@@ -59,7 +59,7 @@ Font Awesome Free Icons
 = 0.5.0-beta =
 * Transfer wallet.
 * **Beruang Pro features absorbed:** `[beruang_install_button]` shortcode, user locale on frontend,
-  beruang-saas theme bundled, Theme Settings admin page.
+  Beruang Theme available separately, Theme Settings admin page.
 * Various fixes.
 
 = 0.4.0-beta =
