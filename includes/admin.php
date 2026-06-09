@@ -289,7 +289,8 @@ function admin_page_settings() {
 				<tr>
 					<th scope="row"><label for="beruang_pwa_theme_color"><?php esc_html_e( 'Theme color', 'beruang' ); ?></label></th>
 					<td>
-						<input type="text" id="beruang_pwa_theme_color" name="beruang_pwa_theme_color" value="<?php echo esc_attr( $pwa_theme_color ); ?>" class="small-text" />
+						<input type="text" id="beruang_pwa_theme_color" name="beruang_pwa_theme_color" value="<?php echo esc_attr( $pwa_theme_color ); ?>" class="medium-text" />
+						<p class="description"><?php esc_html_e( 'Hex color code (e.g. #2271b1). Used for browser toolbar and PWA theme color.', 'beruang' ); ?></p>
 					</td>
 				</tr>
 			</table>
