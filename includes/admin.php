@@ -19,11 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 const ADMIN_SLUG       = 'beruang';
 const ADMIN_CAPABILITY = 'manage_options';
 
-/** Theme settings constants. */
-const THEME_SETTINGS_OPTION = 'beruang_theme_settings';
-const THEME_SETTINGS_GROUP  = 'beruang_theme_settings_group';
-const THEME_ADMIN_SLUG      = 'beruang-theme-settings';
-
 /**
  * Register admin menu and settings hooks. Hooked to init.
  */
@@ -118,8 +113,7 @@ function admin_register_menu() {
 	add_submenu_page( ADMIN_SLUG, __( 'Transactions', 'beruang' ), __( 'Transactions', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-transactions', __NAMESPACE__ . '\admin_page_transactions' );
 	add_submenu_page( ADMIN_SLUG, __( 'Categories', 'beruang' ), __( 'Categories', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-categories', __NAMESPACE__ . '\admin_page_categories' );
 	add_submenu_page( ADMIN_SLUG, __( 'Budgets', 'beruang' ), __( 'Budgets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-budgets', __NAMESPACE__ . '\admin_page_budgets' );
-	add_submenu_page( ADMIN_SLUG, __( 'Wallets', 'beruang' ), __( 'Wallets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-wallets', __NAMESPACE__ . '\admin_page_wallets' );
-	add_submenu_page( ADMIN_SLUG, __( 'Theme Settings', 'beruang' ), __( 'Theme Settings', 'beruang' ), ADMIN_CAPABILITY, THEME_ADMIN_SLUG, __NAMESPACE__ . '\\render_theme_settings_page' );
+	add_submenu_page( ADMIN_SLUG, __( 'Wallets', 'beruang' ), __( 'Wallets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-wallets', __NAMESPACE__ . '\\admin_page_wallets' );
 }
 
 /**
@@ -213,16 +207,6 @@ function admin_register_settings() {
 		)
 	);
 
-	// Theme settings.
-	register_setting(
-		THEME_SETTINGS_GROUP,
-		THEME_SETTINGS_OPTION,
-		array(
-			'type'              => 'array',
-			'sanitize_callback' => __NAMESPACE__ . '\\sanitize_theme_settings',
-			'default'           => array(),
-		)
-	);
 }
 
 /**
@@ -1270,135 +1254,3 @@ function admin_page_wallets() {
 	<?php
 }
 
-/**
- * Sanitize theme settings.
- *
- * @param mixed $input Raw settings input.
- * @return array<string, mixed>
- */
-function sanitize_theme_settings( $input ) {
-	$input = is_array( $input ) ? $input : array();
-
-	return array(
-		'drawer_content'  => isset( $input['drawer_content'] ) ? wp_kses_post( $input['drawer_content'] ) : '',
-		'account_page_id' => isset( $input['account_page_id'] ) ? absint( $input['account_page_id'] ) : 0,
-	);
-}
-
-/**
- * Get all theme settings.
- *
- * @return array<string, mixed>
- */
-function get_theme_settings() {
-	$defaults = array(
-		'drawer_content'  => '',
-		'account_page_id' => 0,
-	);
-
-	$settings = get_option( THEME_SETTINGS_OPTION, array() );
-
-	if ( ! is_array( $settings ) ) {
-		return $defaults;
-	}
-
-	return wp_parse_args( $settings, $defaults );
-}
-
-/**
- * Render drawer content settings field.
- */
-function render_drawer_content_field() {
-	$settings = get_theme_settings();
-	wp_editor(
-		$settings['drawer_content'],
-		'beruang_drawer_content',
-		array(
-			'textarea_name' => THEME_SETTINGS_OPTION . '[drawer_content]',
-			'textarea_rows' => 8,
-			'media_buttons' => false,
-		)
-	);
-}
-
-/**
- * Render account page settings field.
- */
-function render_account_page_field() {
-	$settings   = get_theme_settings();
-	$field_name = THEME_SETTINGS_OPTION . '[account_page_id]';
-	$none_label = __( 'Select a page', 'beruang' );
-
-	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- $field_name and $none_label are hardcoded strings; $dropdown is WP core output.
-	$dropdown = wp_dropdown_pages(
-		array(
-			'name'              => $field_name,
-			'id'                => 'beruang-account-page-id',
-			'show_option_none'  => $none_label,
-			'option_none_value' => '0',
-			'selected'          => absint( $settings['account_page_id'] ),
-			'echo'              => 0,
-		)
-	);
-
-	if ( is_string( $dropdown ) ) {
-		echo $dropdown; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	}
-	// phpcs:enable
-}
-
-/**
- * Render Theme Settings page.
- */
-function render_theme_settings_page() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
-		return;
-	}
-	?>
-	<div class="wrap">
-		<h1><?php esc_html_e( 'Theme Settings', 'beruang' ); ?></h1>
-		<form method="post" action="options.php">
-			<?php
-			settings_fields( THEME_SETTINGS_GROUP );
-			do_settings_sections( THEME_ADMIN_SLUG );
-			submit_button();
-			?>
-		</form>
-	</div>
-	<?php
-}
-
-/**
- * Get site drawer content for theme rendering.
- *
- * @return string
- */
-function get_theme_drawer_content() {
-	$settings = get_theme_settings();
-	return is_string( $settings['drawer_content'] ) ? $settings['drawer_content'] : '';
-}
-
-/**
- * Get account page ID for theme rendering.
- *
- * @return int
- */
-function get_theme_account_page_id() {
-	$settings = get_theme_settings();
-	return absint( $settings['account_page_id'] );
-}
-
-/**
- * Get account page URL for theme rendering.
- *
- * @return string
- */
-function get_theme_account_page_url() {
-	$page_id = get_theme_account_page_id();
-	if ( $page_id <= 0 ) {
-		return '';
-	}
-
-	$url = get_permalink( $page_id );
-	return $url ? $url : '';
-}
