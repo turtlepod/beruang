@@ -206,7 +206,6 @@ function admin_register_settings() {
 			},
 		)
 	);
-
 }
 
 /**
