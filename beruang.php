@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BERUANG_VERSION', '0.4.0-beta' );
+define( 'BERUANG_VERSION', '0.5.0-beta' );
 define( 'BERUANG_PLUGIN_FILE', __FILE__ );
 define( 'BERUANG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BERUANG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
