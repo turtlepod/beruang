@@ -3,7 +3,7 @@ Contributors: turtlepod
 Donate link: https://pandaplugin.com/donate/
 Tags: budget, finance, transactions, expense, income
 Requires at least: 6.0
-Tested up to: 6.9
+Tested up to: 7.0
 Stable tag: 0.5.0-beta
 Requires PHP: 8.2
 License: GPLv2 or later
@@ -59,19 +59,18 @@ Font Awesome Free Icons
 
 == Upgrade Notice ==
 
-= 0.5.0-beta =
 Maintenance update.
 
 == Screenshots ==
 
-1. Settings – Beruang → Settings in wp-admin.
-2. Transaction form with calculator and category management.
+1. Settings.
+2. Screenshot.
 
 == Frequently Asked Questions ==
 
 = Where are the plugin settings? =
 
-Go to **Beruang → Settings** in your WordPress admin. Configure currency, decimal separators, PWA, and more.
+Go to **Beruang > Settings** in your WordPress admin. Configure currency, decimal separators, PWA, and more.
 
 = How do I use the plugin? =
 
