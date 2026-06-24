@@ -127,10 +127,10 @@ class Wallets_List_Table extends \WP_List_Table {
 				$orderby = $col;
 			}
 		}
-		if ( ! empty( $_GET['order'] ) && 'ASC' === strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) {
-			$order = 'ASC';
-		} else {
+		if ( ! empty( $_GET['order'] ) && 'DESC' === strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) {
 			$order = 'DESC';
+		} else {
+			$order = 'ASC';
 		}
 
 		$order_sql = sanitize_sql_orderby( $orderby . ' ' . $order . ', id ASC' );

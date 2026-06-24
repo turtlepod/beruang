@@ -19,17 +19,22 @@
 | `BERUANG_PLUGIN_FILE` | beruang.php | Main plugin file path |
 | `BERUANG_PLUGIN_DIR` | beruang.php | Plugin dir (trailing slash) |
 | `BERUANG_PLUGIN_URL` | beruang.php | Plugin URL |
-| `ADMIN_SLUG` | includes/admin.php | `'beruang'` |
-| `ADMIN_CAPABILITY` | includes/admin.php | `'manage_options'` |
-| `DB::DB_VERSION` | class-beruang-db.php | Schema version (4) |
+|| `ADMIN_SLUG` | includes/admin.php | `'beruang'` |
+|| `ADMIN_CAPABILITY` | includes/admin.php | `'manage_options'` |
+|| `THEME_SETTINGS_OPTION` | includes/admin.php | `'beruang_theme_settings'` |
+|| `THEME_SETTINGS_GROUP` | includes/admin.php | `'beruang_theme_settings_group'` |
+|| `THEME_ADMIN_SLUG` | includes/admin.php | `'beruang-theme-settings'` |
+|| `DB::DB_VERSION` | class-beruang-db.php | Schema version (4) |
 
 ## File Map
 
 ```
 beruang.php                    Entry; constants; loads core + WP-CLI
 includes/
-  core.php                     Bootstrap; activation; enqueue; print templates
+  core.php                     Bootstrap; activation; enqueue; print templates;
+                               use_logged_in_user_locale_on_frontend; theme dir ref
   class-beruang-db.php         DB schema + CRUD (Category, Wallet, Transaction, Budget)
+  class-beruang-import.php     JSON import handler
   icon-helpers.php             beruang_get_icons(), beruang_icon()
   seed.php                     seed_dummy_data($user_id, $tx_count)
   admin.php                    Admin UI, settings, list tables, admin_post_* handlers
@@ -81,6 +86,7 @@ All data is **per-user** (`user_id`). Default wallet stored in user meta: `berua
 | `[beruang-graph]` | templates/graph.php | Chart.js charts |
 | `[beruang-budget]` | templates/budget.php | Budget cards |
 | `[beruang-wallet]` | templates/wallet.php | Wallet CRUD |
+| `[beruang_install_button]` | includes/shortcodes.php | PWA install button/link |
 
 All require logged-in user. Frontend JS uses `window.beruangData` (restUrl, restNonce, i18n).
 
@@ -90,6 +96,7 @@ All require logged-in user. Frontend JS uses `window.beruangData` (restUrl, rest
 |------|----------|----------|
 | `plugins_loaded` | on_plugins_loaded, admin_setup | core.php, admin.php |
 | `init` | shortcodes_setup, manifest_register_rewrite | shortcodes.php, manifest.php |
+| `determine_locale` | use_logged_in_user_locale_on_frontend | core.php |
 | `wp_enqueue_scripts` | enqueue_front_scripts | core.php |
 | `wp_footer` | print_front_templates | core.php |
 | `rest_api_init` | rest_register_routes | rest.php |
@@ -111,6 +118,7 @@ All require logged-in user. Frontend JS uses `window.beruangData` (restUrl, rest
 
 - `beruang_currency`, `beruang_decimal_sep`, `beruang_thousands_sep`, `beruang_decimal_places`
 - `beruang_pwa_enabled`, `beruang_pwa_app_name`, `beruang_pwa_short_name`, `beruang_pwa_theme_color`
+- `beruang_theme_settings` (drawer content, account page ID — for Beruang Theme)
 - `beruang_db_version` (internal)
 
 ## Docs
@@ -119,11 +127,14 @@ Extended documentation lives in `docs/`:
 
 | File | Contents |
 |------|----------|
+| `docs/setup.md` | Step-by-step setup guide (pages, theme, settings, WP-CLI, import/export) |
+| `docs/api-endpoints.md` | Full REST API reference for all `beruang/v1` endpoints |
 | `docs/e2e-tests.md` | Playwright E2E test setup, configuration, coverage tables, CLI commands, bugs found |
 
 ## Build
 
 - `npm run build` → `dist/` (10up-toolkit)
+- For the companion theme: https://github.com/turtlepod/BeruangTheme
 - Entry: `beruang-front.js` → `dist/js/front.js`
 - Front scripts only load when `dist/` exists.
 - **Always run `npm run build` after changing any file. The project must build successfully before marking work as ready for review.**

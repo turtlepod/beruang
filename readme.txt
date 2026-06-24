@@ -1,9 +1,10 @@
 === Beruang Budget ===
 Contributors: turtlepod
-Tags: budget, finance, transactions, expense, income, personal finance
+Donate link: https://pandaplugin.com/donate/
+Tags: budget, finance, transactions, expense, income
 Requires at least: 6.0
-Tested up to: 6.9
-Stable tag: 0.4.0-beta
+Tested up to: 7.0
+Stable tag: 0.5.0
 Requires PHP: 8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -13,6 +14,8 @@ Track money, transactions, and budgets.
 == Description ==
 
 Beruang Budget is a WordPress plugin for per-user money, transaction, and budget tracking. All data is scoped by logged-in user. Use shortcodes on front-end pages to add transactions, view lists, display charts, and manage budgets.
+
+Visit [pandaplugin.com/beruang](https://pandaplugin.com/beruang/) for the companion theme and setup guide.
 
 = Features =
 
@@ -44,6 +47,8 @@ Use on pages where users are logged in:
 * `[beruang-list]` – Monthly transaction list in an accordion with filter
 * `[beruang-graph]` – Chart (by month or by category) with year selector
 * `[beruang-budget]` – List budgets with progress; add/edit budget modal
+* `[beruang-wallet]` – List and manage your wallets.
+* `[beruang_install_button]` – PWA install button/link (enable PWA in Settings first)
 
 == Resources ==
 
@@ -52,14 +57,44 @@ Font Awesome Free Icons
 * License: CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/
 * The plugin uses inline SVG paths derived from Font Awesome Free icons: xmark (close), calculator (calc), list-ul (list), filter (filter), file-circle-plus (add), pen-to-square (edit), trash-can (trash).
 
+== Upgrade Notice ==
+
+Maintenance update.
+
+== Screenshots ==
+
+1. Settings.
+2. Screenshot.
+
+== Frequently Asked Questions ==
+
+= Where are the plugin settings? =
+
+Go to **Beruang > Settings** in your WordPress admin. Configure currency, decimal separators, PWA, and more.
+
+= How do I use the plugin? =
+
+Add shortcodes to any page (users must be logged in): `[beruang-form]` for transactions, `[beruang-list]` to view them, `[beruang-budget]` for budgets, `[beruang-graph]` for charts, and `[beruang-wallet]` for wallets.
+
+= Where can I find more documentation? =
+
+Visit [pandaplugin.com](https://pandaplugin.com) for the companion theme, setup guide, and more.
+
 == Changelog ==
+
+= 0.5.0 =
+* Transfer wallet.
+* **Beruang Pro features absorbed:** `[beruang_install_button]` shortcode, user locale on frontend,
+  Beruang Theme available separately, Theme Settings admin page.
+* Various fixes.
 
 = 0.4.0-beta =
 * Several fixes
 * Wallet feature
 * Notes feature
-* Add Unit test
-* Add playwright test
+* Add unit tests
+* Add Playwright tests
+* Restructure CSS and HTML using component based approach.
 
 = 0.3.0-beta =
 * Refactored front-end CSS into component-based stylesheets and improved responsive rules.

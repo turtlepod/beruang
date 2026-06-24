@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-db.php';
+require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-import.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/icon-helpers.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/seed.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-transactions-list-table.php';
@@ -23,11 +24,14 @@ require_once BERUANG_PLUGIN_DIR . 'includes/rest.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/manifest.php';
 require_once BERUANG_PLUGIN_DIR . 'includes/shortcodes.php';
 
-register_activation_hook( BERUANG_PLUGIN_FILE, __NAMESPACE__ . '\on_activation' );
+register_activation_hook( BERUANG_PLUGIN_FILE, __NAMESPACE__ . '\\on_activation' );
 register_deactivation_hook( BERUANG_PLUGIN_FILE, 'flush_rewrite_rules' );
 
 // Bootstrap.
-add_action( 'plugins_loaded', __NAMESPACE__ . '\on_plugins_loaded' );
+add_action( 'plugins_loaded', __NAMESPACE__ . '\\on_plugins_loaded' );
+
+// Use the logged-in user's locale for frontend requests.
+add_filter( 'determine_locale', __NAMESPACE__ . '\\use_logged_in_user_locale_on_frontend', 20 );
 
 /**
  * Fires on plugin activation: install DB tables and flush rewrite rules for manifest.
@@ -41,11 +45,37 @@ function on_activation() {
 /**
  * Fires on plugins_loaded: load text domain, register shortcodes, and hook actions.
  */
+/**
+ * Use the logged-in user's locale for frontend requests.
+ *
+ * WordPress applies user locale automatically in wp-admin, but not on
+ * regular frontend requests. This aligns frontend locale with the profile
+ * language setting.
+ *
+ * @param string $locale The currently determined locale.
+ * @return string
+ */
+function use_logged_in_user_locale_on_frontend( $locale ) {
+	if ( is_admin() || ! is_user_logged_in() ) {
+		return $locale;
+	}
+
+	$user_locale = get_user_locale();
+	return ! empty( $user_locale ) ? $user_locale : $locale;
+}
+
+/**
+ * Fires on plugins_loaded: load text domain, register shortcodes, and hook actions.
+ */
 function on_plugins_loaded() {
 	DB::maybe_upgrade();
 	load_plugin_textdomain( 'beruang', false, dirname( plugin_basename( BERUANG_PLUGIN_FILE ) ) . '/languages' );
-	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_front_scripts' );
+	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_front_scripts' );
 	manifest_setup();
+
+	// Bundled themes have been decoupled into a separate repo:
+	// https://github.com/turtlepod/BeruangTheme
+	// Install as a standalone WordPress theme.
 }
 
 /**
@@ -116,12 +146,12 @@ function enqueue_front_scripts() {
 			array(
 				'rest_url'       => get_rest_url( null, 'beruang/v1' ),
 				'rest_nonce'     => wp_create_nonce( 'wp_rest' ),
-				'currency'       => get_option( 'beruang_currency', 'IDR' ),
+				'currency'       => get_effective_currency(),
 				'date_format'    => get_option( 'date_format', 'F j, Y' ),
 				'locale'         => str_replace( '_', '-', get_locale() ),
-				'decimal_sep'    => get_option( 'beruang_decimal_sep', ',' ),
-				'thousands_sep'  => get_option( 'beruang_thousands_sep', '.' ),
-				'decimal_places' => (int) get_option( 'beruang_decimal_places', 2 ),
+				'decimal_sep'    => get_effective_decimal_sep(),
+				'thousands_sep'  => get_effective_thousands_sep(),
+				'decimal_places' => get_effective_decimal_places(),
 				'i18n'           => array(
 					'uncategorized'              => __( 'Uncategorized', 'beruang' ),
 					'no_wallet'                  => __( 'No Wallet', 'beruang' ),

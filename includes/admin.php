@@ -113,7 +113,7 @@ function admin_register_menu() {
 	add_submenu_page( ADMIN_SLUG, __( 'Transactions', 'beruang' ), __( 'Transactions', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-transactions', __NAMESPACE__ . '\admin_page_transactions' );
 	add_submenu_page( ADMIN_SLUG, __( 'Categories', 'beruang' ), __( 'Categories', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-categories', __NAMESPACE__ . '\admin_page_categories' );
 	add_submenu_page( ADMIN_SLUG, __( 'Budgets', 'beruang' ), __( 'Budgets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-budgets', __NAMESPACE__ . '\admin_page_budgets' );
-	add_submenu_page( ADMIN_SLUG, __( 'Wallets', 'beruang' ), __( 'Wallets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-wallets', __NAMESPACE__ . '\admin_page_wallets' );
+	add_submenu_page( ADMIN_SLUG, __( 'Wallets', 'beruang' ), __( 'Wallets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-wallets', __NAMESPACE__ . '\\admin_page_wallets' );
 }
 
 /**
@@ -288,7 +288,8 @@ function admin_page_settings() {
 				<tr>
 					<th scope="row"><label for="beruang_pwa_theme_color"><?php esc_html_e( 'Theme color', 'beruang' ); ?></label></th>
 					<td>
-						<input type="text" id="beruang_pwa_theme_color" name="beruang_pwa_theme_color" value="<?php echo esc_attr( $pwa_theme_color ); ?>" class="small-text" />
+						<input type="text" id="beruang_pwa_theme_color" name="beruang_pwa_theme_color" value="<?php echo esc_attr( $pwa_theme_color ); ?>" class="medium-text" />
+						<p class="description"><?php esc_html_e( 'Hex color code (e.g. #2271b1). Used for browser toolbar and PWA theme color.', 'beruang' ); ?></p>
 					</td>
 				</tr>
 			</table>
@@ -331,6 +332,16 @@ function admin_page_settings() {
 		<form method="post" enctype="multipart/form-data">
 			<?php wp_nonce_field( 'beruang_import' ); ?>
 			<p>
+				<label><?php esc_html_e( 'Import to user', 'beruang' ); ?>
+				<?php
+				wp_dropdown_users(
+					array(
+						'name'     => 'beruang_import_user_id',
+						'selected' => get_current_user_id(),
+					)
+				);
+				?>
+				</label>
 				<input type="file" name="beruang_import_file" accept=".json" />
 				<button type="submit" name="beruang_import" class="button"><?php esc_html_e( 'Import from JSON', 'beruang' ); ?></button>
 			</p>
@@ -450,15 +461,20 @@ function admin_handle_export_csv() {
 }
 
 /**
- * Import data from uploaded JSON file for current user.
+ * Import data from uploaded JSON file for a selected user.
  *
  * Handles categories (with ID mapping), transactions, and budgets.
+ * Reads beruang_import_user_id from POST; falls back to current user.
+ * Requires ADMIN_CAPABILITY.
  * Sets success or error via add_settings_error().
  */
 function admin_handle_import() {
-	$user_id = get_current_user_id();
+	$user_id = isset( $_POST['beruang_import_user_id'] ) ? absint( $_POST['beruang_import_user_id'] ) : 0;
 	if ( ! $user_id ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+		$user_id = get_current_user_id();
+	}
+	if ( ! $user_id || ! get_userdata( $user_id ) ) {
+		wp_die( esc_html__( 'Invalid user.', 'beruang' ) );
 	}
 	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- tmp_name validated by is_uploaded_file.
 	if ( ! isset( $_FILES['beruang_import_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['beruang_import_file']['tmp_name'] ) ) {
@@ -501,7 +517,11 @@ function admin_handle_import() {
 		}
 		$new_id = DB::save_wallet(
 			$user_id,
-			array( 'name' => $name ),
+			array(
+				'name'           => $name,
+				'initial_amount' => isset( $wallet['initial_amount'] ) ? (float) $wallet['initial_amount'] : 0.0,
+				'initial_date'   => isset( $wallet['initial_date'] ) ? sanitize_text_field( $wallet['initial_date'] ) : current_time( 'Y-m-d' ),
+			),
 			0
 		);
 		if ( $new_id && $old_id ) {
@@ -1233,3 +1253,4 @@ function admin_page_wallets() {
 	</div>
 	<?php
 }
+

@@ -2,13 +2,14 @@
 /**
  * Plugin Name: Beruang Budget
  * Description: Track money, transactions, and budgets.
- * Plugin URI: https://beruang.web.id/
- * Version: 0.4.0-beta
+ * Plugin URI: https://pandaplugin.com/beruang/
+ * Version: 0.5.0
  * Requires at least: 6.0
  * Requires PHP: 8.2
  * Author: David Chandra Purnama
- * Author URI: https://turtlepod.xyz/
+ * Author URI: https://turtlepod.xyz
  * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: beruang
  * Domain Path: /languages/
  *
@@ -23,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BERUANG_VERSION', '0.4.0-beta' );
+define( 'BERUANG_VERSION', '0.5.0' );
 define( 'BERUANG_PLUGIN_FILE', __FILE__ );
 define( 'BERUANG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BERUANG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

@@ -102,6 +102,16 @@ test.describe( '[beruang-budget]', () => {
 	} );
 
 	// -------------------------------------------------------------------
+	// Budget list loading
+	// -------------------------------------------------------------------
+
+	test( 'budget list finishes loading and removes the loading indicator', async ( { page } ) => {
+		await expect( page.locator( '#beruang-budget-list' ) ).not.toContainText( 'Loading…', {
+			timeout: 10_000,
+		} );
+	} );
+
+	// -------------------------------------------------------------------
 	// Integration: create a budget and verify it appears in the list
 	// -------------------------------------------------------------------
 
@@ -120,5 +130,108 @@ test.describe( '[beruang-budget]', () => {
 		await expect( page.locator( '#beruang-budget-list' ) ).toContainText( budgetName, {
 			timeout: 10_000,
 		} );
+	} );
+
+	test( 'creating a yearly budget shows it in the list', async ( { page } ) => {
+		const budgetName = `E2E Yearly Budget ${ Date.now() }`;
+
+		await page.locator( '.beruang-budget-add' ).click();
+		await page.locator( '#beruang-budget-name' ).fill( budgetName );
+		await page.locator( '#beruang-budget-target' ).fill( '1000000' );
+		await page.locator( 'select[name="type"]' ).selectOption( 'yearly' );
+		await page.locator( '.beruang-modal-save' ).click();
+
+		await expect( page.locator( '#beruang-budget-modal' ) ).toBeHidden( { timeout: 10_000 } );
+		await expect( page.locator( '#beruang-budget-list' ) ).toContainText( budgetName, {
+			timeout: 10_000,
+		} );
+	} );
+
+	test( 'edit button opens the budget modal pre-filled with the budget data', async ( { page } ) => {
+		const budgetName = `E2E Edit Budget ${ Date.now() }`;
+
+		// Create first.
+		await page.locator( '.beruang-budget-add' ).click();
+		await page.locator( '#beruang-budget-name' ).fill( budgetName );
+		await page.locator( '#beruang-budget-target' ).fill( '200000' );
+		await page.locator( '.beruang-modal-save' ).click();
+		await expect( page.locator( '#beruang-budget-modal' ) ).toBeHidden( { timeout: 10_000 } );
+		await expect( page.locator( '#beruang-budget-list' ) ).toContainText( budgetName, {
+			timeout: 10_000,
+		} );
+
+		// Click edit.
+		await page
+			.locator( '.beruang-budget-card', { hasText: budgetName } )
+			.locator( '.beruang-action-edit' )
+			.click();
+
+		await expect( page.locator( '#beruang-budget-modal' ) ).toBeVisible( { timeout: 5_000 } );
+		await expect( page.locator( '#beruang-budget-name' ) ).toHaveValue( budgetName );
+	} );
+
+	test( 'deleting a budget removes it from the list', async ( { page } ) => {
+		const budgetName = `E2E Delete Budget ${ Date.now() }`;
+
+		await page.locator( '.beruang-budget-add' ).click();
+		await page.locator( '#beruang-budget-name' ).fill( budgetName );
+		await page.locator( '#beruang-budget-target' ).fill( '300000' );
+		await page.locator( '.beruang-modal-save' ).click();
+		await expect( page.locator( '#beruang-budget-modal' ) ).toBeHidden( { timeout: 10_000 } );
+		await expect( page.locator( '#beruang-budget-list' ) ).toContainText( budgetName, {
+			timeout: 10_000,
+		} );
+
+		page.on( 'dialog', ( dialog ) => dialog.accept() );
+		const deletePromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/budgets/' ) &&
+				resp.request().method() === 'DELETE'
+		);
+		await page
+			.locator( '.beruang-budget-card', { hasText: budgetName } )
+			.locator( '.beruang-action-delete' )
+			.click();
+		await deletePromise;
+
+		await expect( page.locator( '#beruang-budget-list' ) ).not.toContainText( budgetName, {
+			timeout: 10_000,
+		} );
+	} );
+
+	// -------------------------------------------------------------------
+	// Filter: year and month
+	// -------------------------------------------------------------------
+
+	test( 'changing the month filter and applying reloads the budget list', async ( { page } ) => {
+		const currentMonth = new Date().getMonth() + 1;
+		const otherMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+
+		await page.locator( '.beruang-filter-btn' ).click();
+		await page.locator( '.beruang-filter-month' ).selectOption( String( otherMonth ) );
+		const reloadPromise = page.waitForResponse(
+			( resp ) => resp.url().includes( '/beruang/v1/budgets' )
+		);
+		await page.locator( '.beruang-filter-apply' ).click();
+		await reloadPromise;
+
+		await expect( page.locator( '#beruang-budget-list' ) ).not.toContainText( 'Loading…', {
+			timeout: 10_000,
+		} );
+	} );
+
+	test( 'filter reset restores current year and month', async ( { page } ) => {
+		const year = String( new Date().getFullYear() );
+		const month = String( new Date().getMonth() + 1 );
+
+		await page.locator( '.beruang-filter-btn' ).click();
+		await page.locator( '.beruang-filter-year' ).selectOption(
+			String( new Date().getFullYear() - 1 )
+		);
+		await page.locator( '.beruang-filter-month' ).selectOption( '1' );
+		await page.locator( '.beruang-filter-reset' ).click();
+
+		await expect( page.locator( '.beruang-filter-year' ) ).toHaveValue( year );
+		await expect( page.locator( '.beruang-filter-month' ) ).toHaveValue( month );
 	} );
 } );

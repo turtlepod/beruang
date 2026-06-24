@@ -147,4 +147,155 @@ test.describe( '[beruang-form]', () => {
 		const response = await responsePromise;
 		expect( response.status() ).toBe( 200 );
 	} );
+
+	test( 'submitting an income transaction returns HTTP 200', async ( { page } ) => {
+		const responsePromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/transactions' ) &&
+				resp.request().method() === 'POST'
+		);
+
+		await page.locator( '.beruang-type-btn' ).filter( { hasText: 'Income' } ).click();
+		await page.locator( '#beruang-description' ).fill( 'E2E test income' );
+		await page.locator( '#beruang-amount' ).fill( '50000' );
+		await page.locator( '#beruang-transaction-form button[type="submit"]' ).click();
+
+		const response = await responsePromise;
+		const body = await response.json();
+		expect( response.status() ).toBe( 200 );
+		expect( body.success ).toBe( true );
+	} );
+
+	test( 'form description and amount clear after successful submission', async ( { page } ) => {
+		const responsePromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/transactions' ) &&
+				resp.request().method() === 'POST'
+		);
+
+		await page.locator( '#beruang-description' ).fill( 'E2E reset test' );
+		await page.locator( '#beruang-amount' ).fill( '1234' );
+		await page.locator( '#beruang-transaction-form button[type="submit"]' ).click();
+		await responsePromise;
+
+		// After save the form should reset.
+		await expect( page.locator( '#beruang-description' ) ).toHaveValue( '', { timeout: 5_000 } );
+		await expect( page.locator( '#beruang-amount' ) ).toHaveValue( '', { timeout: 5_000 } );
+	} );
+
+	// -------------------------------------------------------------------
+	// Calculator integration
+	// -------------------------------------------------------------------
+
+	test( 'calculator buttons populate the display', async ( { page } ) => {
+		await page.locator( '.beruang-calc-btn' ).click();
+		// Calculator buttons are rendered dynamically by JS; click digit buttons.
+		await page.locator( '.beruang-calc-buttons button' ).filter( { hasText: '1' } ).first().click();
+		await page.locator( '.beruang-calc-buttons button' ).filter( { hasText: '5' } ).first().click();
+		await page.locator( '.beruang-calc-buttons button' ).filter( { hasText: '0' } ).first().click();
+		await expect( page.locator( '.beruang-calc-display' ) ).toHaveValue( '150' );
+	} );
+
+	test( '"Insert & Close" applies calculator result to the amount field', async ( { page } ) => {
+		await page.locator( '.beruang-calc-btn' ).click();
+		await page.locator( '.beruang-calc-buttons button' ).filter( { hasText: '2' } ).first().click();
+		await page.locator( '.beruang-calc-buttons button' ).filter( { hasText: '5' } ).first().click();
+		await page.locator( '.beruang-calc-insert-close' ).click();
+		await expect( page.locator( '#beruang-calc-modal' ) ).toBeHidden();
+		await expect( page.locator( '#beruang-amount' ) ).toHaveValue( '25' );
+	} );
+
+	test( 'calculator clear button resets display to zero', async ( { page } ) => {
+		await page.locator( '.beruang-calc-btn' ).click();
+		await page.locator( '.beruang-calc-buttons button' ).filter( { hasText: '9' } ).first().click();
+		await page.locator( '.beruang-calc-clear' ).click();
+		await expect( page.locator( '.beruang-calc-display' ) ).toHaveValue( '0' );
+	} );
+
+	// -------------------------------------------------------------------
+	// Note modal integration
+	// -------------------------------------------------------------------
+
+	test( 'note text saved in modal syncs to the hidden note textarea', async ( { page } ) => {
+		const noteText = 'E2E note content';
+		await page.locator( '.beruang-note-btn' ).first().click();
+		await page.locator( '#beruang-note-modal-text' ).fill( noteText );
+		await page.locator( '.beruang-note-save' ).click();
+		await expect( page.locator( '#beruang-note-modal' ) ).toBeHidden();
+		// The hidden textarea in the form should now carry the note value.
+		const noteValue = await page.locator( '#beruang-note' ).inputValue();
+		expect( noteValue ).toBe( noteText );
+	} );
+
+	test( 'reopening note modal shows previously saved text', async ( { page } ) => {
+		const noteText = 'E2E note reopen';
+		await page.locator( '.beruang-note-btn' ).first().click();
+		await page.locator( '#beruang-note-modal-text' ).fill( noteText );
+		await page.locator( '.beruang-note-save' ).click();
+
+		// Open again and verify text is preserved.
+		await page.locator( '.beruang-note-btn' ).first().click();
+		await expect( page.locator( '#beruang-note-modal-text' ) ).toHaveValue( noteText );
+	} );
+
+	// -------------------------------------------------------------------
+	// Category CRUD in modal
+	// -------------------------------------------------------------------
+
+	test( 'adding a category in the modal causes it to appear in the form select', async ( { page } ) => {
+		const catName = `E2E Cat ${ Date.now() }`;
+
+		await page.locator( '.beruang-manage-categories-btn' ).first().click();
+		await expect( page.locator( '#beruang-categories-modal' ) ).toBeVisible();
+
+		// Wait for the categories list to finish loading.
+		await expect( page.locator( '.beruang-cat-loading' ) ).toBeHidden( { timeout: 10_000 } );
+
+		const saveResponsePromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/categories' ) &&
+				resp.request().method() === 'POST'
+		);
+		await page.locator( '#beruang-cat-name' ).fill( catName );
+		await page.locator( '.beruang-cat-submit-add' ).click();
+		await saveResponsePromise;
+
+		// Close the modal; the new category should appear in the form's category select.
+		await page.locator( '.beruang-categories-modal-close' ).click();
+		await expect(
+			page.locator( '#beruang-category option', { hasText: catName } )
+		).toBeAttached( { timeout: 10_000 } );
+	} );
+
+	test( 'deleting a category removes it from the categories list', async ( { page } ) => {
+		const catName = `E2E Del Cat ${ Date.now() }`;
+
+		// Create the category first.
+		await page.locator( '.beruang-manage-categories-btn' ).first().click();
+		await expect( page.locator( '.beruang-cat-loading' ) ).toBeHidden( { timeout: 10_000 } );
+		const saveResponsePromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/categories' ) &&
+				resp.request().method() === 'POST'
+		);
+		await page.locator( '#beruang-cat-name' ).fill( catName );
+		await page.locator( '.beruang-cat-submit-add' ).click();
+		await saveResponsePromise;
+
+		// Delete the newly created category.
+		page.on( 'dialog', ( dialog ) => dialog.accept() );
+		const deleteResponsePromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/categories/' ) &&
+				resp.request().method() === 'DELETE'
+		);
+		await page.locator( '#beruang-categories-list li', { hasText: catName } )
+			.locator( '.beruang-action-delete' )
+			.click();
+		await deleteResponsePromise;
+
+		await expect(
+			page.locator( '#beruang-categories-list li', { hasText: catName } )
+		).toBeHidden( { timeout: 10_000 } );
+	} );
 } );

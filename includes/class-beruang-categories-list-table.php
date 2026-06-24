@@ -30,6 +30,13 @@ class Categories_List_Table extends \WP_List_Table {
 	protected $user_filter = 0;
 
 	/**
+	 * Cached flat categories keyed by ID (for depth indent), loaded once in prepare_items().
+	 *
+	 * @var array<int, array>|null
+	 */
+	protected $flat_categories_cache = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param int $user_filter Optional user ID to filter by. 0 for all users.
@@ -157,6 +164,15 @@ class Categories_List_Table extends \WP_List_Table {
 		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
 		$this->items = is_array( $items ) ? $items : array();
+
+		// Pre-load flat categories once for depth-indent computation in column_name().
+		if ( $this->user_filter > 0 ) {
+			$flat                        = DB::get_categories_flat( $this->user_filter, true );
+			$this->flat_categories_cache = array();
+			foreach ( $flat as $c ) {
+				$this->flat_categories_cache[ (int) $c['id'] ] = $c;
+			}
+		}
 		$this->set_pagination_args(
 			array(
 				'total_items' => $total,
@@ -174,17 +190,12 @@ class Categories_List_Table extends \WP_List_Table {
 	 */
 	protected function column_name( $item ) {
 		$name = ! empty( $item['name'] ) ? esc_html( $item['name'] ) : '—';
-		if ( $this->user_filter > 0 ) {
-			$flat  = DB::get_categories_flat( $this->user_filter, true );
-			$by_id = array();
-			foreach ( $flat as $c ) {
-				$by_id[ (int) $c['id'] ] = $c;
-			}
+		if ( $this->user_filter > 0 && is_array( $this->flat_categories_cache ) ) {
 			$depth = 0;
 			$pid   = (int) $item['parent_id'];
-			while ( $pid > 0 && isset( $by_id[ $pid ] ) ) {
+			while ( $pid > 0 && isset( $this->flat_categories_cache[ $pid ] ) ) {
 				++$depth;
-				$pid = (int) $by_id[ $pid ]['parent_id'];
+				$pid = (int) $this->flat_categories_cache[ $pid ]['parent_id'];
 			}
 			$indent = str_repeat( '— ', $depth );
 			$name   = esc_html( $indent . $item['name'] );

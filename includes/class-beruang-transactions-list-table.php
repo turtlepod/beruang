@@ -238,7 +238,7 @@ class Transactions_List_Table extends \WP_List_Table {
 			case 'category_id':
 				return (string) $item['category_id'];
 			case 'amount':
-				$amount = number_format( (float) $item['amount'], '.' === $dec ? 2 : 0, $dec, $thou );
+				$amount = number_format( (float) $item['amount'], (int) get_option( 'beruang_decimal_places', 2 ), $dec, $thou );
 				return esc_html( $amount . ' ' . $currency );
 			case 'type':
 				return esc_html( $item['type'] );

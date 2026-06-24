@@ -2,7 +2,10 @@ import { execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 
-const WP_PATH = process.env.WP_PATH ?? '/Users/davidchandra/Sites/beruang/app/public';
+const WP_PATH = process.env.WP_PATH;
+if ( ! WP_PATH ) {
+	throw new Error( 'WP_PATH environment variable is required. Set it to the absolute path of your WordPress install.' );
+}
 const PAGES_FILE = join( __dirname, '.test-pages.json' );
 
 function wp( cmd: string ): string {

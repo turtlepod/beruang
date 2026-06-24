@@ -9,6 +9,7 @@
  * @var array  $categories  Flat categories from DB.
  * @var array  $wallets     Wallets from DB.
  * @var int    $default_wallet_id Default wallet ID.
+ * @var int    $decimal_places    Number of decimal places.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,6 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			'categories'        => $categories,
 			'wallets'           => $wallets,
 			'default_wallet_id' => $default_wallet_id,
+			'decimal_places'    => $decimal_places,
 		)
 	);
 	?>

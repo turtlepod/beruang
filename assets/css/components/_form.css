@@ -53,6 +53,14 @@
 		height: var(--br-control-height);
 	}
 
+	& .beruang-form-row .beruang-datetime-wrap input[type="date"] {
+		background: var(--br-bg) var(--br-calendar-icon) no-repeat right 0.5em center / 1em 1em !important;
+	}
+
+	& .beruang-form-row .beruang-datetime-wrap input[type="time"] {
+		background: var(--br-bg) var(--br-clock-icon) no-repeat right 0.5em center / 1em 1em !important;
+	}
+
 	& .beruang-form-row textarea {
 		min-height: 6.5em;
 		resize: vertical;

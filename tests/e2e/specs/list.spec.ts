@@ -81,6 +81,32 @@ test.describe( '[beruang-list]', () => {
 		await expect( page.locator( '.beruang-filter-reset' ) ).toBeVisible();
 	} );
 
+	test( 'filter panel has wallet filter with "All wallets" and "No wallet" options', async ( { page } ) => {
+		await page.locator( '.beruang-filter-btn' ).click();
+		await expect(
+			page.locator( '.beruang-filter-wallet option[value=""]' )
+		).toHaveText( 'All wallets' );
+		await expect(
+			page.locator( '.beruang-filter-wallet option[value="0"]' )
+		).toHaveText( 'No wallet' );
+	} );
+
+	test( 'filter reset clears the search input', async ( { page } ) => {
+		await page.locator( '.beruang-filter-btn' ).click();
+		await page.locator( '.beruang-filter-search' ).fill( 'some search text' );
+		await page.locator( '.beruang-filter-reset' ).click();
+		await expect( page.locator( '.beruang-filter-search' ) ).toHaveValue( '' );
+	} );
+
+	test( 'filter reset restores year to current year', async ( { page } ) => {
+		const year = String( new Date().getFullYear() );
+		const prevYear = String( new Date().getFullYear() - 1 );
+		await page.locator( '.beruang-filter-btn' ).click();
+		await page.locator( '.beruang-filter-year' ).selectOption( prevYear );
+		await page.locator( '.beruang-filter-reset' ).click();
+		await expect( page.locator( '.beruang-filter-year' ) ).toHaveValue( year );
+	} );
+
 	// -------------------------------------------------------------------
 	// Edit modal
 	// -------------------------------------------------------------------
@@ -96,6 +122,163 @@ test.describe( '[beruang-list]', () => {
 	test( 'loading indicator text changes after transactions are fetched', async ( { page } ) => {
 		// The JS replaces "Loading…" with actual rows or "No transactions." once the REST call returns.
 		await expect( page.locator( '#beruang-list-accordion' ) ).not.toContainText( 'Loading…', {
+			timeout: 10_000,
+		} );
+	} );
+
+	// -------------------------------------------------------------------
+	// Search filter
+	// -------------------------------------------------------------------
+
+	test( 'search filter shows only matching transactions', async ( { page, urls } ) => {
+		const description = `E2E search ${ Date.now() }`;
+
+		// Create a transaction first.
+		await page.goto( urls.form );
+		const postPromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/transactions' ) &&
+				resp.request().method() === 'POST'
+		);
+		await page.locator( '#beruang-description' ).fill( description );
+		await page.locator( '#beruang-amount' ).fill( '1000' );
+		await page.locator( '#beruang-transaction-form button[type="submit"]' ).click();
+		await postPromise;
+
+		// Navigate to list, search, apply.
+		await page.goto( urls.list );
+		await expect( page.locator( '#beruang-list-accordion' ) ).not.toContainText( 'Loading…', {
+			timeout: 10_000,
+		} );
+		await page.locator( '.beruang-filter-btn' ).click();
+		await page.locator( '.beruang-filter-search' ).fill( description );
+		const searchPromise = page.waitForResponse(
+			( resp ) => resp.url().includes( '/beruang/v1/transactions' )
+		);
+		await page.locator( '.beruang-filter-apply' ).click();
+		await searchPromise;
+
+		await expect( page.locator( '#beruang-list-accordion' ) ).toContainText( description, {
+			timeout: 10_000,
+		} );
+	} );
+
+	// -------------------------------------------------------------------
+	// Edit transaction modal
+	// -------------------------------------------------------------------
+
+	test( 'clicking edit on a transaction opens the edit modal pre-filled', async ( { page, urls } ) => {
+		const description = `E2E edit modal ${ Date.now() }`;
+
+		// Create via form.
+		await page.goto( urls.form );
+		const postPromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/transactions' ) &&
+				resp.request().method() === 'POST'
+		);
+		await page.locator( '#beruang-description' ).fill( description );
+		await page.locator( '#beruang-amount' ).fill( '2000' );
+		await page.locator( '#beruang-transaction-form button[type="submit"]' ).click();
+		await postPromise;
+
+		// Open list and find the row.
+		await page.goto( urls.list );
+		await expect( page.locator( '#beruang-list-accordion' ) ).toContainText( description, {
+			timeout: 10_000,
+		} );
+
+		// Click the edit button for that transaction row.
+		await page
+			.locator( '.beruang-transaction-item', { hasText: description } )
+			.locator( '.beruang-action-edit' )
+			.click();
+
+		await expect( page.locator( '#beruang-edit-tx-modal' ) ).toBeVisible( { timeout: 5_000 } );
+		await expect( page.locator( '#beruang-edit-tx-description' ) ).toHaveValue( description );
+	} );
+
+	test( 'saving an edited transaction updates it in the list', async ( { page, urls } ) => {
+		const original = `E2E orig ${ Date.now() }`;
+		const updated = `E2E updated ${ Date.now() }`;
+
+		// Create via form.
+		await page.goto( urls.form );
+		const postPromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/transactions' ) &&
+				resp.request().method() === 'POST'
+		);
+		await page.locator( '#beruang-description' ).fill( original );
+		await page.locator( '#beruang-amount' ).fill( '3000' );
+		await page.locator( '#beruang-transaction-form button[type="submit"]' ).click();
+		await postPromise;
+
+		// Open list, open edit modal.
+		await page.goto( urls.list );
+		await expect( page.locator( '#beruang-list-accordion' ) ).toContainText( original, {
+			timeout: 10_000,
+		} );
+		await page
+			.locator( '.beruang-transaction-item', { hasText: original } )
+			.locator( '.beruang-action-edit' )
+			.click();
+		await expect( page.locator( '#beruang-edit-tx-modal' ) ).toBeVisible( { timeout: 5_000 } );
+
+		// Update description and save.
+		await page.locator( '#beruang-edit-tx-description' ).fill( updated );
+		const putPromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/transactions/' ) &&
+				resp.request().method() === 'PUT'
+		);
+		await page.locator( '#beruang-edit-tx-form button[type="submit"]' ).click();
+		await putPromise;
+
+		await expect( page.locator( '#beruang-edit-tx-modal' ) ).toBeHidden( { timeout: 5_000 } );
+		await expect( page.locator( '#beruang-list-accordion' ) ).toContainText( updated, {
+			timeout: 10_000,
+		} );
+	} );
+
+	// -------------------------------------------------------------------
+	// Delete transaction
+	// -------------------------------------------------------------------
+
+	test( 'deleting a transaction removes it from the list', async ( { page, urls } ) => {
+		const description = `E2E delete tx ${ Date.now() }`;
+
+		// Create via form.
+		await page.goto( urls.form );
+		const postPromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/transactions' ) &&
+				resp.request().method() === 'POST'
+		);
+		await page.locator( '#beruang-description' ).fill( description );
+		await page.locator( '#beruang-amount' ).fill( '500' );
+		await page.locator( '#beruang-transaction-form button[type="submit"]' ).click();
+		await postPromise;
+
+		// Open list and delete.
+		await page.goto( urls.list );
+		await expect( page.locator( '#beruang-list-accordion' ) ).toContainText( description, {
+			timeout: 10_000,
+		} );
+
+		page.on( 'dialog', ( dialog ) => dialog.accept() );
+		const deletePromise = page.waitForResponse(
+			( resp ) =>
+				resp.url().includes( '/beruang/v1/transactions/' ) &&
+				resp.request().method() === 'DELETE'
+		);
+		await page
+			.locator( '.beruang-transaction-item', { hasText: description } )
+			.locator( '.beruang-action-delete' )
+			.click();
+		await deletePromise;
+
+		await expect( page.locator( '#beruang-list-accordion' ) ).not.toContainText( description, {
 			timeout: 10_000,
 		} );
 	} );

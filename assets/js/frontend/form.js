@@ -9,6 +9,8 @@
 import { i18n, getDecimalPlaces, editIcon, deleteIcon } from './config.js';
 import { request, beruangTemplate, setFormLoading } from './utils.js';
 
+var lastDateTimeReset = Date.now();
+
 function setCurrentDateTime( form ) {
 	const dateInput = form.querySelector( '[name="date"]' );
 	const timeInput = form.querySelector( '[name="time"]' );
@@ -19,6 +21,7 @@ function setCurrentDateTime( form ) {
 		String( now.getDate() ).padStart( 2, '0' );
 	timeInput.value = String( now.getHours() ).padStart( 2, '0' ) + ':' +
 		String( now.getMinutes() ).padStart( 2, '0' );
+	lastDateTimeReset = Date.now();
 }
 
 function syncNoteUi( form ) {
@@ -488,9 +491,18 @@ export function initForm() {
 		let currentSuggestions = [];
 		let activeIndex = -1;
 
+		const listId = 'beruang-desc-suggestions-' + Math.random().toString( 36 ).slice( 2 );
+
 		const list = document.createElement( 'ul' );
 		list.className = 'beruang-desc-suggestions';
+		list.setAttribute( 'role', 'listbox' );
+		list.id = listId;
 		list.hidden = true;
+
+		input.setAttribute( 'role', 'combobox' );
+		input.setAttribute( 'aria-autocomplete', 'list' );
+		input.setAttribute( 'aria-expanded', 'false' );
+		input.setAttribute( 'aria-controls', listId );
 
 		const wrapper = document.createElement( 'div' );
 		wrapper.className = 'beruang-desc-autocomplete-wrap';
@@ -503,18 +515,24 @@ export function initForm() {
 			list.innerHTML = '';
 			currentSuggestions = [];
 			activeIndex = -1;
+			input.setAttribute( 'aria-expanded', 'false' );
+			input.removeAttribute( 'aria-activedescendant' );
 		}
 
 		function setActive( idx ) {
 			const items = list.querySelectorAll( '.beruang-desc-suggestion-item' );
 			items.forEach( function ( item ) {
 				item.classList.remove( 'is-active' );
+				item.setAttribute( 'aria-selected', 'false' );
 			} );
 			if ( idx >= 0 && idx < items.length ) {
 				items[ idx ].classList.add( 'is-active' );
+				items[ idx ].setAttribute( 'aria-selected', 'true' );
+				input.setAttribute( 'aria-activedescendant', items[ idx ].id );
 				activeIndex = idx;
 			} else {
 				activeIndex = -1;
+				input.removeAttribute( 'aria-activedescendant' );
 			}
 		}
 
@@ -524,9 +542,12 @@ export function initForm() {
 				closeSuggestions();
 				return;
 			}
-			suggestions.forEach( function ( text ) {
+			suggestions.forEach( function ( text, i ) {
 				const li = document.createElement( 'li' );
 				li.className = 'beruang-desc-suggestion-item';
+				li.setAttribute( 'role', 'option' );
+				li.setAttribute( 'aria-selected', 'false' );
+				li.id = listId + '-option-' + i;
 				li.textContent = text;
 				li.addEventListener( 'mousedown', function ( e ) {
 					e.preventDefault();
@@ -536,6 +557,7 @@ export function initForm() {
 				list.appendChild( li );
 			} );
 			list.hidden = false;
+			input.setAttribute( 'aria-expanded', 'true' );
 			activeIndex = -1;
 		}
 
@@ -656,6 +678,14 @@ export function initForm() {
 			} ).finally( function () {
 				setFormLoading( form, false );
 			} );
+		} );
+	} );
+
+	// Refresh date/time on add-mode forms when tab becomes visible (only if stale > 10s).
+	document.addEventListener( 'visibilitychange', function () {
+		if ( document.hidden || Date.now() - lastDateTimeReset <= 10000 ) return;
+		document.querySelectorAll( '.beruang-transaction-form[data-mode="add"]' ).forEach( function ( f ) {
+			setCurrentDateTime( f );
 		} );
 	} );
 
