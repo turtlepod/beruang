@@ -43,6 +43,11 @@ msgstr "David Chandra Purnama"
 msgid "https://pandaplugin.com/"
 msgstr "https://pandaplugin.com/"
 
+#. Author URI of the plugin
+#: beruang.php
+msgid "https://turtlepod.xyz"
+msgstr "https://turtlepod.xyz"
+
 #. translators: %s: npm build command
 #: includes/admin.php:61
 #, php-format
@@ -143,6 +148,10 @@ msgstr "Ditampilkan di layar utama saat ruang terbatas (maks 12 karakter). Koson
 msgid "Theme color"
 msgstr "Warna tema"
 
+#: includes/admin.php:292
+msgid "Hex color code (e.g. #2271b1). Used for browser toolbar and PWA theme color."
+msgstr "Kode warna heksadesimal (misal: #2271b1). Digunakan untuk warna toolbar browser dan tema PWA."
+
 #: includes/admin.php:298
 msgid "Export / Import"
 msgstr "Ekspor / Impor"
@@ -159,6 +168,10 @@ msgstr "Ekspor data (JSON)"
 #: includes/admin.php:328
 msgid "Export transactions (CSV)"
 msgstr "Ekspor transaksi (CSV)"
+
+#: includes/admin.php:335
+msgid "Import to user"
+msgstr "Impor ke pengguna"
 
 #: includes/admin.php:335
 msgid "Import from JSON"
@@ -182,6 +195,10 @@ msgstr "Tidak diizinkan."
 #: templates/wallet.php:28
 msgid "No Wallet"
 msgstr "Tanpa Dompet"
+
+#: includes/admin.php:477
+msgid "Invalid user."
+msgstr "Pengguna tidak valid."
 
 #: includes/admin.php:465
 msgid "Invalid file upload."
@@ -712,6 +729,10 @@ msgstr "Silakan masuk untuk melihat anggaran."
 #: includes/shortcodes.php:212
 msgid "Please log in to manage wallets."
 msgstr "Silakan masuk untuk mengelola dompet."
+
+#: includes/shortcodes.php:301
+msgid "Install App"
+msgstr "Instal Aplikasi"
 
 #: templates/budget.php:25
 #: templates/list.php:26
