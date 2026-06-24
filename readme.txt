@@ -1,6 +1,6 @@
 === Beruang Budget ===
 Contributors: turtlepod
-Tags: budget, finance, transactions, expense, income, personal finance
+Tags: budget, finance, transactions, expense, income
 Requires at least: 6.0
 Tested up to: 6.9
 Stable tag: 0.5.0-beta
