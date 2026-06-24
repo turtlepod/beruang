@@ -4,7 +4,7 @@ Donate link: https://pandaplugin.com/donate/
 Tags: budget, finance, transactions, expense, income
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 0.5.0-beta
+Stable tag: 0.5.0
 Requires PHP: 8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -82,7 +82,7 @@ Visit [pandaplugin.com](https://pandaplugin.com) for the companion theme, setup 
 
 == Changelog ==
 
-= 0.5.0-beta =
+= 0.5.0 =
 * Transfer wallet.
 * **Beruang Pro features absorbed:** `[beruang_install_button]` shortcode, user locale on frontend,
   Beruang Theme available separately, Theme Settings admin page.
