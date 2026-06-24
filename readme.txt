@@ -1,5 +1,6 @@
 === Beruang Budget ===
 Contributors: turtlepod
+Donate link: https://pandaplugin.com/donate/
 Tags: budget, finance, transactions, expense, income
 Requires at least: 6.0
 Tested up to: 6.9
@@ -55,6 +56,30 @@ Font Awesome Free Icons
 * Icons: https://fontawesome.com/icons
 * License: CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/
 * The plugin uses inline SVG paths derived from Font Awesome Free icons: xmark (close), calculator (calc), list-ul (list), filter (filter), file-circle-plus (add), pen-to-square (edit), trash-can (trash).
+
+== Upgrade Notice ==
+
+= 0.5.0-beta =
+Maintenance update.
+
+== Screenshots ==
+
+1. Settings – Beruang → Settings in wp-admin.
+2. Transaction form with calculator and category management.
+
+== Frequently Asked Questions ==
+
+= Where are the plugin settings? =
+
+Go to **Beruang → Settings** in your WordPress admin. Configure currency, decimal separators, PWA, and more.
+
+= How do I use the plugin? =
+
+Add shortcodes to any page (users must be logged in): `[beruang-form]` for transactions, `[beruang-list]` to view them, `[beruang-budget]` for budgets, `[beruang-graph]` for charts, and `[beruang-wallet]` for wallets.
+
+= Where can I find more documentation? =
+
+Visit [pandaplugin.com](https://pandaplugin.com) for the companion theme, setup guide, and more.
 
 == Changelog ==
 
