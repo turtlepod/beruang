@@ -9,6 +9,8 @@
 import { i18n, getDecimalPlaces, editIcon, deleteIcon } from './config.js';
 import { request, beruangTemplate, setFormLoading } from './utils.js';
 
+var lastDateTimeReset = Date.now();
+
 function setCurrentDateTime( form ) {
 	const dateInput = form.querySelector( '[name="date"]' );
 	const timeInput = form.querySelector( '[name="time"]' );
@@ -19,6 +21,7 @@ function setCurrentDateTime( form ) {
 		String( now.getDate() ).padStart( 2, '0' );
 	timeInput.value = String( now.getHours() ).padStart( 2, '0' ) + ':' +
 		String( now.getMinutes() ).padStart( 2, '0' );
+	lastDateTimeReset = Date.now();
 }
 
 function syncNoteUi( form ) {
@@ -675,6 +678,14 @@ export function initForm() {
 			} ).finally( function () {
 				setFormLoading( form, false );
 			} );
+		} );
+	} );
+
+	// Refresh date/time on add-mode forms when tab becomes visible (only if stale > 10s).
+	document.addEventListener( 'visibilitychange', function () {
+		if ( document.hidden || Date.now() - lastDateTimeReset <= 10000 ) return;
+		document.querySelectorAll( '.beruang-transaction-form[data-mode="add"]' ).forEach( function ( f ) {
+			setCurrentDateTime( f );
 		} );
 	} );
 
