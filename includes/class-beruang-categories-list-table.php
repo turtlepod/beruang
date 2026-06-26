@@ -5,7 +5,7 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 // phpcs:disable WordPress.Security.NonceVerification.Recommended -- GET for sorting/filtering in admin list.
 

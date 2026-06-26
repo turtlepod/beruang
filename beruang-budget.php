@@ -18,20 +18,20 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BERUANG_VERSION', '0.5.0' );
-define( 'BERUANG_PLUGIN_FILE', __FILE__ );
-define( 'BERUANG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'BERUANG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'BERUANG_BUDGET_VERSION', '0.5.0' );
+define( 'BERUANG_BUDGET_PLUGIN_FILE', __FILE__ );
+define( 'BERUANG_BUDGET_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'BERUANG_BUDGET_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
-require_once BERUANG_PLUGIN_DIR . 'includes/core.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/core.php';
 
 if ( defined( 'WP_CLI' ) && \WP_CLI ) {
-	require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-cli.php';
+	require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-cli.php';
 	\WP_CLI::add_command( 'beruang', CLI::class );
 }

@@ -5,7 +5,7 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -95,7 +95,7 @@ function get_effective_decimal_places( $user_id = 0 ) {
  * @return void
  */
 function shortcode_load_template( $name, $args = array() ) {
-	$path = BERUANG_PLUGIN_DIR . 'templates/' . $name;
+	$path = BERUANG_BUDGET_PLUGIN_DIR . 'templates/' . $name;
 	if ( ! file_exists( $path ) ) {
 		return;
 	}

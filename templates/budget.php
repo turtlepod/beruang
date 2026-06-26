@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="beruang-budget-header">
 		<h2 class="beruang-section-title"><?php esc_html_e( 'Budgets', 'beruang' ); ?></h2>
 		<div class="beruang-budget-header-actions">
-			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-budget-add" title="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-filter-btn" title="<?php esc_attr_e( 'Filter', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'filter', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-budget-add" title="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add budget', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-filter-btn" title="<?php esc_attr_e( 'Filter', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'filter', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		</div>
 	</div>
 	<div class="beruang-filters beruang-budget-filters" id="beruang-budget-filters" hidden>
@@ -61,7 +61,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div class="beruang-budget-modal beruang-modal" id="beruang-budget-modal" hidden>
 		<div class="beruang-modal-dialog">
-			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 			<div class="beruang-modal-inner beruang-budget-modal-inner">
 			<h4><?php esc_html_e( 'Add / Edit budget', 'beruang' ); ?></h4>
 			<form id="beruang-budget-form">

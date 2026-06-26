@@ -5,16 +5,16 @@
  * @package Beruang
  */
 
-namespace Beruang\Tests\Unit;
+namespace BeruangBudget\Tests\Unit;
 
-use Beruang\DB;
+use BeruangBudget\DB;
 use ReflectionMethod;
 use ReflectionProperty;
 use stdClass;
 use WP_Mock\Tools\TestCase;
 
 /**
- * Tests for Beruang\DB.
+ * Tests for BeruangBudget\DB.
  *
  * Covers:
  *  - Table-name helpers (table_category, table_wallet, etc.)
@@ -75,7 +75,7 @@ class DBTest extends TestCase {
 	// -----------------------------------------------------------------------
 
 	/**
-	 * @covers \Beruang\DB::table_category
+	 * @covers \BeruangBudget\DB::table_category
 	 */
 	public function test_table_category_uses_wpdb_prefix(): void {
 		$this->setUpWpdb( 'wp_' );
@@ -83,7 +83,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::table_wallet
+	 * @covers \BeruangBudget\DB::table_wallet
 	 */
 	public function test_table_wallet_uses_wpdb_prefix(): void {
 		$this->setUpWpdb( 'mysite_' );
@@ -91,7 +91,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::table_transaction
+	 * @covers \BeruangBudget\DB::table_transaction
 	 */
 	public function test_table_transaction_uses_wpdb_prefix(): void {
 		$this->setUpWpdb( 'wp_' );
@@ -99,7 +99,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::table_budget
+	 * @covers \BeruangBudget\DB::table_budget
 	 */
 	public function test_table_budget_uses_wpdb_prefix(): void {
 		$this->setUpWpdb( 'wp_' );
@@ -107,7 +107,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::table_budget_category
+	 * @covers \BeruangBudget\DB::table_budget_category
 	 */
 	public function test_table_budget_category_uses_wpdb_prefix(): void {
 		$this->setUpWpdb( 'wp_' );
@@ -119,7 +119,7 @@ class DBTest extends TestCase {
 	// -----------------------------------------------------------------------
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_date
+	 * @covers \BeruangBudget\DB::normalize_wallet_date
 	 */
 	public function test_normalize_wallet_date_valid_date_is_returned_unchanged(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_date', array( '2024-03-15' ) );
@@ -127,7 +127,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_date
+	 * @covers \BeruangBudget\DB::normalize_wallet_date
 	 */
 	public function test_normalize_wallet_date_another_valid_date(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_date', array( '2000-01-01' ) );
@@ -135,7 +135,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_date
+	 * @covers \BeruangBudget\DB::normalize_wallet_date
 	 */
 	public function test_normalize_wallet_date_empty_string_falls_back_to_date_format(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_date', array( '' ) );
@@ -143,7 +143,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_date
+	 * @covers \BeruangBudget\DB::normalize_wallet_date
 	 */
 	public function test_normalize_wallet_date_null_falls_back_to_date_format(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_date', array( null ) );
@@ -151,7 +151,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_date
+	 * @covers \BeruangBudget\DB::normalize_wallet_date
 	 */
 	public function test_normalize_wallet_date_no_hyphens_falls_back(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_date', array( '20240315' ) );
@@ -159,7 +159,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_date
+	 * @covers \BeruangBudget\DB::normalize_wallet_date
 	 */
 	public function test_normalize_wallet_date_partial_format_falls_back(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_date', array( '2024-03' ) );
@@ -167,7 +167,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_date
+	 * @covers \BeruangBudget\DB::normalize_wallet_date
 	 */
 	public function test_normalize_wallet_date_non_date_string_falls_back(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_date', array( 'not-a-date' ) );
@@ -175,7 +175,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_date
+	 * @covers \BeruangBudget\DB::normalize_wallet_date
 	 */
 	public function test_normalize_wallet_date_integer_input_falls_back(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_date', array( 20240315 ) );
@@ -215,7 +215,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::sum_net_amount
+	 * @covers \BeruangBudget\DB::sum_net_amount
 	 */
 	public function test_sum_net_amount_returns_float(): void {
 		$this->setUpQueryWpdb( 'wp_', '150.50' );
@@ -224,7 +224,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::sum_net_amount
+	 * @covers \BeruangBudget\DB::sum_net_amount
 	 */
 	public function test_sum_net_amount_returns_zero_when_no_transactions(): void {
 		$this->setUpQueryWpdb( 'wp_', '0' );
@@ -235,7 +235,7 @@ class DBTest extends TestCase {
 	/**
 	 * Net amount can be negative when income exceeds expenses.
 	 *
-	 * @covers \Beruang\DB::sum_net_amount
+	 * @covers \BeruangBudget\DB::sum_net_amount
 	 */
 	public function test_sum_net_amount_returns_negative_when_income_exceeds_expenses(): void {
 		$this->setUpQueryWpdb( 'wp_', '-50.00' );
@@ -244,7 +244,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::sum_net_amount
+	 * @covers \BeruangBudget\DB::sum_net_amount
 	 */
 	public function test_sum_net_amount_with_category_ids_calls_prepare(): void {
 		$wpdb = $this->setUpQueryWpdb( 'wp_', '200.00' );
@@ -257,7 +257,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::sum_net_amount
+	 * @covers \BeruangBudget\DB::sum_net_amount
 	 */
 	public function test_sum_net_amount_without_category_ids_omits_category_filter(): void {
 		$wpdb = $this->setUpQueryWpdb( 'wp_', '75.00' );
@@ -300,7 +300,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::get_categories_flat
+	 * @covers \BeruangBudget\DB::get_categories_flat
 	 */
 	public function test_get_categories_flat_returns_empty_array_when_no_categories(): void {
 		$this->setUpCategoriesWpdb( [ null ] );
@@ -309,7 +309,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::get_categories_flat
+	 * @covers \BeruangBudget\DB::get_categories_flat
 	 */
 	public function test_get_categories_flat_returns_empty_array_when_get_results_returns_empty(): void {
 		$this->setUpCategoriesWpdb( [ [] ] );
@@ -318,7 +318,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::get_categories_flat
+	 * @covers \BeruangBudget\DB::get_categories_flat
 	 */
 	public function test_get_categories_flat_returns_top_level_category_with_depth_zero(): void {
 		// get_categories_flat fetches ALL categories in one query then builds depth in PHP.
@@ -334,7 +334,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::get_categories_flat
+	 * @covers \BeruangBudget\DB::get_categories_flat
 	 */
 	public function test_get_categories_flat_returns_child_category_with_incremented_depth(): void {
 		// All categories are fetched in a single query; flatten_categories assigns depth.
@@ -355,7 +355,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::get_categories_flat
+	 * @covers \BeruangBudget\DB::get_categories_flat
 	 */
 	public function test_get_categories_flat_multiple_top_level_categories(): void {
 		$this->setUpCategoriesWpdb(
@@ -381,7 +381,7 @@ class DBTest extends TestCase {
 	// -----------------------------------------------------------------------
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_id
+	 * @covers \BeruangBudget\DB::normalize_wallet_id
 	 */
 	public function test_normalize_wallet_id_positive_integer_is_returned(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_id', array( 5 ) );
@@ -389,7 +389,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_id
+	 * @covers \BeruangBudget\DB::normalize_wallet_id
 	 */
 	public function test_normalize_wallet_id_positive_string_is_cast_to_int(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_id', array( '42' ) );
@@ -397,7 +397,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_id
+	 * @covers \BeruangBudget\DB::normalize_wallet_id
 	 */
 	public function test_normalize_wallet_id_zero_returns_null(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_id', array( 0 ) );
@@ -405,7 +405,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_id
+	 * @covers \BeruangBudget\DB::normalize_wallet_id
 	 */
 	public function test_normalize_wallet_id_zero_string_returns_null(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_id', array( '0' ) );
@@ -415,7 +415,7 @@ class DBTest extends TestCase {
 	/**
 	 * absint(-3) = 3 which is > 0, so the method returns 3, not null.
 	 *
-	 * @covers \Beruang\DB::normalize_wallet_id
+	 * @covers \BeruangBudget\DB::normalize_wallet_id
 	 */
 	public function test_normalize_wallet_id_negative_returns_absint(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_id', array( -3 ) );
@@ -423,7 +423,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_id
+	 * @covers \BeruangBudget\DB::normalize_wallet_id
 	 */
 	public function test_normalize_wallet_id_null_returns_null(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_id', array( null ) );
@@ -431,7 +431,7 @@ class DBTest extends TestCase {
 	}
 
 	/**
-	 * @covers \Beruang\DB::normalize_wallet_id
+	 * @covers \BeruangBudget\DB::normalize_wallet_id
 	 */
 	public function test_normalize_wallet_id_empty_string_returns_null(): void {
 		$result = $this->callPrivateStatic( 'normalize_wallet_id', array( '' ) );

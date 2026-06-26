@@ -60,7 +60,7 @@ $default_wallet = null === $default_wallet_id ? '' : (string) $default_wallet_id
 		<label for="<?php echo esc_attr( $desc_id ); ?>"><?php esc_html_e( 'Description', 'beruang' ); ?></label>
 		<span class="beruang-wrap">
 			<input type="text" id="<?php echo esc_attr( $desc_id ); ?>" name="description" placeholder="<?php esc_attr_e( 'Meal, Gas, etc...', 'beruang' ); ?>" required />
-			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-note-btn" title="<?php esc_attr_e( 'Add note', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add note', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'note', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-note-btn" title="<?php esc_attr_e( 'Add note', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add note', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'note', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		</span>
 		<textarea id="<?php echo esc_attr( $note_id ); ?>" name="note" rows="3" hidden aria-hidden="true" tabindex="-1"></textarea>
 	</div>
@@ -77,14 +77,14 @@ $default_wallet = null === $default_wallet_id ? '' : (string) $default_wallet_id
 				}
 				?>
 			</select>
-			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-manage-categories-btn" title="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'list' ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-manage-categories-btn" title="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Manage categories', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'list' ); ?></button>
 		</span>
 	</div>
 	<div class="beruang-form-row beruang-amount-row">
 		<label for="<?php echo esc_attr( $amt_id ); ?>"><?php esc_html_e( 'Amount', 'beruang' ); ?> <span class="beruang-label-currency">(<?php echo esc_html( $currency ); ?>)</span></label>
 		<span class="beruang-wrap">
 			<input type="number" id="<?php echo esc_attr( $amt_id ); ?>" name="amount" step="<?php echo $decimal_places > 0 ? esc_attr( '0.' . str_repeat( '0', $decimal_places - 1 ) . '1' ) : '1'; ?>" min="0" value="" required placeholder="0" />
-			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-calc-btn" title="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'calc' ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-calc-btn" title="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'calc' ); ?></button>
 		</span>
 	</div>
 	<div class="beruang-form-row beruang-type-row">

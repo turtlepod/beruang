@@ -5,27 +5,27 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-db.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-import.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/icon-helpers.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/seed.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-transactions-list-table.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-categories-list-table.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-budgets-list-table.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-wallets-list-table.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/admin.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/rest.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/manifest.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/shortcodes.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-db.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-import.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/icon-helpers.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/seed.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-transactions-list-table.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-categories-list-table.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-budgets-list-table.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-wallets-list-table.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/admin.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/rest.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/manifest.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/shortcodes.php';
 
-register_activation_hook( BERUANG_PLUGIN_FILE, __NAMESPACE__ . '\\on_activation' );
-register_deactivation_hook( BERUANG_PLUGIN_FILE, 'flush_rewrite_rules' );
+register_activation_hook( BERUANG_BUDGET_PLUGIN_FILE, __NAMESPACE__ . '\\on_activation' );
+register_deactivation_hook( BERUANG_BUDGET_PLUGIN_FILE, 'flush_rewrite_rules' );
 
 // Bootstrap.
 add_action( 'plugins_loaded', __NAMESPACE__ . '\\on_plugins_loaded' );
@@ -69,7 +69,7 @@ function use_logged_in_user_locale_on_frontend( $locale ) {
  */
 function on_plugins_loaded() {
 	DB::maybe_upgrade();
-	load_plugin_textdomain( 'beruang', false, dirname( plugin_basename( BERUANG_PLUGIN_FILE ) ) . '/languages' );
+	load_plugin_textdomain( 'beruang', false, dirname( plugin_basename( BERUANG_BUDGET_PLUGIN_FILE ) ) . '/languages' );
 	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_front_scripts' );
 	manifest_setup();
 
@@ -82,7 +82,7 @@ function on_plugins_loaded() {
  * Whether built assets exist in dist/.
  */
 function beruang_dist_exists() {
-	return is_dir( BERUANG_PLUGIN_DIR . 'dist' );
+	return is_dir( BERUANG_BUDGET_PLUGIN_DIR . 'dist' );
 }
 
 /**
@@ -93,17 +93,17 @@ function enqueue_front_scripts() {
 		return;
 	}
 
-	$front_css_dist   = BERUANG_PLUGIN_DIR . 'dist/css/front-style.css';
-	$front_css_asset  = BERUANG_PLUGIN_DIR . 'dist/css/front-style.asset.php';
+	$front_css_dist   = BERUANG_BUDGET_PLUGIN_DIR . 'dist/css/front-style.css';
+	$front_css_asset  = BERUANG_BUDGET_PLUGIN_DIR . 'dist/css/front-style.asset.php';
 	$front_style_deps = array();
-	$front_style_ver  = BERUANG_VERSION;
+	$front_style_ver  = BERUANG_BUDGET_VERSION;
 	if ( file_exists( $front_css_dist ) ) {
 		if ( file_exists( $front_css_asset ) ) {
 			$front_style_asset = include $front_css_asset;
 			$front_style_deps  = $front_style_asset['dependencies'] ?? array();
 			$front_style_ver   = $front_style_asset['version'] ?? $front_style_ver;
 		}
-		$front_css_url = BERUANG_PLUGIN_URL . 'dist/css/front-style.css';
+		$front_css_url = BERUANG_BUDGET_PLUGIN_URL . 'dist/css/front-style.css';
 		wp_enqueue_style(
 			'beruang-front',
 			$front_css_url,
@@ -112,26 +112,26 @@ function enqueue_front_scripts() {
 		);
 	}
 	$deps        = array();
-	$chart_asset = BERUANG_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
+	$chart_asset = BERUANG_BUDGET_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
 	wp_enqueue_script(
 		'chartjs',
-		BERUANG_PLUGIN_URL . 'assets/js/chart.umd.min.js',
+		BERUANG_BUDGET_PLUGIN_URL . 'assets/js/chart.umd.min.js',
 		array(),
 		file_exists( $chart_asset ) ? (string) filemtime( $chart_asset ) : '4.4.1',
 		true
 	);
 	$deps[]         = 'chartjs';
-	$front_js_dist  = BERUANG_PLUGIN_DIR . 'dist/js/front.js';
-	$front_js_asset = BERUANG_PLUGIN_DIR . 'dist/js/front.asset.php';
+	$front_js_dist  = BERUANG_BUDGET_PLUGIN_DIR . 'dist/js/front.js';
+	$front_js_asset = BERUANG_BUDGET_PLUGIN_DIR . 'dist/js/front.asset.php';
 	$front_js_deps  = $deps;
-	$front_js_ver   = BERUANG_VERSION;
+	$front_js_ver   = BERUANG_BUDGET_VERSION;
 	if ( file_exists( $front_js_dist ) ) {
 		if ( file_exists( $front_js_asset ) ) {
 			$front_js_asset_data = include $front_js_asset;
 			$front_js_deps       = array_merge( $front_js_asset_data['dependencies'] ?? array(), $deps );
 			$front_js_ver        = $front_js_asset_data['version'] ?? $front_js_ver;
 		}
-		$front_js_url = BERUANG_PLUGIN_URL . 'dist/js/front.js';
+		$front_js_url = BERUANG_BUDGET_PLUGIN_URL . 'dist/js/front.js';
 		wp_enqueue_script(
 			'beruang-front',
 			$front_js_url,
@@ -200,5 +200,5 @@ function enqueue_front_scripts() {
  * Output Beruang JS template script blocks in footer.
  */
 function print_front_templates() {
-	include BERUANG_PLUGIN_DIR . 'includes/templates-js.php';
+	include BERUANG_BUDGET_PLUGIN_DIR . 'includes/templates-js.php';
 }

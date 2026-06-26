@@ -7,7 +7,7 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 // phpcs:disable WordPress.Security.NonceVerification.Recommended -- GET for filters; admin_post forms verified.
 
@@ -76,13 +76,13 @@ function admin_enqueue_styles( $hook ) {
 	if ( ! beruang_dist_exists() ) {
 		return;
 	}
-	$admin_css_dist  = BERUANG_PLUGIN_DIR . 'dist/css/admin-style.css';
-	$admin_css_asset = BERUANG_PLUGIN_DIR . 'dist/css/admin-style.asset.php';
+	$admin_css_dist  = BERUANG_BUDGET_PLUGIN_DIR . 'dist/css/admin-style.css';
+	$admin_css_asset = BERUANG_BUDGET_PLUGIN_DIR . 'dist/css/admin-style.asset.php';
 	if ( ! file_exists( $admin_css_dist ) ) {
 		return;
 	}
 	$deps = array();
-	$ver  = BERUANG_VERSION;
+	$ver  = BERUANG_BUDGET_VERSION;
 	if ( file_exists( $admin_css_asset ) ) {
 		$asset = include $admin_css_asset;
 		$deps  = $asset['dependencies'] ?? array();
@@ -90,7 +90,7 @@ function admin_enqueue_styles( $hook ) {
 	}
 	wp_enqueue_style(
 		'beruang-admin',
-		BERUANG_PLUGIN_URL . 'dist/css/admin-style.css',
+		BERUANG_BUDGET_PLUGIN_URL . 'dist/css/admin-style.css',
 		array_merge( $deps, array( 'list-tables' ) ),
 		$ver
 	);

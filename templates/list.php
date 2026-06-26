@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="beruang beruang-list-wrapper">
 	<div class="beruang-list-header">
 		<h2 class="beruang-section-title"><?php esc_html_e( 'Transactions', 'beruang' ); ?></h2>
-		<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-filter-btn" title="<?php esc_attr_e( 'Filter', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'filter', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+		<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-filter-btn" title="<?php esc_attr_e( 'Filter', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Filter', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'filter', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 	</div>
 	<div class="beruang-filters beruang-list-filters" id="beruang-list-filters" hidden>
 		<select class="beruang-filter-year" aria-label="<?php esc_attr_e( 'Year', 'beruang' ); ?>">
@@ -71,11 +71,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div class="beruang-edit-tx-modal beruang-modal" id="beruang-edit-tx-modal" hidden>
 		<div class="beruang-modal-dialog">
-			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 			<div class="beruang-modal-inner beruang-edit-tx-modal-inner">
 			<h4><?php esc_html_e( 'Edit transaction', 'beruang' ); ?></h4>
 			<?php
-			\Beruang\shortcode_load_template(
+			\BeruangBudget\shortcode_load_template(
 				'partials/transaction-form.php',
 				array(
 					'mode'              => 'edit',
@@ -95,4 +95,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 </div>
-<?php \Beruang\output_modals_once(); ?>
+<?php \BeruangBudget\output_modals_once(); ?>

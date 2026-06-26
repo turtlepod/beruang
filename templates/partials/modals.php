@@ -11,13 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="beruang beruang-calc-modal beruang-modal" id="beruang-calc-modal" hidden>
 	<div class="beruang-calc-content">
-		<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+		<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		<input type="text" class="beruang-calc-display" readonly value="0" />
 		<div class="beruang-calc-buttons"></div>
 		<div class="beruang-calc-bottom">
 			<div class="beruang-calc-bottom-row">
 				<button type="button" class="beruang-calc-clear" aria-label="<?php esc_attr_e( 'Clear', 'beruang' ); ?>">C</button>
-				<button type="button" class="beruang-calc-backspace" aria-label="<?php esc_attr_e( 'Backspace', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'backspace', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+				<button type="button" class="beruang-calc-backspace" aria-label="<?php esc_attr_e( 'Backspace', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'backspace', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 				<button type="button" class="beruang-calc-equals">=</button>
 			</div>
 			<button type="button" class="beruang-calc-insert-close"><?php esc_html_e( 'Insert & Close', 'beruang' ); ?></button>
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </div>
 <div class="beruang beruang-note-modal beruang-modal" id="beruang-note-modal" hidden>
 	<div class="beruang-modal-dialog">
-		<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+		<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		<div class="beruang-modal-inner beruang-note-modal-inner">
 			<h4><?php esc_html_e( 'Transaction note', 'beruang' ); ?></h4>
 			<div class="beruang-form-row">
@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </div>
 <div class="beruang beruang-categories-modal beruang-modal" id="beruang-categories-modal" hidden>
 	<div class="beruang-modal-dialog">
-		<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \Beruang\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+		<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		<div class="beruang-modal-inner beruang-categories-modal-inner">
 		<h4><?php esc_html_e( 'Manage categories', 'beruang' ); ?></h4>
 		<form id="beruang-category-form" class="beruang-categories-form">

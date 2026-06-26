@@ -15,15 +15,15 @@
  * @package Beruang
  */
 
-namespace Beruang\Tests\Unit;
+namespace BeruangBudget\Tests\Unit;
 
-use Beruang\ImportHandler;
+use BeruangBudget\ImportHandler;
 use ReflectionProperty;
 use stdClass;
 use WP_Mock\Tools\TestCase;
 
 /**
- * Tests for Beruang\ImportHandler.
+ * Tests for BeruangBudget\ImportHandler.
  */
 class ImportHandlerTest extends TestCase {
 
@@ -40,7 +40,7 @@ class ImportHandlerTest extends TestCase {
 
 		$GLOBALS['wpdb'] = $wpdb;
 
-		$prop = new ReflectionProperty( \Beruang\DB::class, 'wpdb' );
+		$prop = new ReflectionProperty( \BeruangBudget\DB::class, 'wpdb' );
 		$prop->setAccessible( true );
 		$prop->setValue( null, null );
 	}
@@ -72,7 +72,7 @@ class ImportHandlerTest extends TestCase {
 
 		$GLOBALS['wpdb'] = $wpdb;
 
-		$prop = new ReflectionProperty( \Beruang\DB::class, 'wpdb' );
+		$prop = new ReflectionProperty( \BeruangBudget\DB::class, 'wpdb' );
 		$prop->setAccessible( true );
 		$prop->setValue( null, null );
 
@@ -82,7 +82,7 @@ class ImportHandlerTest extends TestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		unset( $GLOBALS['wpdb'] );
-		$prop = new ReflectionProperty( \Beruang\DB::class, 'wpdb' );
+		$prop = new ReflectionProperty( \BeruangBudget\DB::class, 'wpdb' );
 		$prop->setAccessible( true );
 		$prop->setValue( null, null );
 	}
@@ -91,13 +91,13 @@ class ImportHandlerTest extends TestCase {
 	// validate()
 	// -----------------------------------------------------------------------
 
-	/** @covers \Beruang\ImportHandler::validate */
+	/** @covers \BeruangBudget\ImportHandler::validate */
 	public function test_validate_null_when_categories_present(): void {
 		$data = array( 'categories' => array( array( 'id' => 1, 'name' => 'Food' ) ) );
 		$this->assertNull( ImportHandler::validate( $data ) );
 	}
 
-	/** @covers \Beruang\ImportHandler::validate */
+	/** @covers \BeruangBudget\ImportHandler::validate */
 	public function test_validate_null_when_wallets_only(): void {
 		$data = array(
 			'wallets' => array(
@@ -107,39 +107,39 @@ class ImportHandlerTest extends TestCase {
 		$this->assertNull( ImportHandler::validate( $data ) );
 	}
 
-	/** @covers \Beruang\ImportHandler::validate */
+	/** @covers \BeruangBudget\ImportHandler::validate */
 	public function test_validate_null_when_transactions_present(): void {
 		$data = array( 'transactions' => array( array( 'date' => '2024-01-01', 'amount' => 100 ) ) );
 		$this->assertNull( ImportHandler::validate( $data ) );
 	}
 
-	/** @covers \Beruang\ImportHandler::validate */
+	/** @covers \BeruangBudget\ImportHandler::validate */
 	public function test_validate_null_when_budgets_present(): void {
 		$data = array( 'budgets' => array( array( 'name' => 'Monthly', 'target_amount' => 1000 ) ) );
 		$this->assertNull( ImportHandler::validate( $data ) );
 	}
 
-	/** @covers \Beruang\ImportHandler::validate */
+	/** @covers \BeruangBudget\ImportHandler::validate */
 	public function test_validate_error_for_null(): void {
 		$this->assertIsString( ImportHandler::validate( null ) );
 	}
 
-	/** @covers \Beruang\ImportHandler::validate */
+	/** @covers \BeruangBudget\ImportHandler::validate */
 	public function test_validate_error_for_string(): void {
 		$this->assertIsString( ImportHandler::validate( 'not an array' ) );
 	}
 
-	/** @covers \Beruang\ImportHandler::validate */
+	/** @covers \BeruangBudget\ImportHandler::validate */
 	public function test_validate_error_for_integer(): void {
 		$this->assertIsString( ImportHandler::validate( 42 ) );
 	}
 
-	/** @covers \Beruang\ImportHandler::validate */
+	/** @covers \BeruangBudget\ImportHandler::validate */
 	public function test_validate_error_for_empty_array(): void {
 		$this->assertIsString( ImportHandler::validate( array() ) );
 	}
 
-	/** @covers \Beruang\ImportHandler::validate */
+	/** @covers \BeruangBudget\ImportHandler::validate */
 	public function test_validate_error_when_all_sections_empty(): void {
 		$data = array(
 			'categories'   => array(),
@@ -150,7 +150,7 @@ class ImportHandlerTest extends TestCase {
 		$this->assertIsString( ImportHandler::validate( $data ) );
 	}
 
-	/** @covers \Beruang\ImportHandler::validate */
+	/** @covers \BeruangBudget\ImportHandler::validate */
 	public function test_validate_error_for_metadata_only(): void {
 		$data = array( 'version' => 1, 'exported' => '2024-01-01' );
 		$this->assertIsString( ImportHandler::validate( $data ) );
@@ -160,21 +160,21 @@ class ImportHandlerTest extends TestCase {
 	// remap_transaction()
 	// -----------------------------------------------------------------------
 
-	/** @covers \Beruang\ImportHandler::remap_transaction */
+	/** @covers \BeruangBudget\ImportHandler::remap_transaction */
 	public function test_remap_tx_remaps_category_id(): void {
 		$tx     = array( 'category_id' => 5, 'wallet_id' => 0, 'amount' => 100 );
 		$result = ImportHandler::remap_transaction( $tx, array( 5 => 99 ), array() );
 		$this->assertSame( 99, $result['category_id'] );
 	}
 
-	/** @covers \Beruang\ImportHandler::remap_transaction */
+	/** @covers \BeruangBudget\ImportHandler::remap_transaction */
 	public function test_remap_tx_remaps_wallet_id(): void {
 		$tx     = array( 'category_id' => 0, 'wallet_id' => 3, 'amount' => 50 );
 		$result = ImportHandler::remap_transaction( $tx, array(), array( 3 => 77 ) );
 		$this->assertSame( 77, $result['wallet_id'] );
 	}
 
-	/** @covers \Beruang\ImportHandler::remap_transaction */
+	/** @covers \BeruangBudget\ImportHandler::remap_transaction */
 	public function test_remap_tx_leaves_unmapped_ids_unchanged(): void {
 		$tx     = array( 'category_id' => 5, 'wallet_id' => 3, 'amount' => 100 );
 		$result = ImportHandler::remap_transaction( $tx, array(), array() );
@@ -182,7 +182,7 @@ class ImportHandlerTest extends TestCase {
 		$this->assertSame( 3, $result['wallet_id'] );
 	}
 
-	/** @covers \Beruang\ImportHandler::remap_transaction */
+	/** @covers \BeruangBudget\ImportHandler::remap_transaction */
 	public function test_remap_tx_zero_ids_stay_zero(): void {
 		$tx     = array( 'category_id' => 0, 'wallet_id' => 0, 'amount' => 100 );
 		$result = ImportHandler::remap_transaction( $tx, array( 0 => 999 ), array( 0 => 888 ) );
@@ -190,7 +190,7 @@ class ImportHandlerTest extends TestCase {
 		$this->assertSame( 0, $result['wallet_id'] );
 	}
 
-	/** @covers \Beruang\ImportHandler::remap_transaction */
+	/** @covers \BeruangBudget\ImportHandler::remap_transaction */
 	public function test_remap_tx_preserves_other_fields(): void {
 		$tx = array(
 			'date'        => '2024-03-01',
@@ -213,25 +213,25 @@ class ImportHandlerTest extends TestCase {
 	// remap_budget_categories()
 	// -----------------------------------------------------------------------
 
-	/** @covers \Beruang\ImportHandler::remap_budget_categories */
+	/** @covers \BeruangBudget\ImportHandler::remap_budget_categories */
 	public function test_remap_budget_categories_maps_present_ids(): void {
 		$result = ImportHandler::remap_budget_categories( array( 1, 2, 3 ), array( 1 => 10, 2 => 20, 3 => 30 ) );
 		$this->assertSame( array( 10, 20, 30 ), $result );
 	}
 
-	/** @covers \Beruang\ImportHandler::remap_budget_categories */
+	/** @covers \BeruangBudget\ImportHandler::remap_budget_categories */
 	public function test_remap_budget_categories_drops_unmapped_ids(): void {
 		$result = ImportHandler::remap_budget_categories( array( 1, 5, 9 ), array( 1 => 10 ) );
 		$this->assertSame( array( 10 ), $result );
 	}
 
-	/** @covers \Beruang\ImportHandler::remap_budget_categories */
+	/** @covers \BeruangBudget\ImportHandler::remap_budget_categories */
 	public function test_remap_budget_categories_empty_input(): void {
 		$result = ImportHandler::remap_budget_categories( array(), array( 1 => 10 ) );
 		$this->assertSame( array(), $result );
 	}
 
-	/** @covers \Beruang\ImportHandler::remap_budget_categories */
+	/** @covers \BeruangBudget\ImportHandler::remap_budget_categories */
 	public function test_remap_budget_categories_drops_zero_ids(): void {
 		$result = ImportHandler::remap_budget_categories( array( 0, 1 ), array( 1 => 10 ) );
 		$this->assertSame( array( 10 ), $result );
@@ -241,7 +241,7 @@ class ImportHandlerTest extends TestCase {
 	// import_wallets()
 	// -----------------------------------------------------------------------
 
-	/** @covers \Beruang\ImportHandler::import_wallets */
+	/** @covers \BeruangBudget\ImportHandler::import_wallets */
 	public function test_import_wallets_builds_id_map(): void {
 		$this->setUpInsertWpdb( array( 100, 200 ) );
 
@@ -254,7 +254,7 @@ class ImportHandlerTest extends TestCase {
 		$this->assertSame( array( 1 => 100, 2 => 200 ), $map );
 	}
 
-	/** @covers \Beruang\ImportHandler::import_wallets */
+	/** @covers \BeruangBudget\ImportHandler::import_wallets */
 	public function test_import_wallets_skips_blank_name(): void {
 		$this->setUpInsertWpdb( array( 100 ) );
 
@@ -269,14 +269,14 @@ class ImportHandlerTest extends TestCase {
 		$this->assertSame( 100, $map[2] );
 	}
 
-	/** @covers \Beruang\ImportHandler::import_wallets */
+	/** @covers \BeruangBudget\ImportHandler::import_wallets */
 	public function test_import_wallets_empty_returns_empty_map(): void {
 		$this->setUpQueryWpdb();
 		$map = ImportHandler::import_wallets( 1, array() );
 		$this->assertSame( array(), $map );
 	}
 
-	/** @covers \Beruang\ImportHandler::import_wallets */
+	/** @covers \BeruangBudget\ImportHandler::import_wallets */
 	public function test_import_wallets_preserves_initial_amount_and_date(): void {
 		$captured = null;
 
@@ -297,7 +297,7 @@ class ImportHandlerTest extends TestCase {
 		$wpdb->method( 'get_var' )->willReturn( '0' );
 
 		$GLOBALS['wpdb'] = $wpdb;
-		$prop            = new ReflectionProperty( \Beruang\DB::class, 'wpdb' );
+		$prop            = new ReflectionProperty( \BeruangBudget\DB::class, 'wpdb' );
 		$prop->setAccessible( true );
 		$prop->setValue( null, null );
 
@@ -316,7 +316,7 @@ class ImportHandlerTest extends TestCase {
 	// import_categories()
 	// -----------------------------------------------------------------------
 
-	/** @covers \Beruang\ImportHandler::import_categories */
+	/** @covers \BeruangBudget\ImportHandler::import_categories */
 	public function test_import_categories_remaps_parent_id(): void {
 		$this->setUpInsertWpdb( array( 10, 11 ) );
 
@@ -329,7 +329,7 @@ class ImportHandlerTest extends TestCase {
 		$this->assertSame( array( 1 => 10, 2 => 11 ), $map );
 	}
 
-	/** @covers \Beruang\ImportHandler::import_categories */
+	/** @covers \BeruangBudget\ImportHandler::import_categories */
 	public function test_import_categories_empty_returns_empty_map(): void {
 		$this->setUpQueryWpdb();
 		$map = ImportHandler::import_categories( 1, array() );
@@ -340,7 +340,7 @@ class ImportHandlerTest extends TestCase {
 	// run() -- integration
 	// -----------------------------------------------------------------------
 
-	/** @covers \Beruang\ImportHandler::run */
+	/** @covers \BeruangBudget\ImportHandler::run */
 	public function test_run_returns_correct_counts_all_sections(): void {
 		// 1 cat, 1 wallet, 1 tx, 1 budget
 		$this->setUpInsertWpdb( array( 10, 20, 30, 40 ) );
@@ -380,7 +380,7 @@ class ImportHandlerTest extends TestCase {
 		$this->assertSame( 1, $result['budgets'] );
 	}
 
-	/** @covers \Beruang\ImportHandler::run */
+	/** @covers \BeruangBudget\ImportHandler::run */
 	public function test_run_wallets_only_export(): void {
 		$this->setUpInsertWpdb( array( 100, 101 ) );
 
@@ -399,7 +399,7 @@ class ImportHandlerTest extends TestCase {
 		$this->assertSame( 0, $result['budgets'] );
 	}
 
-	/** @covers \Beruang\ImportHandler::run */
+	/** @covers \BeruangBudget\ImportHandler::run */
 	public function test_run_remaps_wallet_id_in_transactions(): void {
 		$captured_tx = null;
 		$call_index  = 0;
@@ -425,7 +425,7 @@ class ImportHandlerTest extends TestCase {
 		$wpdb->method( 'get_var' )->willReturn( '0' );
 
 		$GLOBALS['wpdb'] = $wpdb;
-		$prop            = new ReflectionProperty( \Beruang\DB::class, 'wpdb' );
+		$prop            = new ReflectionProperty( \BeruangBudget\DB::class, 'wpdb' );
 		$prop->setAccessible( true );
 		$prop->setValue( null, null );
 

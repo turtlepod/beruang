@@ -16,11 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-\Beruang\output_modals_once();
+\BeruangBudget\output_modals_once();
 ?>
 <div class="beruang beruang-form-wrapper">
 	<?php
-	\Beruang\shortcode_load_template(
+	\BeruangBudget\shortcode_load_template(
 		'partials/transaction-form.php',
 		array(
 			'mode'              => 'add',

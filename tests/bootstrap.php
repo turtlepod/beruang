@@ -7,10 +7,10 @@
 
 // Plugin constants required before loading plugin files.
 define( 'ABSPATH', '/' );
-define( 'BERUANG_VERSION', '0.4.0-beta' );
-define( 'BERUANG_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
-define( 'BERUANG_PLUGIN_FILE', dirname( __DIR__ ) . '/beruang.php' );
-define( 'BERUANG_PLUGIN_URL', 'http://example.com/wp-content/plugins/beruang/' );
+define( 'BERUANG_BUDGET_VERSION', '0.4.0-beta' );
+define( 'BERUANG_BUDGET_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
+define( 'BERUANG_BUDGET_PLUGIN_FILE', dirname( __DIR__ ) . '/beruang-budget.php' );
+define( 'BERUANG_BUDGET_PLUGIN_URL', 'http://example.com/wp-content/plugins/beruang/' );
 
 // Composer autoloader (includes WP_Mock and PHPUnit).
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';

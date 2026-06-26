@@ -5,7 +5,7 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -177,7 +177,7 @@ function manifest_get_icons() {
 	}
 
 	// Fallback to plugin default icons.
-	$base = BERUANG_PLUGIN_URL . 'assets/images/';
+	$base = BERUANG_BUDGET_PLUGIN_URL . 'assets/images/';
 	return array(
 		array(
 			'src'   => $base . 'icon-192.png',
