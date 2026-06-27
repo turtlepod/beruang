@@ -205,7 +205,7 @@ class Transactions_List_Table extends \WP_List_Table {
 	protected function column_actions( $item ) {
 		$edit_url = add_query_arg(
 			array(
-				'page'    => ADMIN_SLUG . '-transactions',
+				'page'    => BERUANG_BUDGET_ADMIN_SLUG . '-transactions',
 				'edit'    => $item['id'],
 				'user_id' => $this->user_filter ? $this->user_filter : null,
 			),

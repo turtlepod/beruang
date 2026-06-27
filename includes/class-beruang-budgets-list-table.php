@@ -202,7 +202,7 @@ class Budgets_List_Table extends \WP_List_Table {
 		$user_filter = $this->user_filter ? $this->user_filter : (int) $item['user_id'];
 		$edit_url    = add_query_arg(
 			array(
-				'page'    => ADMIN_SLUG . '-budgets',
+				'page'    => BERUANG_BUDGET_ADMIN_SLUG . '-budgets',
 				'user_id' => $user_filter,
 				'edit'    => $item['id'],
 			),

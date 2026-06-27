@@ -29,9 +29,13 @@ define( 'BERUANG_BUDGET_PLUGIN_FILE', __FILE__ );
 define( 'BERUANG_BUDGET_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BERUANG_BUDGET_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
+define( 'BERUANG_BUDGET_ADMIN_SLUG', 'beruang' );
+define( 'BERUANG_BUDGET_ADMIN_CAPABILITY', 'manage_options' );
+
 require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/core.php';
 
 if ( defined( 'WP_CLI' ) && \WP_CLI ) {
+	require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/seed.php';
 	require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-cli.php';
 	\WP_CLI::add_command( 'beruang', CLI::class );
 }

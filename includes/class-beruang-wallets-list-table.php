@@ -172,7 +172,7 @@ class Wallets_List_Table extends \WP_List_Table {
 		$user_filter = $this->user_filter ? $this->user_filter : (int) $item['user_id'];
 		$edit_url    = add_query_arg(
 			array(
-				'page'    => ADMIN_SLUG . '-wallets',
+				'page'    => BERUANG_BUDGET_ADMIN_SLUG . '-wallets',
 				'user_id' => $user_filter,
 				'edit'    => $item['id'],
 			),
@@ -181,7 +181,7 @@ class Wallets_List_Table extends \WP_List_Table {
 		$del_url     = wp_nonce_url(
 			add_query_arg(
 				array(
-					'page'    => ADMIN_SLUG . '-wallets',
+					'page'    => BERUANG_BUDGET_ADMIN_SLUG . '-wallets',
 					'user_id' => $user_filter,
 					'delete'  => $item['id'],
 				),

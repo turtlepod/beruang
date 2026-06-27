@@ -15,12 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/** Admin slug and capability. */
-const ADMIN_SLUG       = 'beruang';
-const ADMIN_CAPABILITY = 'manage_options';
-
 /**
- * Register admin menu and settings hooks. Hooked to init.
+ * Register admin menu and settings hooks. Only runs in wp-admin.
  */
 function admin_setup() {
 	add_action( 'admin_menu', __NAMESPACE__ . '\admin_register_menu' );
@@ -29,7 +25,15 @@ function admin_setup() {
 	add_action( 'admin_notices', __NAMESPACE__ . '\admin_notice_dist_missing' );
 	add_filter( 'admin_body_class', __NAMESPACE__ . '\admin_body_class_table_pages' );
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\admin_setup' );
+// Guard with is_admin() so admin hooks are not registered on frontend page loads.
+add_action(
+	'plugins_loaded',
+	function () {
+		if ( is_admin() ) {
+			admin_setup();
+		}
+	}
+);
 
 /**
  * Add beruang-admin-table body class on table-based Beruang admin pages.
@@ -53,7 +57,7 @@ function admin_body_class_table_pages( $classes ) {
  * Show admin notice when dist/ is missing.
  */
 function admin_notice_dist_missing() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) || beruang_dist_exists() ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) || beruang_dist_exists() ) {
 		return;
 	}
 	$message = sprintf(
@@ -103,17 +107,17 @@ function admin_register_menu() {
 	add_menu_page(
 		__( 'Beruang Budget', 'beruang' ),
 		__( 'Beruang Budget', 'beruang' ),
-		ADMIN_CAPABILITY,
-		ADMIN_SLUG,
+		BERUANG_BUDGET_ADMIN_CAPABILITY,
+		BERUANG_BUDGET_ADMIN_SLUG,
 		__NAMESPACE__ . '\admin_page_settings',
 		'dashicons-money-alt',
 		30
 	);
-	add_submenu_page( ADMIN_SLUG, __( 'Settings', 'beruang' ), __( 'Settings', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG, __NAMESPACE__ . '\admin_page_settings' );
-	add_submenu_page( ADMIN_SLUG, __( 'Transactions', 'beruang' ), __( 'Transactions', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-transactions', __NAMESPACE__ . '\admin_page_transactions' );
-	add_submenu_page( ADMIN_SLUG, __( 'Categories', 'beruang' ), __( 'Categories', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-categories', __NAMESPACE__ . '\admin_page_categories' );
-	add_submenu_page( ADMIN_SLUG, __( 'Budgets', 'beruang' ), __( 'Budgets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-budgets', __NAMESPACE__ . '\admin_page_budgets' );
-	add_submenu_page( ADMIN_SLUG, __( 'Wallets', 'beruang' ), __( 'Wallets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-wallets', __NAMESPACE__ . '\\admin_page_wallets' );
+	add_submenu_page( BERUANG_BUDGET_ADMIN_SLUG, __( 'Settings', 'beruang' ), __( 'Settings', 'beruang' ), BERUANG_BUDGET_ADMIN_CAPABILITY, BERUANG_BUDGET_ADMIN_SLUG, __NAMESPACE__ . '\admin_page_settings' );
+	add_submenu_page( BERUANG_BUDGET_ADMIN_SLUG, __( 'Transactions', 'beruang' ), __( 'Transactions', 'beruang' ), BERUANG_BUDGET_ADMIN_CAPABILITY, BERUANG_BUDGET_ADMIN_SLUG . '-transactions', __NAMESPACE__ . '\admin_page_transactions' );
+	add_submenu_page( BERUANG_BUDGET_ADMIN_SLUG, __( 'Categories', 'beruang' ), __( 'Categories', 'beruang' ), BERUANG_BUDGET_ADMIN_CAPABILITY, BERUANG_BUDGET_ADMIN_SLUG . '-categories', __NAMESPACE__ . '\admin_page_categories' );
+	add_submenu_page( BERUANG_BUDGET_ADMIN_SLUG, __( 'Budgets', 'beruang' ), __( 'Budgets', 'beruang' ), BERUANG_BUDGET_ADMIN_CAPABILITY, BERUANG_BUDGET_ADMIN_SLUG . '-budgets', __NAMESPACE__ . '\admin_page_budgets' );
+	add_submenu_page( BERUANG_BUDGET_ADMIN_SLUG, __( 'Wallets', 'beruang' ), __( 'Wallets', 'beruang' ), BERUANG_BUDGET_ADMIN_CAPABILITY, BERUANG_BUDGET_ADMIN_SLUG . '-wallets', __NAMESPACE__ . '\\admin_page_wallets' );
 }
 
 /**
@@ -212,7 +216,7 @@ function admin_register_settings() {
  * Render settings page: currency, number format, and export/import forms.
  */
 function admin_page_settings() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
 	if ( isset( $_POST['beruang_import'] ) && check_admin_referer( 'beruang_import' ) && ! empty( $_FILES['beruang_import_file']['tmp_name'] ) ) {
@@ -351,12 +355,14 @@ function admin_page_settings() {
 }
 
 /**
- * Export current user's data as JSON and send download response.
+ * Export current user's data as JSON and stream the response in chunks.
  *
- * Handled via admin_post before any output; exits after sending headers and body.
+ * Transactions are fetched page-by-page and written directly to the output
+ * buffer to avoid loading the entire dataset into memory at once.
+ * Handled via admin_post before any output; exits after sending body.
  */
 function admin_handle_export() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
 	}
 	check_admin_referer( 'beruang_export' );
@@ -367,36 +373,77 @@ function admin_handle_export() {
 	if ( ! $user_id ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
 	}
-	$user         = get_userdata( $user_id );
-	$categories   = DB::get_categories_flat( $user_id, false );
-	$wallets      = DB::get_wallets( $user_id );
-	$transactions = DB::get_transactions( $user_id, array( 'per_page' => 99999 ) );
-	$budgets      = DB::get_budgets( $user_id );
-	$data         = array(
-		'version'      => 1,
-		'exported'     => current_time( 'c' ),
-		'user_id'      => $user_id,
-		'user_login'   => $user ? $user->user_login : '',
-		'user_email'   => $user ? $user->user_email : '',
-		'display_name' => $user ? $user->display_name : '',
-		'categories'   => $categories,
-		'wallets'      => $wallets,
-		'transactions' => $transactions['items'],
-		'budgets'      => $budgets,
-	);
+
+	/**
+	 * Number of transactions fetched per chunk during JSON export.
+	 * Lower values reduce peak memory; higher values reduce total DB round-trips.
+	 *
+	 * @param int $chunk_size Default 500.
+	 */
+	$chunk_size = (int) apply_filters( 'beruang_export_chunk_size', 500 );
+	$chunk_size = min( max( $chunk_size, 50 ), 5000 );
+
+	// Discard any prior output buffering so bytes reach the client immediately.
+	while ( ob_get_level() > 0 ) {
+		ob_end_clean();
+	}
+
+	$user = get_userdata( $user_id );
+
 	header( 'Content-Type: application/json; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename="beruang-export-' . gmdate( 'Y-m-d' ) . '.json"' );
-	echo wp_json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
+	header( 'X-Accel-Buffering: no' ); // Disable Nginx proxy buffering.
+
+	// Stream the JSON envelope, writing non-transaction fields first.
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON-encoded, streaming output.
+	echo '{';
+	echo '"version":1,';
+	echo '"exported":' . wp_json_encode( current_time( 'c' ) ) . ',';
+	echo '"user_id":' . wp_json_encode( $user_id ) . ',';
+	echo '"user_login":' . wp_json_encode( $user ? $user->user_login : '' ) . ',';
+	echo '"user_email":' . wp_json_encode( $user ? $user->user_email : '' ) . ',';
+	echo '"display_name":' . wp_json_encode( $user ? $user->display_name : '' ) . ',';
+	echo '"categories":' . wp_json_encode( DB::get_categories_flat( $user_id, false ), JSON_UNESCAPED_UNICODE ) . ',';
+	echo '"wallets":' . wp_json_encode( DB::get_wallets( $user_id ), JSON_UNESCAPED_UNICODE ) . ',';
+	echo '"budgets":' . wp_json_encode( DB::get_budgets( $user_id ), JSON_UNESCAPED_UNICODE ) . ',';
+	echo '"transactions":[';
+	// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
+
+	$page       = 1;
+	$first_item = true;
+	do {
+		$result     = DB::get_transactions(
+			$user_id,
+			array(
+				'per_page' => $chunk_size,
+				'page'     => $page,
+			)
+		);
+		$items      = $result['items'] ?? array();
+		$item_count = count( $items );
+		foreach ( $items as $tx ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON-encoded streaming.
+			echo ( $first_item ? '' : ',' ) . wp_json_encode( $tx, JSON_UNESCAPED_UNICODE );
+			$first_item = false;
+		}
+		flush();
+		++$page;
+	} while ( $item_count === $chunk_size );
+
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- closing JSON structure.
+	echo ']}';
 	exit;
 }
 
 /**
- * Export current user's transactions as CSV.
+ * Export current user's transactions as CSV, streamed in chunks.
  *
- * Handled via admin_post before any output; exits after sending headers and body.
+ * Transactions are fetched page-by-page and written directly via fputcsv so
+ * peak memory scales with chunk size, not total row count.
+ * Handled via admin_post before any output; exits after sending body.
  */
 function admin_handle_export_csv() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
 	}
 	check_admin_referer( 'beruang_export_csv' );
@@ -407,12 +454,21 @@ function admin_handle_export_csv() {
 	if ( ! $user_id ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
 	}
+
+	/**
+	 * Number of transactions per chunk. @see admin_handle_export() for full filter docs.
+	 *
+	 * @param int $chunk_size
+	 */
+	$chunk_size = (int) apply_filters( 'beruang_export_chunk_size', 500 );
+	$chunk_size = min( max( $chunk_size, 50 ), 5000 );
+
 	$user         = get_userdata( $user_id );
 	$user_login   = $user ? $user->user_login : '';
 	$user_email   = $user ? $user->user_email : '';
 	$display_name = $user ? $user->display_name : '';
-	$transactions = DB::get_transactions( $user_id, array( 'per_page' => 99999 ) );
-	$items        = $transactions['items'];
+
+	// Build lookup maps once (categories and wallets are small).
 	$categories   = DB::get_categories_flat( $user_id, false );
 	$wallets      = DB::get_wallets( $user_id );
 	$cat_names    = array();
@@ -423,38 +479,62 @@ function admin_handle_export_csv() {
 	foreach ( $wallets as $wallet ) {
 		$wallet_names[ (int) $wallet['id'] ] = $wallet['name'] ?? '';
 	}
+
+	while ( ob_get_level() > 0 ) {
+		ob_end_clean();
+	}
+
 	header( 'Content-Type: text/csv; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename="beruang-transactions-' . gmdate( 'Y-m-d' ) . '.csv"' );
+	header( 'X-Accel-Buffering: no' ); // Disable Nginx proxy buffering.
+
+	// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- php://output, no filesystem path.
 	$output = fopen( 'php://output', 'w' );
 	// UTF-8 BOM for Excel compatibility.
 	fprintf( $output, "\xEF\xBB\xBF" );
 	fputcsv( $output, array( 'id', 'user_id', 'user_login', 'user_email', 'display_name', 'date', 'time', 'description', 'note', 'wallet_id', 'wallet_name', 'category_id', 'category_name', 'amount', 'type' ) );
-	foreach ( $items as $row ) {
-		$cat_id      = isset( $row['category_id'] ) ? (int) $row['category_id'] : 0;
-		$cat_name    = $cat_id && isset( $cat_names[ $cat_id ] ) ? $cat_names[ $cat_id ] : '';
-		$wallet_id   = isset( $row['wallet_id'] ) ? (int) $row['wallet_id'] : 0;
-		$wallet_name = $wallet_id && isset( $wallet_names[ $wallet_id ] ) ? $wallet_names[ $wallet_id ] : __( 'No Wallet', 'beruang' );
-		fputcsv(
-			$output,
+
+	$page = 1;
+	do {
+		$result     = DB::get_transactions(
+			$user_id,
 			array(
-				$row['id'] ?? '',
-				$row['user_id'] ?? '',
-				$user_login,
-				$user_email,
-				$display_name,
-				$row['date'] ?? '',
-				$row['time'] ?? '',
-				$row['description'] ?? '',
-				$row['note'] ?? '',
-				$row['wallet_id'] ?? '',
-				$wallet_name,
-				$row['category_id'] ?? '',
-				$cat_name,
-				$row['amount'] ?? '',
-				$row['type'] ?? '',
+				'per_page' => $chunk_size,
+				'page'     => $page,
 			)
 		);
-	}
+		$items      = $result['items'] ?? array();
+		$item_count = count( $items );
+		foreach ( $items as $row ) {
+			$cat_id      = isset( $row['category_id'] ) ? (int) $row['category_id'] : 0;
+			$cat_name    = $cat_id && isset( $cat_names[ $cat_id ] ) ? $cat_names[ $cat_id ] : '';
+			$wallet_id   = isset( $row['wallet_id'] ) ? (int) $row['wallet_id'] : 0;
+			$wallet_name = $wallet_id && isset( $wallet_names[ $wallet_id ] ) ? $wallet_names[ $wallet_id ] : __( 'No Wallet', 'beruang' );
+			fputcsv(
+				$output,
+				array(
+					$row['id'] ?? '',
+					$row['user_id'] ?? '',
+					$user_login,
+					$user_email,
+					$display_name,
+					$row['date'] ?? '',
+					$row['time'] ?? '',
+					$row['description'] ?? '',
+					$row['note'] ?? '',
+					$row['wallet_id'] ?? '',
+					$wallet_name,
+					$row['category_id'] ?? '',
+					$cat_name,
+					$row['amount'] ?? '',
+					$row['type'] ?? '',
+				)
+			);
+		}
+		flush();
+		++$page;
+	} while ( $item_count === $chunk_size );
+
 	// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- php://output stream, no filesystem path.
 	fclose( $output );
 	exit;
@@ -465,7 +545,7 @@ function admin_handle_export_csv() {
  *
  * Handles categories (with ID mapping), transactions, and budgets.
  * Reads beruang_import_user_id from POST; falls back to current user.
- * Requires ADMIN_CAPABILITY.
+ * Requires BERUANG_BUDGET_ADMIN_CAPABILITY.
  * Sets success or error via add_settings_error().
  */
 function admin_handle_import() {
@@ -582,7 +662,7 @@ function admin_handle_import() {
  * beruang_category_id, beruang_amount, beruang_type. Redirects on success or error.
  */
 function admin_handle_update_transaction() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
 	}
 	check_admin_referer( 'beruang_edit_transaction' );
@@ -651,7 +731,7 @@ function admin_handle_update_transaction() {
  * Redirects on success or error.
  */
 function admin_handle_update_category() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
 	}
 	check_admin_referer( 'beruang_edit_category' );
@@ -728,7 +808,7 @@ function admin_handle_update_category() {
  * Redirects on success or error.
  */
 function admin_handle_update_budget() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
 	}
 	check_admin_referer( 'beruang_edit_budget' );
@@ -808,7 +888,7 @@ function admin_handle_update_budget() {
  * Redirects on success or error.
  */
 function admin_handle_update_wallet() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
 	}
 	check_admin_referer( 'beruang_edit_wallet' );
@@ -882,7 +962,7 @@ function admin_handle_update_wallet() {
  * Uses WP_List_Table for the transactions table.
  */
 function admin_page_transactions() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
 	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
@@ -975,7 +1055,7 @@ function admin_page_transactions() {
  * Supports user filter, edit form, and WP_List_Table with pagination, sorting, delete links.
  */
 function admin_page_categories() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
 	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
@@ -1080,7 +1160,7 @@ function admin_page_categories() {
  * Supports user filter, edit form, and WP_List_Table with pagination, sorting.
  */
 function admin_page_budgets() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
 	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
@@ -1165,7 +1245,7 @@ function admin_page_budgets() {
  * Supports user filter, edit form, and WP_List_Table with pagination, sorting, delete links.
  */
 function admin_page_wallets() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
 	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
