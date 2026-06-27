@@ -80,15 +80,15 @@ class Transactions_List_Table extends \WP_List_Table {
 	 */
 	public function get_columns() {
 		return array(
-			'description' => __( 'Description', 'beruang' ),
-			'id'          => __( 'ID', 'beruang' ),
-			'user_id'     => __( 'User ID', 'beruang' ),
-			'date'        => __( 'Date', 'beruang' ),
-			'time'        => __( 'Time', 'beruang' ),
-			'category_id' => __( 'Category ID', 'beruang' ),
-			'amount'      => __( 'Amount', 'beruang' ),
-			'type'        => __( 'Type', 'beruang' ),
-			'actions'     => __( 'Actions', 'beruang' ),
+			'description' => __( 'Description', 'beruang-budget' ),
+			'id'          => __( 'ID', 'beruang-budget' ),
+			'user_id'     => __( 'User ID', 'beruang-budget' ),
+			'date'        => __( 'Date', 'beruang-budget' ),
+			'time'        => __( 'Time', 'beruang-budget' ),
+			'category_id' => __( 'Category ID', 'beruang-budget' ),
+			'amount'      => __( 'Amount', 'beruang-budget' ),
+			'type'        => __( 'Type', 'beruang-budget' ),
+			'actions'     => __( 'Actions', 'beruang-budget' ),
 		);
 	}
 
@@ -211,7 +211,7 @@ class Transactions_List_Table extends \WP_List_Table {
 			),
 			admin_url( 'admin.php' )
 		);
-		return '<a href="' . esc_url( $edit_url ) . '">' . esc_html__( 'Edit', 'beruang' ) . '</a>';
+		return '<a href="' . esc_url( $edit_url ) . '">' . esc_html__( 'Edit', 'beruang-budget' ) . '</a>';
 	}
 
 	/**
@@ -251,7 +251,7 @@ class Transactions_List_Table extends \WP_List_Table {
 	 * Message when no items found.
 	 */
 	public function no_items() {
-		esc_html_e( 'No transactions.', 'beruang' );
+		esc_html_e( 'No transactions.', 'beruang-budget' );
 	}
 
 	/**
@@ -272,9 +272,9 @@ class Transactions_List_Table extends \WP_List_Table {
 		}
 		?>
 		<div class="alignleft actions">
-			<label for="filter-by-user" class="screen-reader-text"><?php esc_html_e( 'Filter by user', 'beruang' ); ?></label>
+			<label for="filter-by-user" class="screen-reader-text"><?php esc_html_e( 'Filter by user', 'beruang-budget' ); ?></label>
 			<select name="user_id" id="filter-by-user">
-				<option value="0" <?php selected( $selected_user, 0 ); ?>><?php esc_html_e( 'All users', 'beruang' ); ?></option>
+				<option value="0" <?php selected( $selected_user, 0 ); ?>><?php esc_html_e( 'All users', 'beruang-budget' ); ?></option>
 				<?php
 				foreach ( $user_ids as $uid ) {
 					$user  = get_userdata( $uid );
@@ -287,9 +287,9 @@ class Transactions_List_Table extends \WP_List_Table {
 			if ( $selected_user > 0 ) {
 				$categories = DB::get_categories_flat( $selected_user, true );
 				?>
-				<label for="filter-by-category" class="screen-reader-text"><?php esc_html_e( 'Filter by category', 'beruang' ); ?></label>
+				<label for="filter-by-category" class="screen-reader-text"><?php esc_html_e( 'Filter by category', 'beruang-budget' ); ?></label>
 				<select name="category_id" id="filter-by-category">
-					<option value="0" <?php selected( $selected_cat, 0 ); ?>><?php esc_html_e( 'All categories', 'beruang' ); ?></option>
+					<option value="0" <?php selected( $selected_cat, 0 ); ?>><?php esc_html_e( 'All categories', 'beruang-budget' ); ?></option>
 					<?php
 					foreach ( $categories as $c ) {
 						$indent = str_repeat( '— ', (int) ( $c['depth'] ?? 0 ) );
@@ -300,13 +300,13 @@ class Transactions_List_Table extends \WP_List_Table {
 				<?php
 			}
 			?>
-			<label for="filter-by-type" class="screen-reader-text"><?php esc_html_e( 'Filter by type', 'beruang' ); ?></label>
+			<label for="filter-by-type" class="screen-reader-text"><?php esc_html_e( 'Filter by type', 'beruang-budget' ); ?></label>
 			<select name="type" id="filter-by-type">
-				<option value="" <?php selected( $selected_type, '' ); ?>><?php esc_html_e( 'All types', 'beruang' ); ?></option>
-				<option value="expense" <?php selected( $selected_type, 'expense' ); ?>><?php esc_html_e( 'Expense', 'beruang' ); ?></option>
-				<option value="income" <?php selected( $selected_type, 'income' ); ?>><?php esc_html_e( 'Income', 'beruang' ); ?></option>
+				<option value="" <?php selected( $selected_type, '' ); ?>><?php esc_html_e( 'All types', 'beruang-budget' ); ?></option>
+				<option value="expense" <?php selected( $selected_type, 'expense' ); ?>><?php esc_html_e( 'Expense', 'beruang-budget' ); ?></option>
+				<option value="income" <?php selected( $selected_type, 'income' ); ?>><?php esc_html_e( 'Income', 'beruang-budget' ); ?></option>
 			</select>
-			<?php submit_button( __( 'Filter', 'beruang' ), '', 'filter_action', false, array( 'id' => 'beruang-transactions-query-submit' ) ); ?>
+			<?php submit_button( __( 'Filter', 'beruang-budget' ), '', 'filter_action', false, array( 'id' => 'beruang-transactions-query-submit' ) ); ?>
 		</div>
 		<?php
 	}

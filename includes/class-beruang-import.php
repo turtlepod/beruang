@@ -34,7 +34,7 @@ class ImportHandler {
 	 */
 	public static function validate( $data ): ?string {
 		if ( ! is_array( $data ) ) {
-			return __( 'Invalid or empty import file.', 'beruang' );
+			return __( 'Invalid or empty import file.', 'beruang-budget' );
 		}
 		if (
 			empty( $data['categories'] ) &&
@@ -42,7 +42,7 @@ class ImportHandler {
 			empty( $data['transactions'] ) &&
 			empty( $data['budgets'] )
 		) {
-			return __( 'Invalid or empty import file.', 'beruang' );
+			return __( 'Invalid or empty import file.', 'beruang-budget' );
 		}
 		return null;
 	}

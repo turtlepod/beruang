@@ -16,16 +16,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="beruang beruang-wallet-wrapper">
 	<div class="beruang-wallet-header">
-		<h2 class="beruang-section-title"><?php esc_html_e( 'Wallets', 'beruang' ); ?></h2>
+		<h2 class="beruang-section-title"><?php esc_html_e( 'Wallets', 'beruang-budget' ); ?></h2>
 		<div class="beruang-wallet-header-actions">
-			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-wallet-transfer-open" title="<?php esc_attr_e( 'Transfer between wallets', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Transfer between wallets', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'transfer', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-wallet-add" title="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Add wallet', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-wallet-transfer-open" title="<?php esc_attr_e( 'Transfer between wallets', 'beruang-budget' ); ?>" aria-label="<?php esc_attr_e( 'Transfer between wallets', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'transfer', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-wallet-add" title="<?php esc_attr_e( 'Add wallet', 'beruang-budget' ); ?>" aria-label="<?php esc_attr_e( 'Add wallet', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'add', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		</div>
 	</div>
 	<div class="beruang-form-row beruang-wallet-default-row"<?php echo count( $wallets ) >= 1 ? '' : ' hidden'; ?>>
-		<label for="beruang-default-wallet-select"><?php esc_html_e( 'Default wallet', 'beruang' ); ?></label>
+		<label for="beruang-default-wallet-select"><?php esc_html_e( 'Default wallet', 'beruang-budget' ); ?></label>
 		<select id="beruang-default-wallet-select" class="beruang-default-wallet-select" data-default-wallet-id="<?php echo esc_attr( null === $default_wallet_id ? '' : (string) $default_wallet_id ); ?>">
-			<option value=""><?php esc_html_e( 'No Wallet', 'beruang' ); ?></option>
+			<option value=""><?php esc_html_e( 'No Wallet', 'beruang-budget' ); ?></option>
 			<?php foreach ( $wallets as $wallet ) : ?>
 				<option value="<?php echo esc_attr( (string) $wallet['id'] ); ?>"<?php echo selected( (string) $wallet['id'], (string) $default_wallet_id, false ); ?>><?php echo esc_html( $wallet['name'] ); ?></option>
 			<?php endforeach; ?>
@@ -44,12 +44,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="beruang-wallet-card" data-id="<?php echo esc_attr( $wallet['id'] ); ?>" data-name="<?php echo esc_attr( $wallet['name'] ); ?>" data-default="<?php echo esc_attr( $is_default ); ?>" data-initial-amount="<?php echo esc_attr( (string) $initial_amount ); ?>" data-initial-date="<?php echo esc_attr( $initial_date ); ?>">
 				<h4><?php echo esc_html( $wallet['name'] ); ?></h4>
 				<?php /* translators: %s: current wallet amount. */ ?>
-				<div class="beruang-wallet-card-balance <?php echo esc_attr( $balance_class ); ?>"><?php echo esc_html( sprintf( __( 'Current: %s', 'beruang' ), number_format_i18n( $current_amount, $decimal_places ) ) ); ?></div>
+				<div class="beruang-wallet-card-balance <?php echo esc_attr( $balance_class ); ?>"><?php echo esc_html( sprintf( __( 'Current: %s', 'beruang-budget' ), number_format_i18n( $current_amount, $decimal_places ) ) ); ?></div>
 				<?php /* translators: 1: amount, 2: date (Y-m-d). */ ?>
-				<div class="beruang-wallet-card-meta"><?php echo esc_html( sprintf( __( 'Baseline: %1$s on %2$s', 'beruang' ), number_format_i18n( $initial_amount, $decimal_places ), $initial_date ) ); ?></div>
+				<div class="beruang-wallet-card-meta"><?php echo esc_html( sprintf( __( 'Baseline: %1$s on %2$s', 'beruang-budget' ), number_format_i18n( $initial_amount, $decimal_places ), $initial_date ) ); ?></div>
 				<span class="beruang-wallet-card-actions">
-					<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-action-edit" title="<?php esc_attr_e( 'Edit', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Edit', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'edit', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-					<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--danger beruang-action-delete" title="<?php esc_attr_e( 'Delete', 'beruang' ); ?>" aria-label="<?php esc_attr_e( 'Delete', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'trash', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+					<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--primary beruang-action-edit" title="<?php esc_attr_e( 'Edit', 'beruang-budget' ); ?>" aria-label="<?php esc_attr_e( 'Edit', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'edit', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+					<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--danger beruang-action-delete" title="<?php esc_attr_e( 'Delete', 'beruang-budget' ); ?>" aria-label="<?php esc_attr_e( 'Delete', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'trash', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 				</span>
 			</div>
 			<?php
@@ -58,24 +58,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div class="beruang-wallet-transfer-modal beruang-modal" id="beruang-wallet-transfer-modal" hidden>
 		<div class="beruang-modal-dialog">
-			<button type="button" class="beruang-modal-close-x beruang-wallet-transfer-close" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-modal-close-x beruang-wallet-transfer-close" aria-label="<?php esc_attr_e( 'Close', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 			<div class="beruang-modal-inner">
-				<h4><?php esc_html_e( 'Transfer between wallets', 'beruang' ); ?></h4>
+				<h4><?php esc_html_e( 'Transfer between wallets', 'beruang-budget' ); ?></h4>
 				<div class="beruang-form-wrapper">
 					<form id="beruang-wallet-transfer-form" class="beruang-form">
 						<div class="beruang-form-row beruang-form-row--split">
 							<div class="beruang-form-field">
-								<label for="beruang-transfer-date"><?php esc_html_e( 'Date', 'beruang' ); ?></label>
+								<label for="beruang-transfer-date"><?php esc_html_e( 'Date', 'beruang-budget' ); ?></label>
 								<input type="date" id="beruang-transfer-date" name="date" value="<?php echo esc_attr( $today ); ?>" required />
 							</div>
 							<div class="beruang-form-field">
-								<label for="beruang-transfer-time"><?php esc_html_e( 'Time', 'beruang' ); ?></label>
+								<label for="beruang-transfer-time"><?php esc_html_e( 'Time', 'beruang-budget' ); ?></label>
 								<input type="time" id="beruang-transfer-time" name="time" value="<?php echo esc_attr( $time ); ?>" required />
 							</div>
 						</div>
 						<div class="beruang-form-row beruang-form-row--split">
 							<div class="beruang-form-field">
-								<label for="beruang-transfer-from"><?php esc_html_e( 'From wallet', 'beruang' ); ?></label>
+								<label for="beruang-transfer-from"><?php esc_html_e( 'From wallet', 'beruang-budget' ); ?></label>
 								<select id="beruang-transfer-from" name="from_wallet_id" required>
 									<?php foreach ( $wallets as $wallet ) : ?>
 										<option value="<?php echo esc_attr( (string) $wallet['id'] ); ?>"><?php echo esc_html( $wallet['name'] ); ?></option>
@@ -83,7 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								</select>
 							</div>
 							<div class="beruang-form-field">
-								<label for="beruang-transfer-to"><?php esc_html_e( 'To wallet', 'beruang' ); ?></label>
+								<label for="beruang-transfer-to"><?php esc_html_e( 'To wallet', 'beruang-budget' ); ?></label>
 								<select id="beruang-transfer-to" name="to_wallet_id" required>
 									<?php foreach ( $wallets as $wallet ) : ?>
 										<option value="<?php echo esc_attr( (string) $wallet['id'] ); ?>"><?php echo esc_html( $wallet['name'] ); ?></option>
@@ -92,25 +92,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</div>
 						</div>
 						<div class="beruang-form-row">
-							<label for="beruang-transfer-amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label>
+							<label for="beruang-transfer-amount"><?php esc_html_e( 'Amount', 'beruang-budget' ); ?></label>
 							<input type="number" id="beruang-transfer-amount" name="amount" step="<?php echo $decimal_places > 0 ? esc_attr( '0.' . str_repeat( '0', $decimal_places - 1 ) . '1' ) : '1'; ?>" min="0" required />
 						</div>
 						<div class="beruang-form-row">
-							<label for="beruang-transfer-category"><?php esc_html_e( 'Category', 'beruang' ); ?></label>
+							<label for="beruang-transfer-category"><?php esc_html_e( 'Category', 'beruang-budget' ); ?></label>
 							<select id="beruang-transfer-category" name="category_id">
-								<option value="0"><?php esc_html_e( 'No category', 'beruang' ); ?></option>
+								<option value="0"><?php esc_html_e( 'No category', 'beruang-budget' ); ?></option>
 								<?php foreach ( $categories as $cat ) : ?>
 									<option value="<?php echo esc_attr( (string) $cat['id'] ); ?>"><?php echo esc_html( str_repeat( '— ', max( 0, (int) $cat['depth'] ) ) . $cat['name'] ); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>
 						<div class="beruang-form-row">
-							<label for="beruang-transfer-note"><?php esc_html_e( 'Note', 'beruang' ); ?></label>
+							<label for="beruang-transfer-note"><?php esc_html_e( 'Note', 'beruang-budget' ); ?></label>
 							<input type="text" id="beruang-transfer-note" name="note" />
 						</div>
 						<div class="beruang-form-row beruang-modal-actions">
-							<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit beruang-modal-save"><?php esc_html_e( 'Transfer', 'beruang' ); ?></button>
-							<button type="button" class="beruang-btn beruang-btn--secondary beruang-modal-cancel beruang-wallet-transfer-close"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+							<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit beruang-modal-save"><?php esc_html_e( 'Transfer', 'beruang-budget' ); ?></button>
+							<button type="button" class="beruang-btn beruang-btn--secondary beruang-modal-cancel beruang-wallet-transfer-close"><?php esc_html_e( 'Cancel', 'beruang-budget' ); ?></button>
 							<span class="beruang-form-message" aria-live="polite"></span>
 						</div>
 					</form>
@@ -120,30 +120,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<div class="beruang-wallet-modal beruang-modal" id="beruang-wallet-modal" hidden>
 		<div class="beruang-modal-dialog">
-			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang' ); ?>"><?php \BeruangBudget\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
+			<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 			<div class="beruang-modal-inner beruang-wallet-modal-inner">
-				<h4><?php esc_html_e( 'Add / Edit wallet', 'beruang' ); ?></h4>
+				<h4><?php esc_html_e( 'Add / Edit wallet', 'beruang-budget' ); ?></h4>
 				<form id="beruang-wallet-form" class="beruang-wallet-form">
 					<input type="hidden" id="beruang-wallet-edit-id" name="id" value="" />
 					<div class="beruang-form-row">
-						<label for="beruang-wallet-name"><?php esc_html_e( 'Name', 'beruang' ); ?></label>
+						<label for="beruang-wallet-name"><?php esc_html_e( 'Name', 'beruang-budget' ); ?></label>
 						<input type="text" id="beruang-wallet-name" name="name" required />
 					</div>
 					<div class="beruang-form-row">
-						<label for="beruang-wallet-initial-amount"><?php esc_html_e( 'Amount on selected date', 'beruang' ); ?></label>
+						<label for="beruang-wallet-initial-amount"><?php esc_html_e( 'Amount on selected date', 'beruang-budget' ); ?></label>
 						<input type="number" id="beruang-wallet-initial-amount" name="initial_amount" step="0.01" />
 					</div>
 					<div class="beruang-form-row">
-						<label for="beruang-wallet-initial-date"><?php esc_html_e( 'Selected date', 'beruang' ); ?></label>
+						<label for="beruang-wallet-initial-date"><?php esc_html_e( 'Selected date', 'beruang-budget' ); ?></label>
 						<input type="date" id="beruang-wallet-initial-date" name="initial_date" value="<?php echo esc_attr( current_time( 'Y-m-d' ) ); ?>" required />
 					</div>
 					<div class="beruang-form-row">
-						<label for="beruang-wallet-set-default"><?php esc_html_e( 'Set as default wallet', 'beruang' ); ?></label>
+						<label for="beruang-wallet-set-default"><?php esc_html_e( 'Set as default wallet', 'beruang-budget' ); ?></label>
 						<input type="checkbox" id="beruang-wallet-set-default" name="set_as_default" value="1" />
 					</div>
 					<div class="beruang-form-row beruang-modal-actions">
-						<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit beruang-wallet-submit-add beruang-modal-save"><?php esc_html_e( 'Save', 'beruang' ); ?></button>
-						<button type="button" class="beruang-btn beruang-btn--secondary beruang-modal-cancel beruang-wallet-cancel-edit"><?php esc_html_e( 'Cancel', 'beruang' ); ?></button>
+						<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit beruang-wallet-submit-add beruang-modal-save"><?php esc_html_e( 'Save', 'beruang-budget' ); ?></button>
+						<button type="button" class="beruang-btn beruang-btn--secondary beruang-modal-cancel beruang-wallet-cancel-edit"><?php esc_html_e( 'Cancel', 'beruang-budget' ); ?></button>
 						<span class="beruang-form-message" aria-live="polite"></span>
 					</div>
 				</form>

@@ -9,7 +9,7 @@
 | **Purpose** | Per-user money tracking: transactions, wallets, budgets |
 | **Namespace** | `BeruangBudget` |
 | **PHP** | 8.2+ |
-| **Text domain** | `beruang` |
+| **Text domain** | `beruang-budget` |
 
 ## Constants
 
@@ -19,14 +19,14 @@
 | `BERUANG_BUDGET_PLUGIN_FILE` | beruang-budget.php | Main plugin file path |
 | `BERUANG_BUDGET_PLUGIN_DIR` | beruang-budget.php | Plugin dir (trailing slash) |
 | `BERUANG_BUDGET_PLUGIN_URL` | beruang-budget.php | Plugin URL |
-| `ADMIN_SLUG` | beruang-budget.php | `'beruang'` (namespace const) |
-| `ADMIN_CAPABILITY` | beruang-budget.php | `'manage_options'` (namespace const) |
+| `BERUANG_BUDGET_ADMIN_SLUG` | beruang-budget.php | `'beruang'` (admin page slug) |
+| `BERUANG_BUDGET_ADMIN_CAPABILITY` | beruang-budget.php | `'manage_options'` (required cap) |
 | `DB::DB_VERSION` | class-beruang-db.php | Schema version (4) |
 
 ## File Map
 
 ```
-beruang.php                    Entry; constants; loads core + WP-CLI
+beruang-budget.php             Entry; constants; loads core + WP-CLI
 includes/
   core.php                     Bootstrap; activation; enqueue; print templates;
                                use_logged_in_user_locale_on_frontend; theme dir ref
