@@ -1112,7 +1112,7 @@ function rest_get_budgets( $request ) {
 	$yearly_from  = sprintf( '%04d-01-01', $year );
 	$yearly_to    = sprintf( '%04d-12-31', $year );
 	$monthly_from = sprintf( '%04d-%02d-01', $year, $month );
-	$monthly_to   = gmdate( 'Y-m-t', strtotime( $monthly_from ) );
+	$monthly_to   = gmdate( 'Y-m-t', mktime( 0, 0, 0, $month, 1, $year ) );
 
 	$groups      = array();
 	$group_spent = array();
