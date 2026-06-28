@@ -533,7 +533,7 @@ function admin_handle_export_csv() {
 		}
 		flush();
 		++$page;
-	} while ( $item_count === $chunk_size && $page <= 10000 );
+	} while ( $item_count === $chunk_size && $page <= max( 1, (int) ceil( ( (int) ( $result['total'] ?? 0 ) ) / $chunk_size ) ) );
 
 	// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- php://output stream, no filesystem path.
 	fclose( $output );
