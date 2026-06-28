@@ -42,9 +42,6 @@ function on_activation() {
 }
 
 /**
- * Fires on plugins_loaded: load text domain, register shortcodes, and hook actions.
- */
-/**
  * Use the logged-in user's locale for frontend requests.
  *
  * WordPress applies user locale automatically in wp-admin, but not on
@@ -110,24 +107,23 @@ function enqueue_front_scripts() {
 			$front_style_ver
 		);
 	}
-	$deps        = array();
-	$chart_asset = BERUANG_BUDGET_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
+
 	wp_enqueue_script(
 		'chartjs',
 		BERUANG_BUDGET_PLUGIN_URL . 'assets/js/chart.umd.min.js',
 		array(),
-		file_exists( $chart_asset ) ? (string) filemtime( $chart_asset ) : '4.4.1',
+		'4.4.1', // Hardcoded: vendored library, version rarely changes. Update manually when upgrading Chart.js.
 		true
 	);
-	$deps[]         = 'chartjs';
+
 	$front_js_dist  = BERUANG_BUDGET_PLUGIN_DIR . 'dist/js/front.js';
 	$front_js_asset = BERUANG_BUDGET_PLUGIN_DIR . 'dist/js/front.asset.php';
-	$front_js_deps  = $deps;
+	$front_js_deps  = [ 'chartjs' ];
 	$front_js_ver   = BERUANG_BUDGET_VERSION;
 	if ( file_exists( $front_js_dist ) ) {
 		if ( file_exists( $front_js_asset ) ) {
 			$front_js_asset_data = include $front_js_asset;
-			$front_js_deps       = array_merge( $front_js_asset_data['dependencies'] ?? array(), $deps );
+			$front_js_deps       = array_merge( $front_js_asset_data['dependencies'] ?? array(), $front_js_deps );
 			$front_js_ver        = $front_js_asset_data['version'] ?? $front_js_ver;
 		}
 		$front_js_url = BERUANG_BUDGET_PLUGIN_URL . 'dist/js/front.js';

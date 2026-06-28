@@ -663,7 +663,7 @@ function rest_update_transaction( $request ) {
 		'wallet_id'   => array_key_exists( 'wallet_id', $body ) ? rest_parse_wallet_id( $body['wallet_id'] ) : $existing_wallet_id,
 		'category_id' => isset( $body['category_id'] ) ? absint( $body['category_id'] ) : (int) ( $existing['category_id'] ?? 0 ),
 		'amount'      => isset( $body['amount'] ) ? floatval( $body['amount'] ) : (float) ( $existing['amount'] ?? 0 ),
-		'type'        => isset( $body['type'] ) && 'income' === $body['type'] ? 'income' : 'expense',
+		'type'        => isset( $body['type'] ) ? ( 'income' === $body['type'] ? 'income' : 'expense' ) : ( $existing['type'] ?? 'expense' ),
 	);
 	if ( '' === $data['time'] ) {
 		$data['time'] = null;
@@ -715,7 +715,7 @@ function rest_update_transaction( $request ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'No changes were made.', 'beruang-budget' ), 400 );
 	}
 
-	$ok = DB::update_transaction( $id, $data );
+	$ok = DB::update_transaction( $user_id, $id, $data );
 	if ( $ok ) {
 		return rest_ensure_response(
 			array(
