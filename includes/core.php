@@ -123,7 +123,7 @@ function enqueue_front_scripts() {
 	if ( file_exists( $front_js_dist ) ) {
 		if ( file_exists( $front_js_asset ) ) {
 			$front_js_asset_data = include $front_js_asset;
-			$front_js_deps       = array_merge( $front_js_asset_data['dependencies'] ?? array(), $deps );
+			$front_js_deps       = array_merge( $front_js_asset_data['dependencies'] ?? array(), $front_js_deps );
 			$front_js_ver        = $front_js_asset_data['version'] ?? $front_js_ver;
 		}
 		$front_js_url = BERUANG_BUDGET_PLUGIN_URL . 'dist/js/front.js';
