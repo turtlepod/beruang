@@ -57,20 +57,29 @@ function beruang_icon( $name, $args = array() ) {
 	$svg   = $icons[ $name ];
 	$class = trim( 'beruang-icon beruang-icon-' . $name . ' ' . $args['class'] );
 
-	// Inject size if provided.
-	if ( ! empty( $args['size'] ) ) {
-		$size = esc_attr( $args['size'] );
-		$svg  = preg_replace( '/width="[^"]+"/', 'width="' . $size . '"', $svg );
-		$svg  = preg_replace( '/height="[^"]+"/', 'height="' . $size . '"', $svg );
-	}
+	libxml_use_internal_errors( true );
+	$doc = new \DOMDocument();
+	if ( $doc->loadXML( $svg ) ) {
+		$svg_el = $doc->documentElement; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
-	// Inject class.
-	$svg = preg_replace( '/<svg/', '<svg class="' . esc_attr( $class ) . '"', $svg );
+		// Inject size if provided.
+		if ( ! empty( $args['size'] ) ) {
+			$svg_el->setAttribute( 'width', $args['size'] );
+			$svg_el->setAttribute( 'height', $args['size'] );
+		}
 
-	// Merge extra attrs.
-	foreach ( $args['attrs'] as $k => $v ) {
-		$svg = preg_replace( '/<svg/', '<svg ' . esc_attr( $k ) . '="' . esc_attr( $v ) . '"', $svg );
+		// Inject class.
+		$old_class = $svg_el->getAttribute( 'class' );
+		$svg_el->setAttribute( 'class', trim( $old_class . ' ' . $class ) );
+
+		// Merge extra attrs.
+		foreach ( $args['attrs'] as $k => $v ) {
+			$svg_el->setAttribute( $k, $v );
+		}
+
+		$svg = $doc->saveXML( $svg_el );
 	}
+	libxml_clear_errors();
 
 	echo $svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }

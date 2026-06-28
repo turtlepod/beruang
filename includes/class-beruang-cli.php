@@ -17,6 +17,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 class CLI {
 
 	/**
+	 * Validate and filter a comma-separated list of field names against an allowed list.
+	 *
+	 * @param string $fields   Comma-separated field names.
+	 * @param array  $allowed  Whitelist of valid field names.
+	 * @return array Filtered field names.
+	 */
+	private static function validate_fields( $fields, $allowed ) {
+		$requested = explode( ',', $fields );
+		return array_values(
+			array_filter(
+				array_map( 'trim', $requested ),
+				function ( $f ) use ( $allowed ) {
+					return in_array( $f, $allowed, true );
+				}
+			)
+		);
+	}
+
+	/**
 	 * Transaction operations.
 	 *
 	 * ## OPTIONS
@@ -88,7 +107,7 @@ class CLI {
 		$result   = DB::get_transactions( $user_id, $params );
 		$format   = isset( $assoc_args['format'] ) ? $assoc_args['format'] : 'table';
 		$fields   = isset( $assoc_args['fields'] ) ? $assoc_args['fields'] : 'id,user_id,date,time,description,category_id,amount,type';
-		\WP_CLI\Utils\format_items( $format, $result['items'], explode( ',', $fields ) );
+		\WP_CLI\Utils\format_items( $format, $result['items'], self::validate_fields( $fields, array( 'id', 'user_id', 'date', 'time', 'description', 'note', 'category_id', 'wallet_id', 'amount', 'type' ) ) );
 	}
 
 	/**
@@ -133,7 +152,7 @@ class CLI {
 		$items  = DB::get_categories_flat( $user_id, true );
 		$format = isset( $assoc_args['format'] ) ? $assoc_args['format'] : 'table';
 		$fields = isset( $assoc_args['fields'] ) ? $assoc_args['fields'] : 'id,user_id,name,parent_id,sort_order,depth';
-		\WP_CLI\Utils\format_items( $format, $items, explode( ',', $fields ) );
+		\WP_CLI\Utils\format_items( $format, $items, self::validate_fields( $fields, array( 'id', 'user_id', 'name', 'parent_id', 'sort_order', 'depth' ) ) );
 	}
 
 	/**
@@ -178,7 +197,7 @@ class CLI {
 		$items  = DB::get_budgets( $user_id );
 		$format = isset( $assoc_args['format'] ) ? $assoc_args['format'] : 'table';
 		$fields = isset( $assoc_args['fields'] ) ? $assoc_args['fields'] : 'id,user_id,name,target_amount,type,category_ids';
-		\WP_CLI\Utils\format_items( $format, $items, explode( ',', $fields ) );
+		\WP_CLI\Utils\format_items( $format, $items, self::validate_fields( $fields, array( 'id', 'user_id', 'name', 'target_amount', 'type', 'category_ids' ) ) );
 	}
 
 	/**
@@ -237,7 +256,7 @@ class CLI {
 		$items  = is_array( $items ) ? $items : array();
 		$format = isset( $assoc_args['format'] ) ? $assoc_args['format'] : 'table';
 		$fields = isset( $assoc_args['fields'] ) ? $assoc_args['fields'] : 'budget_id,category_id';
-		\WP_CLI\Utils\format_items( $format, $items, explode( ',', $fields ) );
+		\WP_CLI\Utils\format_items( $format, $items, self::validate_fields( $fields, array( 'budget_id', 'category_id' ) ) );
 	}
 
 	/**

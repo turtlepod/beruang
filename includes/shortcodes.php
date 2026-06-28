@@ -99,8 +99,10 @@ function shortcode_load_template( $name, $args = array() ) {
 	if ( ! file_exists( $path ) ) {
 		return;
 	}
-	// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- keys are hardcoded caller-controlled arrays.
-	extract( $args, EXTR_SKIP );
+	// Unpack template variables from caller-controlled arrays.
+	foreach ( $args as $key => $value ) {
+		$$key = $value;
+	}
 	include $path;
 }
 

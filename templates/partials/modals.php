@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="beruang beruang-calc-modal beruang-modal" id="beruang-calc-modal" hidden>
 	<div class="beruang-calc-content">
 		<button type="button" class="beruang-modal-close-x" aria-label="<?php esc_attr_e( 'Close', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'close', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-		<input type="text" class="beruang-calc-display" readonly value="0" />
+		<div class="beruang-calc-display" aria-live="polite" aria-atomic="true">0</div>
 		<div class="beruang-calc-buttons"></div>
 		<div class="beruang-calc-bottom">
 			<div class="beruang-calc-bottom-row">

@@ -21,6 +21,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * Transactions list table for admin page.
  */
 class Transactions_List_Table extends \WP_List_Table {
+	use Beruang_List_Table_Trait;
 
 	/**
 	 * User ID filter. 0 = all users.
@@ -45,32 +46,6 @@ class Transactions_List_Table extends \WP_List_Table {
 				'screen'   => $screen ? $screen->id : 'beruang_page_beruang-transactions',
 			)
 		);
-	}
-
-	/**
-	 * Always use list view to avoid layout issues with excerpt/grid modes.
-	 *
-	 * @return string[]
-	 */
-	protected function get_table_classes() {
-		return array( 'widefat', 'fixed', 'striped', 'table-view-list', $this->_args['plural'] );
-	}
-
-	/**
-	 * Override column info to ensure our columns are always used (avoids filter conflicts).
-	 *
-	 * @return array
-	 */
-	protected function get_column_info() {
-		if ( isset( $this->_column_headers ) && is_array( $this->_column_headers ) ) {
-			return $this->_column_headers;
-		}
-		$columns               = $this->get_columns();
-		$hidden                = array();
-		$sortable              = $this->get_sortable_columns();
-		$primary               = $this->get_default_primary_column_name();
-		$this->_column_headers = array( $columns, $hidden, $sortable, $primary );
-		return $this->_column_headers;
 	}
 
 	/**

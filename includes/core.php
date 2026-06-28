@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-db.php';
 require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-import.php';
 require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/icon-helpers.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/trait-beruang-list-table-trait.php';
 require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-transactions-list-table.php';
 require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-categories-list-table.php';
 require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-budgets-list-table.php';
