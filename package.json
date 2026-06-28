@@ -1,9 +1,9 @@
 {
-  "name": "beruang",
+  "name": "beruang-budget",
   "version": "0.5.0",
   "private": true,
   "description": "Track money, transactions, and budgets. Per-user data with shortcodes and admin pages.",
-  "license": "GPL-2.0-or-later",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "@10up/babel-preset-default": "^2.1.2",
     "@playwright/test": "^1.58.2",
@@ -30,10 +30,10 @@
     "lint-fix-css": "stylelint --fix \"assets/css/**/*.css\"",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "zip": "npm run build && composer run test && version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang.$version.zip beruang -x '*/.?*' -x '*node_modules*' -x '*/vendor/*' -x '*/test-results/*' -x '*/tests/e2e/report/*' -x '*/playwright-report/*'",
+    "zip": "npm run build && composer run test && version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang-budget.$version.zip beruang-budget -x '*/.?*' -x '*node_modules*' -x '*/vendor/*' -x '*/test-results/*' -x '*/tests/e2e/report/*' -x '*/playwright-report/*'",
     "clean-dist": "rm -rf ./dist",
-    "make-pot": "wp i18n make-pot . languages/beruang.pot --path=../../.. --allow-root",
-    "make-mo": "wp i18n make-mo languages/beruang-id_ID.po --path=../../.. --allow-root",
+    "make-pot": "wp i18n make-pot . languages/beruang-budget.pot --domain=beruang-budget --path=../../.. --allow-root",
+    "make-mo": "wp i18n make-mo languages/beruang-budget-id_ID.po --path=../../.. --allow-root",
     "lang": "npm run make-pot && npm run make-mo"
   },
   "10up-toolkit": {

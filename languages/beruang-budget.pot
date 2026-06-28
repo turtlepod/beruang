@@ -1,227 +1,226 @@
 # Copyright (C) 2026 David Chandra Purnama
-# This file is distributed under the GPLv2 or later.
+# This file is distributed under the GPLv3 or later.
 msgid ""
 msgstr ""
 "Project-Id-Version: Beruang Budget 0.5.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/beruang\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/beruang-budget\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-24T21:41:04+02:00\n"
+"POT-Creation-Date: 2026-06-27T18:33:02+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: beruang\n"
 
 #. Plugin Name of the plugin
-#: beruang.php
-#: includes/admin.php:104
-#: includes/admin.php:105
+#: beruang-budget.php
+#: includes/admin.php:108
+#: includes/admin.php:109
 msgid "Beruang Budget"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: beruang.php
+#: beruang-budget.php
 msgid "https://pandaplugin.com/beruang/"
 msgstr ""
 
 #. Description of the plugin
-#: beruang.php
+#: beruang-budget.php
 msgid "Track money, transactions, and budgets."
 msgstr ""
 
 #. Author of the plugin
-#: beruang.php
+#: beruang-budget.php
 msgid "David Chandra Purnama"
 msgstr ""
 
 #. Author URI of the plugin
-#: beruang.php
+#: beruang-budget.php
 msgid "https://turtlepod.xyz"
 msgstr ""
 
 #. translators: %s: npm build command
-#: includes/admin.php:61
+#: includes/admin.php:65
 #, php-format
 msgid "Beruang: Built assets are missing. Run %s in the plugin directory."
 msgstr ""
 
-#: includes/admin.php:112
+#: includes/admin.php:116
 msgid "Settings"
 msgstr ""
 
-#: includes/admin.php:113
-#: includes/admin.php:901
+#: includes/admin.php:117
+#: includes/admin.php:981
 #: templates/list.php:23
 msgid "Transactions"
 msgstr ""
 
-#: includes/admin.php:114
-#: includes/admin.php:1014
-#: includes/admin.php:1133
-#: includes/core.php:169
+#: includes/admin.php:118
+#: includes/admin.php:1094
+#: includes/admin.php:1213
+#: includes/core.php:168
 #: templates/budget.php:85
 msgid "Categories"
 msgstr ""
 
-#: includes/admin.php:115
-#: includes/admin.php:1100
+#: includes/admin.php:119
+#: includes/admin.php:1180
 #: templates/budget.php:18
 msgid "Budgets"
 msgstr ""
 
-#: includes/admin.php:116
-#: includes/admin.php:1203
+#: includes/admin.php:120
+#: includes/admin.php:1283
 #: templates/wallet.php:19
 msgid "Wallets"
 msgstr ""
 
-#: includes/admin.php:232
+#: includes/admin.php:236
 msgid "Beruang Budget Settings"
 msgstr ""
 
-#: includes/admin.php:237
+#: includes/admin.php:241
 msgid "Currency"
 msgstr ""
 
-#: includes/admin.php:241
+#: includes/admin.php:245
 msgid "Decimal separator"
 msgstr ""
 
-#: includes/admin.php:245
+#: includes/admin.php:249
 msgid "Thousands separator"
 msgstr ""
 
-#: includes/admin.php:249
+#: includes/admin.php:253
 msgid "Decimal places"
 msgstr ""
 
-#: includes/admin.php:252
+#: includes/admin.php:256
 msgid "None (integers only)"
 msgstr ""
 
-#: includes/admin.php:258
+#: includes/admin.php:262
 msgid "Number of digits after the decimal in amount fields."
 msgstr ""
 
-#: includes/admin.php:262
+#: includes/admin.php:266
 msgid "Web app"
 msgstr ""
 
-#: includes/admin.php:263
+#: includes/admin.php:267
 msgid "Allow visitors to install your site as an app on their device (Add to Home Screen)."
 msgstr ""
 
-#: includes/admin.php:266
+#: includes/admin.php:270
 msgid "Enable web app install"
 msgstr ""
 
-#: includes/admin.php:270
+#: includes/admin.php:274
 msgid "Enable"
 msgstr ""
 
-#: includes/admin.php:275
+#: includes/admin.php:279
 msgid "App name"
 msgstr ""
 
-#: includes/admin.php:278
+#: includes/admin.php:282
 msgid "Display name when installed. Leave blank to use site title."
 msgstr ""
 
-#: includes/admin.php:282
+#: includes/admin.php:286
 msgid "Short name"
 msgstr ""
 
-#: includes/admin.php:285
+#: includes/admin.php:289
 msgid "Shown on home screen when space is limited (max 12 chars). Leave blank to auto-truncate app name."
 msgstr ""
 
-#: includes/admin.php:289
+#: includes/admin.php:293
 msgid "Theme color"
 msgstr ""
 
-#: includes/admin.php:292
+#: includes/admin.php:296
 msgid "Hex color code (e.g. #2271b1). Used for browser toolbar and PWA theme color."
 msgstr ""
 
-#: includes/admin.php:299
+#: includes/admin.php:303
 msgid "Export / Import"
 msgstr ""
 
-#: includes/admin.php:304
-#: includes/admin.php:319
+#: includes/admin.php:308
+#: includes/admin.php:323
 msgid "User"
 msgstr ""
 
-#: includes/admin.php:314
+#: includes/admin.php:318
 msgid "Export data (JSON)"
 msgstr ""
 
-#: includes/admin.php:329
+#: includes/admin.php:333
 msgid "Export transactions (CSV)"
 msgstr ""
 
-#: includes/admin.php:335
+#: includes/admin.php:339
 msgid "Import to user"
 msgstr ""
 
-#: includes/admin.php:346
+#: includes/admin.php:350
 msgid "Import from JSON"
 msgstr ""
 
-#: includes/admin.php:360
-#: includes/admin.php:368
-#: includes/admin.php:400
-#: includes/admin.php:408
-#: includes/admin.php:586
-#: includes/admin.php:655
-#: includes/admin.php:732
+#: includes/admin.php:366
+#: includes/admin.php:374
+#: includes/admin.php:447
+#: includes/admin.php:455
+#: includes/admin.php:666
+#: includes/admin.php:735
 #: includes/admin.php:812
+#: includes/admin.php:892
 msgid "Not allowed."
 msgstr ""
 
-#: includes/admin.php:436
-#: includes/core.php:157
+#: includes/admin.php:512
+#: includes/core.php:156
 #: templates/partials/transaction-form.php:41
 #: templates/wallet.php:28
 msgid "No Wallet"
 msgstr ""
 
-#: includes/admin.php:477
+#: includes/admin.php:557
 msgid "Invalid user."
 msgstr ""
 
-#: includes/admin.php:481
+#: includes/admin.php:561
 msgid "Invalid file upload."
 msgstr ""
 
-#: includes/admin.php:488
+#: includes/admin.php:568
 #: includes/class-beruang-import.php:37
 #: includes/class-beruang-import.php:45
 msgid "Invalid or empty import file."
 msgstr ""
 
-#: includes/admin.php:575
+#: includes/admin.php:655
 msgid "Import completed."
 msgstr ""
 
-#: includes/admin.php:904
+#: includes/admin.php:984
 msgid "Transaction updated."
 msgstr ""
 
-#: includes/admin.php:907
+#: includes/admin.php:987
 #: includes/rest.php:624
 #: includes/rest.php:651
 msgid "Transaction not found."
 msgstr ""
 
-#: includes/admin.php:912
+#: includes/admin.php:992
 #: templates/list.php:76
 msgid "Edit transaction"
 msgstr ""
 
-#: includes/admin.php:918
+#: includes/admin.php:998
 #: includes/class-beruang-budgets-list-table.php:84
 #: includes/class-beruang-categories-list-table.php:91
 #: includes/class-beruang-transactions-list-table.php:85
@@ -229,47 +228,47 @@ msgstr ""
 msgid "User ID"
 msgstr ""
 
-#: includes/admin.php:919
+#: includes/admin.php:999
 #: includes/class-beruang-transactions-list-table.php:86
 #: templates/partials/transaction-form.php:53
 #: templates/wallet.php:68
 msgid "Date"
 msgstr ""
 
-#: includes/admin.php:920
+#: includes/admin.php:1000
 #: includes/class-beruang-transactions-list-table.php:87
 #: templates/wallet.php:72
 msgid "Time"
 msgstr ""
 
-#: includes/admin.php:921
+#: includes/admin.php:1001
 #: includes/class-beruang-transactions-list-table.php:83
 #: templates/partials/transaction-form.php:60
 msgid "Description"
 msgstr ""
 
-#: includes/admin.php:922
+#: includes/admin.php:1002
 #: templates/partials/transaction-form.php:68
 #: templates/wallet.php:99
 msgid "Category"
 msgstr ""
 
-#: includes/admin.php:924
-#: includes/core.php:156
+#: includes/admin.php:1004
+#: includes/core.php:155
 #: templates/list.php:38
 #: templates/partials/transaction-form.php:71
 msgid "Uncategorized"
 msgstr ""
 
-#: includes/admin.php:932
+#: includes/admin.php:1012
 #: includes/class-beruang-transactions-list-table.php:89
 #: templates/partials/transaction-form.php:84
 #: templates/wallet.php:95
 msgid "Amount"
 msgstr ""
 
-#: includes/admin.php:933
-#: includes/admin.php:1132
+#: includes/admin.php:1013
+#: includes/admin.php:1212
 #: includes/class-beruang-budgets-list-table.php:87
 #: includes/class-beruang-transactions-list-table.php:90
 #: templates/budget.php:78
@@ -277,31 +276,31 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: includes/admin.php:935
+#: includes/admin.php:1015
 #: includes/class-beruang-transactions-list-table.php:306
-#: includes/core.php:158
+#: includes/core.php:157
 #: templates/partials/transaction-form.php:93
 msgid "Expense"
 msgstr ""
 
-#: includes/admin.php:936
+#: includes/admin.php:1016
 #: includes/class-beruang-transactions-list-table.php:307
-#: includes/core.php:159
+#: includes/core.php:158
 #: templates/partials/transaction-form.php:94
 msgid "Income"
 msgstr ""
 
-#: includes/admin.php:939
-#: includes/admin.php:1058
-#: includes/admin.php:1143
-#: includes/admin.php:1238
+#: includes/admin.php:1019
+#: includes/admin.php:1138
+#: includes/admin.php:1223
+#: includes/admin.php:1318
 msgid "Update"
 msgstr ""
 
-#: includes/admin.php:952
-#: includes/admin.php:1059
-#: includes/admin.php:1144
-#: includes/admin.php:1239
+#: includes/admin.php:1032
+#: includes/admin.php:1139
+#: includes/admin.php:1224
+#: includes/admin.php:1319
 #: templates/budget.php:98
 #: templates/partials/modals.php:38
 #: templates/partials/modals.php:62
@@ -311,32 +310,32 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: includes/admin.php:1017
+#: includes/admin.php:1097
 msgid "Category updated."
 msgstr ""
 
-#: includes/admin.php:1020
+#: includes/admin.php:1100
 #: includes/rest.php:812
 msgid "Category not found."
 msgstr ""
 
-#: includes/admin.php:1023
+#: includes/admin.php:1103
 msgid "Category deleted."
 msgstr ""
 
-#: includes/admin.php:1026
-#: includes/admin.php:1109
-#: includes/admin.php:1215
+#: includes/admin.php:1106
+#: includes/admin.php:1189
+#: includes/admin.php:1295
 msgid "Name is required."
 msgstr ""
 
-#: includes/admin.php:1040
+#: includes/admin.php:1120
 msgid "Edit category"
 msgstr ""
 
-#: includes/admin.php:1047
-#: includes/admin.php:1130
-#: includes/admin.php:1236
+#: includes/admin.php:1127
+#: includes/admin.php:1210
+#: includes/admin.php:1316
 #: includes/class-beruang-budgets-list-table.php:85
 #: includes/class-beruang-categories-list-table.php:92
 #: includes/class-beruang-wallets-list-table.php:85
@@ -345,60 +344,60 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: includes/admin.php:1048
+#: includes/admin.php:1128
 #: templates/partials/modals.php:55
 msgid "Parent"
 msgstr ""
 
-#: includes/admin.php:1103
+#: includes/admin.php:1183
 msgid "Budget updated."
 msgstr ""
 
-#: includes/admin.php:1106
+#: includes/admin.php:1186
 #: includes/rest.php:1172
 #: includes/rest.php:1202
 msgid "Budget not found."
 msgstr ""
 
-#: includes/admin.php:1123
+#: includes/admin.php:1203
 msgid "Edit budget"
 msgstr ""
 
-#: includes/admin.php:1131
+#: includes/admin.php:1211
 #: includes/class-beruang-budgets-list-table.php:86
-#: includes/core.php:168
+#: includes/core.php:167
 #: templates/budget.php:74
 msgid "Target"
 msgstr ""
 
-#: includes/admin.php:1132
-#: includes/core.php:164
+#: includes/admin.php:1212
+#: includes/core.php:163
 #: templates/budget.php:80
 msgid "Monthly"
 msgstr ""
 
-#: includes/admin.php:1132
-#: includes/core.php:165
+#: includes/admin.php:1212
+#: includes/core.php:164
 #: templates/budget.php:81
 msgid "Yearly"
 msgstr ""
 
-#: includes/admin.php:1206
+#: includes/admin.php:1286
 msgid "Wallet updated."
 msgstr ""
 
-#: includes/admin.php:1209
+#: includes/admin.php:1289
 #: includes/rest.php:907
 #: includes/rest.php:956
 #: includes/rest.php:982
 msgid "Wallet not found."
 msgstr ""
 
-#: includes/admin.php:1212
+#: includes/admin.php:1292
 msgid "Wallet deleted."
 msgstr ""
 
-#: includes/admin.php:1229
+#: includes/admin.php:1309
 msgid "Edit wallet"
 msgstr ""
 
@@ -424,13 +423,13 @@ msgstr ""
 #: includes/class-beruang-categories-list-table.php:233
 #: includes/class-beruang-transactions-list-table.php:214
 #: includes/class-beruang-wallets-list-table.php:192
-#: includes/core.php:176
+#: includes/core.php:175
 #: templates/wallet.php:51
 msgid "Edit"
 msgstr ""
 
 #: includes/class-beruang-budgets-list-table.php:250
-#: includes/core.php:172
+#: includes/core.php:171
 msgid "No budgets."
 msgstr ""
 
@@ -452,7 +451,7 @@ msgstr ""
 #: includes/class-beruang-categories-list-table.php:289
 #: includes/class-beruang-transactions-list-table.php:309
 #: includes/class-beruang-wallets-list-table.php:246
-#: includes/core.php:162
+#: includes/core.php:161
 #: templates/budget.php:21
 #: templates/graph.php:16
 #: templates/list.php:24
@@ -469,7 +468,7 @@ msgstr ""
 
 #: includes/class-beruang-categories-list-table.php:233
 #: includes/class-beruang-wallets-list-table.php:192
-#: includes/core.php:175
+#: includes/core.php:174
 #: templates/wallet.php:52
 msgid "Delete"
 msgstr ""
@@ -483,7 +482,7 @@ msgid "Category ID"
 msgstr ""
 
 #: includes/class-beruang-transactions-list-table.php:254
-#: includes/core.php:171
+#: includes/core.php:170
 msgid "No transactions."
 msgstr ""
 
@@ -508,96 +507,96 @@ msgstr ""
 msgid "No wallets."
 msgstr ""
 
-#: includes/core.php:160
+#: includes/core.php:159
 msgid "Saved."
 msgstr ""
 
-#: includes/core.php:161
+#: includes/core.php:160
 msgid "Something went wrong."
 msgstr ""
 
-#: includes/core.php:163
+#: includes/core.php:162
 msgid "Search"
 msgstr ""
 
-#: includes/core.php:166
+#: includes/core.php:165
 #: templates/budget.php:20
 msgid "Add budget"
 msgstr ""
 
-#: includes/core.php:167
+#: includes/core.php:166
 #: templates/budget.php:70
 msgid "Budget name"
 msgstr ""
 
-#: includes/core.php:170
+#: includes/core.php:169
 #: templates/budget.php:60
 #: templates/list.php:70
 #: templates/partials/modals.php:67
 msgid "Loading…"
 msgstr ""
 
-#: includes/core.php:173
+#: includes/core.php:172
 msgid "No data"
 msgstr ""
 
-#: includes/core.php:174
+#: includes/core.php:173
 msgid "Delete this budget?"
 msgstr ""
 
-#: includes/core.php:177
+#: includes/core.php:176
 #: templates/partials/modals.php:47
 #: templates/partials/transaction-form.php:80
 msgid "Manage categories"
 msgstr ""
 
-#: includes/core.php:178
+#: includes/core.php:177
 #: templates/partials/modals.php:61
 msgid "Add category"
 msgstr ""
 
-#: includes/core.php:179
+#: includes/core.php:178
 msgid "Update category"
 msgstr ""
 
-#: includes/core.php:180
+#: includes/core.php:179
 #: templates/wallet.php:22
 msgid "Add wallet"
 msgstr ""
 
-#: includes/core.php:181
+#: includes/core.php:180
 msgid "Update wallet"
 msgstr ""
 
-#: includes/core.php:182
+#: includes/core.php:181
 msgid "Delete this wallet?"
 msgstr ""
 
-#: includes/core.php:183
+#: includes/core.php:182
 msgid "No wallets yet."
 msgstr ""
 
-#: includes/core.php:184
+#: includes/core.php:183
 msgid "Delete this category?"
 msgstr ""
 
-#: includes/core.php:185
+#: includes/core.php:184
 msgid "Delete this transaction?"
 msgstr ""
 
-#: includes/core.php:186
+#: includes/core.php:185
 msgid "No categories yet."
 msgstr ""
 
 #. translators: 1: amount, 2: date (Y-m-d).
-#: includes/core.php:188
+#: includes/core.php:187
 #: templates/wallet.php:49
 #, php-format
 msgid "Baseline: %1$s on %2$s"
 msgstr ""
 
 #. translators: %s: current wallet amount.
-#: includes/core.php:190
+#: includes/core.php:189
 #: templates/wallet.php:47
 #, php-format
 msgid "Current: %s"

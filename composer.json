@@ -1,8 +1,8 @@
 {
-	"name": "beruang/beruang",
+	"name": "beruang/beruang-budget",
 	"description": "Track money, transactions, and budgets. Per-user data with shortcodes and admin pages.",
 	"type": "wordpress-plugin",
-	"license": "GPL-2.0-or-later",
+	"license": "GPL-3.0-or-later",
 	"require-dev": {
 		"10up/phpcs-composer": "^3.0",
 		"phpunit/phpunit": "^9.6",

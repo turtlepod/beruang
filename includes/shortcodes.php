@@ -5,7 +5,7 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -95,7 +95,7 @@ function get_effective_decimal_places( $user_id = 0 ) {
  * @return void
  */
 function shortcode_load_template( $name, $args = array() ) {
-	$path = BERUANG_PLUGIN_DIR . 'templates/' . $name;
+	$path = BERUANG_BUDGET_PLUGIN_DIR . 'templates/' . $name;
 	if ( ! file_exists( $path ) ) {
 		return;
 	}
@@ -113,7 +113,7 @@ function shortcode_load_template( $name, $args = array() ) {
  */
 function shortcode_render_form( $atts ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	if ( ! is_user_logged_in() ) {
-		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to add transactions.', 'beruang' ) . '</p>';
+		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to add transactions.', 'beruang-budget' ) . '</p>';
 	}
 	$user_id = get_current_user_id();
 	ob_start();
@@ -140,7 +140,7 @@ function shortcode_render_form( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
  */
 function shortcode_render_list( $atts ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	if ( ! is_user_logged_in() ) {
-		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view transactions.', 'beruang' ) . '</p>';
+		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view transactions.', 'beruang-budget' ) . '</p>';
 	}
 	$user_id = get_current_user_id();
 	ob_start();
@@ -169,7 +169,7 @@ function shortcode_render_list( $atts ) { // phpcs:ignore Generic.CodeAnalysis.U
  */
 function shortcode_render_graph( $atts ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	if ( ! is_user_logged_in() ) {
-		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view graphs.', 'beruang' ) . '</p>';
+		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view graphs.', 'beruang-budget' ) . '</p>';
 	}
 	ob_start();
 	shortcode_load_template(
@@ -189,7 +189,7 @@ function shortcode_render_graph( $atts ) { // phpcs:ignore Generic.CodeAnalysis.
  */
 function shortcode_render_budget( $atts ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	if ( ! is_user_logged_in() ) {
-		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view budgets.', 'beruang' ) . '</p>';
+		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to view budgets.', 'beruang-budget' ) . '</p>';
 	}
 	ob_start();
 	shortcode_load_template(
@@ -213,7 +213,7 @@ function shortcode_render_budget( $atts ) { // phpcs:ignore Generic.CodeAnalysis
  */
 function shortcode_render_wallet( $atts ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	if ( ! is_user_logged_in() ) {
-		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to manage wallets.', 'beruang' ) . '</p>';
+		return '<p class="beruang-login-required">' . esc_html__( 'Please log in to manage wallets.', 'beruang-budget' ) . '</p>';
 	}
 	$user_id = get_current_user_id();
 	$wallets = DB::get_wallets( $user_id );
@@ -298,7 +298,7 @@ function shortcode_install_button( $atts ) {
 
 	$atts = shortcode_atts(
 		array(
-			'label' => __( 'Install App', 'beruang' ),
+			'label' => __( 'Install App', 'beruang-budget' ),
 			'tag'   => 'button',
 			'class' => '',
 		),

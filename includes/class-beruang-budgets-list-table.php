@@ -5,7 +5,7 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 // phpcs:disable WordPress.Security.NonceVerification.Recommended -- GET for sorting/filtering in admin list.
 
@@ -80,13 +80,13 @@ class Budgets_List_Table extends \WP_List_Table {
 	 */
 	public function get_columns() {
 		return array(
-			'id'            => __( 'ID', 'beruang' ),
-			'user_id'       => __( 'User ID', 'beruang' ),
-			'name'          => __( 'Name', 'beruang' ),
-			'target_amount' => __( 'Target', 'beruang' ),
-			'type'          => __( 'Type', 'beruang' ),
-			'category_ids'  => __( 'Category IDs', 'beruang' ),
-			'actions'       => __( 'Actions', 'beruang' ),
+			'id'            => __( 'ID', 'beruang-budget' ),
+			'user_id'       => __( 'User ID', 'beruang-budget' ),
+			'name'          => __( 'Name', 'beruang-budget' ),
+			'target_amount' => __( 'Target', 'beruang-budget' ),
+			'type'          => __( 'Type', 'beruang-budget' ),
+			'category_ids'  => __( 'Category IDs', 'beruang-budget' ),
+			'actions'       => __( 'Actions', 'beruang-budget' ),
 		);
 	}
 
@@ -202,13 +202,13 @@ class Budgets_List_Table extends \WP_List_Table {
 		$user_filter = $this->user_filter ? $this->user_filter : (int) $item['user_id'];
 		$edit_url    = add_query_arg(
 			array(
-				'page'    => ADMIN_SLUG . '-budgets',
+				'page'    => BERUANG_BUDGET_ADMIN_SLUG . '-budgets',
 				'user_id' => $user_filter,
 				'edit'    => $item['id'],
 			),
 			admin_url( 'admin.php' )
 		);
-		return '<a href="' . esc_url( $edit_url ) . '">' . esc_html__( 'Edit', 'beruang' ) . '</a>';
+		return '<a href="' . esc_url( $edit_url ) . '">' . esc_html__( 'Edit', 'beruang-budget' ) . '</a>';
 	}
 
 	/**
@@ -247,7 +247,7 @@ class Budgets_List_Table extends \WP_List_Table {
 	 * Message when no items found.
 	 */
 	public function no_items() {
-		esc_html_e( 'No budgets.', 'beruang' );
+		esc_html_e( 'No budgets.', 'beruang-budget' );
 	}
 
 	/**
@@ -263,9 +263,9 @@ class Budgets_List_Table extends \WP_List_Table {
 		$selected_user = $this->user_filter;
 		?>
 		<div class="alignleft actions">
-			<label for="filter-by-user" class="screen-reader-text"><?php esc_html_e( 'Filter by user', 'beruang' ); ?></label>
+			<label for="filter-by-user" class="screen-reader-text"><?php esc_html_e( 'Filter by user', 'beruang-budget' ); ?></label>
 			<select name="user_id" id="filter-by-user">
-				<option value="0" <?php selected( $selected_user, 0 ); ?>><?php esc_html_e( 'All users', 'beruang' ); ?></option>
+				<option value="0" <?php selected( $selected_user, 0 ); ?>><?php esc_html_e( 'All users', 'beruang-budget' ); ?></option>
 				<?php
 				foreach ( $user_ids as $uid ) {
 					$user  = get_userdata( $uid );
@@ -274,7 +274,7 @@ class Budgets_List_Table extends \WP_List_Table {
 				}
 				?>
 			</select>
-			<?php submit_button( __( 'Filter', 'beruang' ), '', 'filter_action', false, array( 'id' => 'beruang-budgets-query-submit' ) ); ?>
+			<?php submit_button( __( 'Filter', 'beruang-budget' ), '', 'filter_action', false, array( 'id' => 'beruang-budgets-query-submit' ) ); ?>
 		</div>
 		<?php
 	}

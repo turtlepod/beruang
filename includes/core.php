@@ -5,27 +5,26 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-db.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-import.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/icon-helpers.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/seed.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-transactions-list-table.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-categories-list-table.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-budgets-list-table.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/class-beruang-wallets-list-table.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/admin.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/rest.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/manifest.php';
-require_once BERUANG_PLUGIN_DIR . 'includes/shortcodes.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-db.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-import.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/icon-helpers.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-transactions-list-table.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-categories-list-table.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-budgets-list-table.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/class-beruang-wallets-list-table.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/admin.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/rest.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/manifest.php';
+require_once BERUANG_BUDGET_PLUGIN_DIR . 'includes/shortcodes.php';
 
-register_activation_hook( BERUANG_PLUGIN_FILE, __NAMESPACE__ . '\\on_activation' );
-register_deactivation_hook( BERUANG_PLUGIN_FILE, 'flush_rewrite_rules' );
+register_activation_hook( BERUANG_BUDGET_PLUGIN_FILE, __NAMESPACE__ . '\\on_activation' );
+register_deactivation_hook( BERUANG_BUDGET_PLUGIN_FILE, 'flush_rewrite_rules' );
 
 // Bootstrap.
 add_action( 'plugins_loaded', __NAMESPACE__ . '\\on_plugins_loaded' );
@@ -69,7 +68,7 @@ function use_logged_in_user_locale_on_frontend( $locale ) {
  */
 function on_plugins_loaded() {
 	DB::maybe_upgrade();
-	load_plugin_textdomain( 'beruang', false, dirname( plugin_basename( BERUANG_PLUGIN_FILE ) ) . '/languages' );
+	load_plugin_textdomain( 'beruang-budget', false, dirname( plugin_basename( BERUANG_BUDGET_PLUGIN_FILE ) ) . '/languages' );
 	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_front_scripts' );
 	manifest_setup();
 
@@ -82,7 +81,7 @@ function on_plugins_loaded() {
  * Whether built assets exist in dist/.
  */
 function beruang_dist_exists() {
-	return is_dir( BERUANG_PLUGIN_DIR . 'dist' );
+	return is_dir( BERUANG_BUDGET_PLUGIN_DIR . 'dist' );
 }
 
 /**
@@ -93,17 +92,17 @@ function enqueue_front_scripts() {
 		return;
 	}
 
-	$front_css_dist   = BERUANG_PLUGIN_DIR . 'dist/css/front-style.css';
-	$front_css_asset  = BERUANG_PLUGIN_DIR . 'dist/css/front-style.asset.php';
+	$front_css_dist   = BERUANG_BUDGET_PLUGIN_DIR . 'dist/css/front-style.css';
+	$front_css_asset  = BERUANG_BUDGET_PLUGIN_DIR . 'dist/css/front-style.asset.php';
 	$front_style_deps = array();
-	$front_style_ver  = BERUANG_VERSION;
+	$front_style_ver  = BERUANG_BUDGET_VERSION;
 	if ( file_exists( $front_css_dist ) ) {
 		if ( file_exists( $front_css_asset ) ) {
 			$front_style_asset = include $front_css_asset;
 			$front_style_deps  = $front_style_asset['dependencies'] ?? array();
 			$front_style_ver   = $front_style_asset['version'] ?? $front_style_ver;
 		}
-		$front_css_url = BERUANG_PLUGIN_URL . 'dist/css/front-style.css';
+		$front_css_url = BERUANG_BUDGET_PLUGIN_URL . 'dist/css/front-style.css';
 		wp_enqueue_style(
 			'beruang-front',
 			$front_css_url,
@@ -112,26 +111,26 @@ function enqueue_front_scripts() {
 		);
 	}
 	$deps        = array();
-	$chart_asset = BERUANG_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
+	$chart_asset = BERUANG_BUDGET_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
 	wp_enqueue_script(
 		'chartjs',
-		BERUANG_PLUGIN_URL . 'assets/js/chart.umd.min.js',
+		BERUANG_BUDGET_PLUGIN_URL . 'assets/js/chart.umd.min.js',
 		array(),
 		file_exists( $chart_asset ) ? (string) filemtime( $chart_asset ) : '4.4.1',
 		true
 	);
 	$deps[]         = 'chartjs';
-	$front_js_dist  = BERUANG_PLUGIN_DIR . 'dist/js/front.js';
-	$front_js_asset = BERUANG_PLUGIN_DIR . 'dist/js/front.asset.php';
+	$front_js_dist  = BERUANG_BUDGET_PLUGIN_DIR . 'dist/js/front.js';
+	$front_js_asset = BERUANG_BUDGET_PLUGIN_DIR . 'dist/js/front.asset.php';
 	$front_js_deps  = $deps;
-	$front_js_ver   = BERUANG_VERSION;
+	$front_js_ver   = BERUANG_BUDGET_VERSION;
 	if ( file_exists( $front_js_dist ) ) {
 		if ( file_exists( $front_js_asset ) ) {
 			$front_js_asset_data = include $front_js_asset;
 			$front_js_deps       = array_merge( $front_js_asset_data['dependencies'] ?? array(), $deps );
 			$front_js_ver        = $front_js_asset_data['version'] ?? $front_js_ver;
 		}
-		$front_js_url = BERUANG_PLUGIN_URL . 'dist/js/front.js';
+		$front_js_url = BERUANG_BUDGET_PLUGIN_URL . 'dist/js/front.js';
 		wp_enqueue_script(
 			'beruang-front',
 			$front_js_url,
@@ -153,41 +152,41 @@ function enqueue_front_scripts() {
 				'thousands_sep'  => get_effective_thousands_sep(),
 				'decimal_places' => get_effective_decimal_places(),
 				'i18n'           => array(
-					'uncategorized'              => __( 'Uncategorized', 'beruang' ),
-					'no_wallet'                  => __( 'No Wallet', 'beruang' ),
-					'expense'                    => __( 'Expense', 'beruang' ),
-					'income'                     => __( 'Income', 'beruang' ),
-					'saved'                      => __( 'Saved.', 'beruang' ),
-					'error'                      => __( 'Something went wrong.', 'beruang' ),
-					'filter'                     => __( 'Filter', 'beruang' ),
-					'search'                     => __( 'Search', 'beruang' ),
-					'monthly'                    => __( 'Monthly', 'beruang' ),
-					'yearly'                     => __( 'Yearly', 'beruang' ),
-					'add_budget'                 => __( 'Add budget', 'beruang' ),
-					'budget_name'                => __( 'Budget name', 'beruang' ),
-					'target'                     => __( 'Target', 'beruang' ),
-					'categories'                 => __( 'Categories', 'beruang' ),
-					'loading'                    => __( 'Loading…', 'beruang' ),
-					'no_transactions'            => __( 'No transactions.', 'beruang' ),
-					'no_budgets'                 => __( 'No budgets.', 'beruang' ),
-					'no_data'                    => __( 'No data', 'beruang' ),
-					'confirm_delete'             => __( 'Delete this budget?', 'beruang' ),
-					'delete'                     => __( 'Delete', 'beruang' ),
-					'edit'                       => __( 'Edit', 'beruang' ),
-					'manage_categories'          => __( 'Manage categories', 'beruang' ),
-					'add_category'               => __( 'Add category', 'beruang' ),
-					'update_category'            => __( 'Update category', 'beruang' ),
-					'add_wallet'                 => __( 'Add wallet', 'beruang' ),
-					'update_wallet'              => __( 'Update wallet', 'beruang' ),
-					'confirm_delete_wallet'      => __( 'Delete this wallet?', 'beruang' ),
-					'no_wallets'                 => __( 'No wallets yet.', 'beruang' ),
-					'confirm_delete_category'    => __( 'Delete this category?', 'beruang' ),
-					'confirm_delete_transaction' => __( 'Delete this transaction?', 'beruang' ),
-					'no_categories'              => __( 'No categories yet.', 'beruang' ),
+					'uncategorized'              => __( 'Uncategorized', 'beruang-budget' ),
+					'no_wallet'                  => __( 'No Wallet', 'beruang-budget' ),
+					'expense'                    => __( 'Expense', 'beruang-budget' ),
+					'income'                     => __( 'Income', 'beruang-budget' ),
+					'saved'                      => __( 'Saved.', 'beruang-budget' ),
+					'error'                      => __( 'Something went wrong.', 'beruang-budget' ),
+					'filter'                     => __( 'Filter', 'beruang-budget' ),
+					'search'                     => __( 'Search', 'beruang-budget' ),
+					'monthly'                    => __( 'Monthly', 'beruang-budget' ),
+					'yearly'                     => __( 'Yearly', 'beruang-budget' ),
+					'add_budget'                 => __( 'Add budget', 'beruang-budget' ),
+					'budget_name'                => __( 'Budget name', 'beruang-budget' ),
+					'target'                     => __( 'Target', 'beruang-budget' ),
+					'categories'                 => __( 'Categories', 'beruang-budget' ),
+					'loading'                    => __( 'Loading…', 'beruang-budget' ),
+					'no_transactions'            => __( 'No transactions.', 'beruang-budget' ),
+					'no_budgets'                 => __( 'No budgets.', 'beruang-budget' ),
+					'no_data'                    => __( 'No data', 'beruang-budget' ),
+					'confirm_delete'             => __( 'Delete this budget?', 'beruang-budget' ),
+					'delete'                     => __( 'Delete', 'beruang-budget' ),
+					'edit'                       => __( 'Edit', 'beruang-budget' ),
+					'manage_categories'          => __( 'Manage categories', 'beruang-budget' ),
+					'add_category'               => __( 'Add category', 'beruang-budget' ),
+					'update_category'            => __( 'Update category', 'beruang-budget' ),
+					'add_wallet'                 => __( 'Add wallet', 'beruang-budget' ),
+					'update_wallet'              => __( 'Update wallet', 'beruang-budget' ),
+					'confirm_delete_wallet'      => __( 'Delete this wallet?', 'beruang-budget' ),
+					'no_wallets'                 => __( 'No wallets yet.', 'beruang-budget' ),
+					'confirm_delete_category'    => __( 'Delete this category?', 'beruang-budget' ),
+					'confirm_delete_transaction' => __( 'Delete this transaction?', 'beruang-budget' ),
+					'no_categories'              => __( 'No categories yet.', 'beruang-budget' ),
 					/* translators: 1: amount, 2: date (Y-m-d). */
-					'wallet_baseline'            => __( 'Baseline: %1$s on %2$s', 'beruang' ),
+					'wallet_baseline'            => __( 'Baseline: %1$s on %2$s', 'beruang-budget' ),
 					/* translators: %s: current wallet amount. */
-					'wallet_current'             => __( 'Current: %s', 'beruang' ),
+					'wallet_current'             => __( 'Current: %s', 'beruang-budget' ),
 				),
 				'edit_icon'      => beruang_get_icon( 'edit' ),
 				'delete_icon'    => beruang_get_icon( 'trash' ),
@@ -200,5 +199,5 @@ function enqueue_front_scripts() {
  * Output Beruang JS template script blocks in footer.
  */
 function print_front_templates() {
-	include BERUANG_PLUGIN_DIR . 'includes/templates-js.php';
+	include BERUANG_BUDGET_PLUGIN_DIR . 'includes/templates-js.php';
 }

@@ -7,7 +7,7 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 // phpcs:disable WordPress.Security.NonceVerification.Recommended -- GET for filters; admin_post forms verified.
 
@@ -15,12 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/** Admin slug and capability. */
-const ADMIN_SLUG       = 'beruang';
-const ADMIN_CAPABILITY = 'manage_options';
-
 /**
- * Register admin menu and settings hooks. Hooked to init.
+ * Register admin menu and settings hooks. Only runs in wp-admin.
  */
 function admin_setup() {
 	add_action( 'admin_menu', __NAMESPACE__ . '\admin_register_menu' );
@@ -29,7 +25,15 @@ function admin_setup() {
 	add_action( 'admin_notices', __NAMESPACE__ . '\admin_notice_dist_missing' );
 	add_filter( 'admin_body_class', __NAMESPACE__ . '\admin_body_class_table_pages' );
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\admin_setup' );
+// Guard with is_admin() so admin hooks are not registered on frontend page loads.
+add_action(
+	'plugins_loaded',
+	function () {
+		if ( is_admin() ) {
+			admin_setup();
+		}
+	}
+);
 
 /**
  * Add beruang-admin-table body class on table-based Beruang admin pages.
@@ -53,12 +57,12 @@ function admin_body_class_table_pages( $classes ) {
  * Show admin notice when dist/ is missing.
  */
 function admin_notice_dist_missing() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) || beruang_dist_exists() ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) || beruang_dist_exists() ) {
 		return;
 	}
 	$message = sprintf(
 		/* translators: %s: npm build command */
-		__( 'Beruang: Built assets are missing. Run %s in the plugin directory.', 'beruang' ),
+		__( 'Beruang: Built assets are missing. Run %s in the plugin directory.', 'beruang-budget' ),
 		'<code>npm install && npm run build</code>'
 	);
 	echo '<div class="notice notice-warning"><p>' . wp_kses_post( $message ) . '</p></div>';
@@ -76,13 +80,13 @@ function admin_enqueue_styles( $hook ) {
 	if ( ! beruang_dist_exists() ) {
 		return;
 	}
-	$admin_css_dist  = BERUANG_PLUGIN_DIR . 'dist/css/admin-style.css';
-	$admin_css_asset = BERUANG_PLUGIN_DIR . 'dist/css/admin-style.asset.php';
+	$admin_css_dist  = BERUANG_BUDGET_PLUGIN_DIR . 'dist/css/admin-style.css';
+	$admin_css_asset = BERUANG_BUDGET_PLUGIN_DIR . 'dist/css/admin-style.asset.php';
 	if ( ! file_exists( $admin_css_dist ) ) {
 		return;
 	}
 	$deps = array();
-	$ver  = BERUANG_VERSION;
+	$ver  = BERUANG_BUDGET_VERSION;
 	if ( file_exists( $admin_css_asset ) ) {
 		$asset = include $admin_css_asset;
 		$deps  = $asset['dependencies'] ?? array();
@@ -90,7 +94,7 @@ function admin_enqueue_styles( $hook ) {
 	}
 	wp_enqueue_style(
 		'beruang-admin',
-		BERUANG_PLUGIN_URL . 'dist/css/admin-style.css',
+		BERUANG_BUDGET_PLUGIN_URL . 'dist/css/admin-style.css',
 		array_merge( $deps, array( 'list-tables' ) ),
 		$ver
 	);
@@ -101,19 +105,19 @@ function admin_enqueue_styles( $hook ) {
  */
 function admin_register_menu() {
 	add_menu_page(
-		__( 'Beruang Budget', 'beruang' ),
-		__( 'Beruang Budget', 'beruang' ),
-		ADMIN_CAPABILITY,
-		ADMIN_SLUG,
+		__( 'Beruang Budget', 'beruang-budget' ),
+		__( 'Beruang Budget', 'beruang-budget' ),
+		BERUANG_BUDGET_ADMIN_CAPABILITY,
+		BERUANG_BUDGET_ADMIN_SLUG,
 		__NAMESPACE__ . '\admin_page_settings',
 		'dashicons-money-alt',
 		30
 	);
-	add_submenu_page( ADMIN_SLUG, __( 'Settings', 'beruang' ), __( 'Settings', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG, __NAMESPACE__ . '\admin_page_settings' );
-	add_submenu_page( ADMIN_SLUG, __( 'Transactions', 'beruang' ), __( 'Transactions', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-transactions', __NAMESPACE__ . '\admin_page_transactions' );
-	add_submenu_page( ADMIN_SLUG, __( 'Categories', 'beruang' ), __( 'Categories', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-categories', __NAMESPACE__ . '\admin_page_categories' );
-	add_submenu_page( ADMIN_SLUG, __( 'Budgets', 'beruang' ), __( 'Budgets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-budgets', __NAMESPACE__ . '\admin_page_budgets' );
-	add_submenu_page( ADMIN_SLUG, __( 'Wallets', 'beruang' ), __( 'Wallets', 'beruang' ), ADMIN_CAPABILITY, ADMIN_SLUG . '-wallets', __NAMESPACE__ . '\\admin_page_wallets' );
+	add_submenu_page( BERUANG_BUDGET_ADMIN_SLUG, __( 'Settings', 'beruang-budget' ), __( 'Settings', 'beruang-budget' ), BERUANG_BUDGET_ADMIN_CAPABILITY, BERUANG_BUDGET_ADMIN_SLUG, __NAMESPACE__ . '\admin_page_settings' );
+	add_submenu_page( BERUANG_BUDGET_ADMIN_SLUG, __( 'Transactions', 'beruang-budget' ), __( 'Transactions', 'beruang-budget' ), BERUANG_BUDGET_ADMIN_CAPABILITY, BERUANG_BUDGET_ADMIN_SLUG . '-transactions', __NAMESPACE__ . '\admin_page_transactions' );
+	add_submenu_page( BERUANG_BUDGET_ADMIN_SLUG, __( 'Categories', 'beruang-budget' ), __( 'Categories', 'beruang-budget' ), BERUANG_BUDGET_ADMIN_CAPABILITY, BERUANG_BUDGET_ADMIN_SLUG . '-categories', __NAMESPACE__ . '\admin_page_categories' );
+	add_submenu_page( BERUANG_BUDGET_ADMIN_SLUG, __( 'Budgets', 'beruang-budget' ), __( 'Budgets', 'beruang-budget' ), BERUANG_BUDGET_ADMIN_CAPABILITY, BERUANG_BUDGET_ADMIN_SLUG . '-budgets', __NAMESPACE__ . '\admin_page_budgets' );
+	add_submenu_page( BERUANG_BUDGET_ADMIN_SLUG, __( 'Wallets', 'beruang-budget' ), __( 'Wallets', 'beruang-budget' ), BERUANG_BUDGET_ADMIN_CAPABILITY, BERUANG_BUDGET_ADMIN_SLUG . '-wallets', __NAMESPACE__ . '\\admin_page_wallets' );
 }
 
 /**
@@ -212,7 +216,7 @@ function admin_register_settings() {
  * Render settings page: currency, number format, and export/import forms.
  */
 function admin_page_settings() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
 	if ( isset( $_POST['beruang_import'] ) && check_admin_referer( 'beruang_import' ) && ! empty( $_FILES['beruang_import_file']['tmp_name'] ) ) {
@@ -229,79 +233,79 @@ function admin_page_settings() {
 	settings_errors( 'beruang_import' );
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'Beruang Budget Settings', 'beruang' ); ?></h1>
+		<h1><?php esc_html_e( 'Beruang Budget Settings', 'beruang-budget' ); ?></h1>
 		<form method="post" action="options.php">
 			<?php settings_fields( 'beruang_settings' ); ?>
 			<table class="form-table">
 				<tr>
-					<th scope="row"><label for="beruang_currency"><?php esc_html_e( 'Currency', 'beruang' ); ?></label></th>
+					<th scope="row"><label for="beruang_currency"><?php esc_html_e( 'Currency', 'beruang-budget' ); ?></label></th>
 					<td><input type="text" id="beruang_currency" name="beruang_currency" value="<?php echo esc_attr( $currency ); ?>" /></td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="beruang_decimal_sep"><?php esc_html_e( 'Decimal separator', 'beruang' ); ?></label></th>
+					<th scope="row"><label for="beruang_decimal_sep"><?php esc_html_e( 'Decimal separator', 'beruang-budget' ); ?></label></th>
 					<td><input type="text" id="beruang_decimal_sep" name="beruang_decimal_sep" value="<?php echo esc_attr( $decimal_sep ); ?>" maxlength="2" /></td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="beruang_thousands_sep"><?php esc_html_e( 'Thousands separator', 'beruang' ); ?></label></th>
+					<th scope="row"><label for="beruang_thousands_sep"><?php esc_html_e( 'Thousands separator', 'beruang-budget' ); ?></label></th>
 					<td><input type="text" id="beruang_thousands_sep" name="beruang_thousands_sep" value="<?php echo esc_attr( $thousands_sep ); ?>" maxlength="2" /></td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="beruang_decimal_places"><?php esc_html_e( 'Decimal places', 'beruang' ); ?></label></th>
+					<th scope="row"><label for="beruang_decimal_places"><?php esc_html_e( 'Decimal places', 'beruang-budget' ); ?></label></th>
 					<td>
 						<select id="beruang_decimal_places" name="beruang_decimal_places">
-							<option value="0" <?php selected( $decimal_places, 0 ); ?>><?php esc_html_e( 'None (integers only)', 'beruang' ); ?></option>
+							<option value="0" <?php selected( $decimal_places, 0 ); ?>><?php esc_html_e( 'None (integers only)', 'beruang-budget' ); ?></option>
 							<option value="1" <?php selected( $decimal_places, 1 ); ?>>1</option>
 							<option value="2" <?php selected( $decimal_places, 2 ); ?>>2</option>
 							<option value="3" <?php selected( $decimal_places, 3 ); ?>>3</option>
 							<option value="4" <?php selected( $decimal_places, 4 ); ?>>4</option>
 						</select>
-						<p class="description"><?php esc_html_e( 'Number of digits after the decimal in amount fields.', 'beruang' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Number of digits after the decimal in amount fields.', 'beruang-budget' ); ?></p>
 					</td>
 				</tr>
 			</table>
-			<h2><?php esc_html_e( 'Web app', 'beruang' ); ?></h2>
-			<p class="description"><?php esc_html_e( 'Allow visitors to install your site as an app on their device (Add to Home Screen).', 'beruang' ); ?></p>
+			<h2><?php esc_html_e( 'Web app', 'beruang-budget' ); ?></h2>
+			<p class="description"><?php esc_html_e( 'Allow visitors to install your site as an app on their device (Add to Home Screen).', 'beruang-budget' ); ?></p>
 			<table class="form-table">
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Enable web app install', 'beruang' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Enable web app install', 'beruang-budget' ); ?></th>
 					<td>
 						<label>
 							<input type="checkbox" name="beruang_pwa_enabled" value="1" <?php checked( $pwa_enabled ); ?> />
-							<?php esc_html_e( 'Enable', 'beruang' ); ?>
+							<?php esc_html_e( 'Enable', 'beruang-budget' ); ?>
 						</label>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="beruang_pwa_app_name"><?php esc_html_e( 'App name', 'beruang' ); ?></label></th>
+					<th scope="row"><label for="beruang_pwa_app_name"><?php esc_html_e( 'App name', 'beruang-budget' ); ?></label></th>
 					<td>
 						<input type="text" id="beruang_pwa_app_name" name="beruang_pwa_app_name" value="<?php echo esc_attr( $pwa_app_name ); ?>" class="regular-text" />
-						<p class="description"><?php esc_html_e( 'Display name when installed. Leave blank to use site title.', 'beruang' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Display name when installed. Leave blank to use site title.', 'beruang-budget' ); ?></p>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="beruang_pwa_short_name"><?php esc_html_e( 'Short name', 'beruang' ); ?></label></th>
+					<th scope="row"><label for="beruang_pwa_short_name"><?php esc_html_e( 'Short name', 'beruang-budget' ); ?></label></th>
 					<td>
 						<input type="text" id="beruang_pwa_short_name" name="beruang_pwa_short_name" value="<?php echo esc_attr( $pwa_short_name ); ?>" class="regular-text" maxlength="12" />
-						<p class="description"><?php esc_html_e( 'Shown on home screen when space is limited (max 12 chars). Leave blank to auto-truncate app name.', 'beruang' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Shown on home screen when space is limited (max 12 chars). Leave blank to auto-truncate app name.', 'beruang-budget' ); ?></p>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="beruang_pwa_theme_color"><?php esc_html_e( 'Theme color', 'beruang' ); ?></label></th>
+					<th scope="row"><label for="beruang_pwa_theme_color"><?php esc_html_e( 'Theme color', 'beruang-budget' ); ?></label></th>
 					<td>
 						<input type="text" id="beruang_pwa_theme_color" name="beruang_pwa_theme_color" value="<?php echo esc_attr( $pwa_theme_color ); ?>" class="medium-text" />
-						<p class="description"><?php esc_html_e( 'Hex color code (e.g. #2271b1). Used for browser toolbar and PWA theme color.', 'beruang' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Hex color code (e.g. #2271b1). Used for browser toolbar and PWA theme color.', 'beruang-budget' ); ?></p>
 					</td>
 				</tr>
 			</table>
 			<?php submit_button(); ?>
 		</form>
 		<hr />
-		<h2><?php esc_html_e( 'Export / Import', 'beruang' ); ?></h2>
+		<h2><?php esc_html_e( 'Export / Import', 'beruang-budget' ); ?></h2>
 		<p>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:block;margin-bottom:1em;">
 				<input type="hidden" name="action" value="beruang_export" />
 				<?php wp_nonce_field( 'beruang_export' ); ?>
-				<label><?php esc_html_e( 'User', 'beruang' ); ?>
+				<label><?php esc_html_e( 'User', 'beruang-budget' ); ?>
 				<?php
 				wp_dropdown_users(
 					array(
@@ -311,12 +315,12 @@ function admin_page_settings() {
 				);
 				?>
 				</label>
-				<button type="submit" name="beruang_export" class="button"><?php esc_html_e( 'Export data (JSON)', 'beruang' ); ?></button>
+				<button type="submit" name="beruang_export" class="button"><?php esc_html_e( 'Export data (JSON)', 'beruang-budget' ); ?></button>
 			</form>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:block;margin-bottom:1em;">
 				<input type="hidden" name="action" value="beruang_export_csv" />
 				<?php wp_nonce_field( 'beruang_export_csv' ); ?>
-				<label><?php esc_html_e( 'User', 'beruang' ); ?>
+				<label><?php esc_html_e( 'User', 'beruang-budget' ); ?>
 				<?php
 				wp_dropdown_users(
 					array(
@@ -326,13 +330,13 @@ function admin_page_settings() {
 				);
 				?>
 				</label>
-				<button type="submit" name="beruang_export_csv" class="button"><?php esc_html_e( 'Export transactions (CSV)', 'beruang' ); ?></button>
+				<button type="submit" name="beruang_export_csv" class="button"><?php esc_html_e( 'Export transactions (CSV)', 'beruang-budget' ); ?></button>
 			</form>
 		</p>
 		<form method="post" enctype="multipart/form-data">
 			<?php wp_nonce_field( 'beruang_import' ); ?>
 			<p>
-				<label><?php esc_html_e( 'Import to user', 'beruang' ); ?>
+				<label><?php esc_html_e( 'Import to user', 'beruang-budget' ); ?>
 				<?php
 				wp_dropdown_users(
 					array(
@@ -343,7 +347,7 @@ function admin_page_settings() {
 				?>
 				</label>
 				<input type="file" name="beruang_import_file" accept=".json" />
-				<button type="submit" name="beruang_import" class="button"><?php esc_html_e( 'Import from JSON', 'beruang' ); ?></button>
+				<button type="submit" name="beruang_import" class="button"><?php esc_html_e( 'Import from JSON', 'beruang-budget' ); ?></button>
 			</p>
 		</form>
 	</div>
@@ -351,13 +355,15 @@ function admin_page_settings() {
 }
 
 /**
- * Export current user's data as JSON and send download response.
+ * Export current user's data as JSON and stream the response in chunks.
  *
- * Handled via admin_post before any output; exits after sending headers and body.
+ * Transactions are fetched page-by-page and written directly to the output
+ * buffer to avoid loading the entire dataset into memory at once.
+ * Handled via admin_post before any output; exits after sending body.
  */
 function admin_handle_export() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
 	}
 	check_admin_referer( 'beruang_export' );
 	$user_id = isset( $_POST['beruang_export_user_id'] ) ? absint( $_POST['beruang_export_user_id'] ) : 0;
@@ -365,39 +371,80 @@ function admin_handle_export() {
 		$user_id = get_current_user_id();
 	}
 	if ( ! $user_id ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
 	}
-	$user         = get_userdata( $user_id );
-	$categories   = DB::get_categories_flat( $user_id, false );
-	$wallets      = DB::get_wallets( $user_id );
-	$transactions = DB::get_transactions( $user_id, array( 'per_page' => 99999 ) );
-	$budgets      = DB::get_budgets( $user_id );
-	$data         = array(
-		'version'      => 1,
-		'exported'     => current_time( 'c' ),
-		'user_id'      => $user_id,
-		'user_login'   => $user ? $user->user_login : '',
-		'user_email'   => $user ? $user->user_email : '',
-		'display_name' => $user ? $user->display_name : '',
-		'categories'   => $categories,
-		'wallets'      => $wallets,
-		'transactions' => $transactions['items'],
-		'budgets'      => $budgets,
-	);
+
+	/**
+	 * Number of transactions fetched per chunk during JSON export.
+	 * Lower values reduce peak memory; higher values reduce total DB round-trips.
+	 *
+	 * @param int $chunk_size Default 500.
+	 */
+	$chunk_size = (int) apply_filters( 'beruang_export_chunk_size', 500 );
+	$chunk_size = min( max( $chunk_size, 50 ), 5000 );
+
+	// Discard any prior output buffering so bytes reach the client immediately.
+	while ( ob_get_level() > 0 ) {
+		ob_end_clean();
+	}
+
+	$user = get_userdata( $user_id );
+
 	header( 'Content-Type: application/json; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename="beruang-export-' . gmdate( 'Y-m-d' ) . '.json"' );
-	echo wp_json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
+	header( 'X-Accel-Buffering: no' ); // Disable Nginx proxy buffering.
+
+	// Stream the JSON envelope, writing non-transaction fields first.
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON-encoded, streaming output.
+	echo '{';
+	echo '"version":1,';
+	echo '"exported":' . wp_json_encode( current_time( 'c' ) ) . ',';
+	echo '"user_id":' . wp_json_encode( $user_id ) . ',';
+	echo '"user_login":' . wp_json_encode( $user ? $user->user_login : '' ) . ',';
+	echo '"user_email":' . wp_json_encode( $user ? $user->user_email : '' ) . ',';
+	echo '"display_name":' . wp_json_encode( $user ? $user->display_name : '' ) . ',';
+	echo '"categories":' . wp_json_encode( DB::get_categories_flat( $user_id, false ), JSON_UNESCAPED_UNICODE ) . ',';
+	echo '"wallets":' . wp_json_encode( DB::get_wallets( $user_id ), JSON_UNESCAPED_UNICODE ) . ',';
+	echo '"budgets":' . wp_json_encode( DB::get_budgets( $user_id ), JSON_UNESCAPED_UNICODE ) . ',';
+	echo '"transactions":[';
+	// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
+
+	$page       = 1;
+	$first_item = true;
+	do {
+		$result     = DB::get_transactions(
+			$user_id,
+			array(
+				'per_page' => $chunk_size,
+				'page'     => $page,
+			)
+		);
+		$items      = $result['items'] ?? array();
+		$item_count = count( $items );
+		foreach ( $items as $tx ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON-encoded streaming.
+			echo ( $first_item ? '' : ',' ) . wp_json_encode( $tx, JSON_UNESCAPED_UNICODE );
+			$first_item = false;
+		}
+		flush();
+		++$page;
+	} while ( $item_count === $chunk_size );
+
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- closing JSON structure.
+	echo ']}';
 	exit;
 }
 
 /**
- * Export current user's transactions as CSV.
+ * Export current user's transactions as CSV, streamed in chunks.
  *
- * Handled via admin_post before any output; exits after sending headers and body.
+ * Transactions are fetched page-by-page and written directly via fputcsv so
+ * peak memory scales with chunk size, not total row count.
+ * Handled via admin_post before any output; exits after sending body.
  */
 function admin_handle_export_csv() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
 	}
 	check_admin_referer( 'beruang_export_csv' );
 	$user_id = isset( $_POST['beruang_export_user_id'] ) ? absint( $_POST['beruang_export_user_id'] ) : 0;
@@ -405,14 +452,23 @@ function admin_handle_export_csv() {
 		$user_id = get_current_user_id();
 	}
 	if ( ! $user_id ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
 	}
+
+	/**
+	 * Number of transactions per chunk. @see admin_handle_export() for full filter docs.
+	 *
+	 * @param int $chunk_size
+	 */
+	$chunk_size = (int) apply_filters( 'beruang_export_chunk_size', 500 );
+	$chunk_size = min( max( $chunk_size, 50 ), 5000 );
+
 	$user         = get_userdata( $user_id );
 	$user_login   = $user ? $user->user_login : '';
 	$user_email   = $user ? $user->user_email : '';
 	$display_name = $user ? $user->display_name : '';
-	$transactions = DB::get_transactions( $user_id, array( 'per_page' => 99999 ) );
-	$items        = $transactions['items'];
+
+	// Build lookup maps once (categories and wallets are small).
 	$categories   = DB::get_categories_flat( $user_id, false );
 	$wallets      = DB::get_wallets( $user_id );
 	$cat_names    = array();
@@ -423,38 +479,62 @@ function admin_handle_export_csv() {
 	foreach ( $wallets as $wallet ) {
 		$wallet_names[ (int) $wallet['id'] ] = $wallet['name'] ?? '';
 	}
+
+	while ( ob_get_level() > 0 ) {
+		ob_end_clean();
+	}
+
 	header( 'Content-Type: text/csv; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename="beruang-transactions-' . gmdate( 'Y-m-d' ) . '.csv"' );
+	header( 'X-Accel-Buffering: no' ); // Disable Nginx proxy buffering.
+
+	// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- php://output, no filesystem path.
 	$output = fopen( 'php://output', 'w' );
 	// UTF-8 BOM for Excel compatibility.
 	fprintf( $output, "\xEF\xBB\xBF" );
 	fputcsv( $output, array( 'id', 'user_id', 'user_login', 'user_email', 'display_name', 'date', 'time', 'description', 'note', 'wallet_id', 'wallet_name', 'category_id', 'category_name', 'amount', 'type' ) );
-	foreach ( $items as $row ) {
-		$cat_id      = isset( $row['category_id'] ) ? (int) $row['category_id'] : 0;
-		$cat_name    = $cat_id && isset( $cat_names[ $cat_id ] ) ? $cat_names[ $cat_id ] : '';
-		$wallet_id   = isset( $row['wallet_id'] ) ? (int) $row['wallet_id'] : 0;
-		$wallet_name = $wallet_id && isset( $wallet_names[ $wallet_id ] ) ? $wallet_names[ $wallet_id ] : __( 'No Wallet', 'beruang' );
-		fputcsv(
-			$output,
+
+	$page = 1;
+	do {
+		$result     = DB::get_transactions(
+			$user_id,
 			array(
-				$row['id'] ?? '',
-				$row['user_id'] ?? '',
-				$user_login,
-				$user_email,
-				$display_name,
-				$row['date'] ?? '',
-				$row['time'] ?? '',
-				$row['description'] ?? '',
-				$row['note'] ?? '',
-				$row['wallet_id'] ?? '',
-				$wallet_name,
-				$row['category_id'] ?? '',
-				$cat_name,
-				$row['amount'] ?? '',
-				$row['type'] ?? '',
+				'per_page' => $chunk_size,
+				'page'     => $page,
 			)
 		);
-	}
+		$items      = $result['items'] ?? array();
+		$item_count = count( $items );
+		foreach ( $items as $row ) {
+			$cat_id      = isset( $row['category_id'] ) ? (int) $row['category_id'] : 0;
+			$cat_name    = $cat_id && isset( $cat_names[ $cat_id ] ) ? $cat_names[ $cat_id ] : '';
+			$wallet_id   = isset( $row['wallet_id'] ) ? (int) $row['wallet_id'] : 0;
+			$wallet_name = $wallet_id && isset( $wallet_names[ $wallet_id ] ) ? $wallet_names[ $wallet_id ] : __( 'No Wallet', 'beruang-budget' );
+			fputcsv(
+				$output,
+				array(
+					$row['id'] ?? '',
+					$row['user_id'] ?? '',
+					$user_login,
+					$user_email,
+					$display_name,
+					$row['date'] ?? '',
+					$row['time'] ?? '',
+					$row['description'] ?? '',
+					$row['note'] ?? '',
+					$row['wallet_id'] ?? '',
+					$wallet_name,
+					$row['category_id'] ?? '',
+					$cat_name,
+					$row['amount'] ?? '',
+					$row['type'] ?? '',
+				)
+			);
+		}
+		flush();
+		++$page;
+	} while ( $item_count === $chunk_size );
+
 	// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- php://output stream, no filesystem path.
 	fclose( $output );
 	exit;
@@ -465,7 +545,7 @@ function admin_handle_export_csv() {
  *
  * Handles categories (with ID mapping), transactions, and budgets.
  * Reads beruang_import_user_id from POST; falls back to current user.
- * Requires ADMIN_CAPABILITY.
+ * Requires BERUANG_BUDGET_ADMIN_CAPABILITY.
  * Sets success or error via add_settings_error().
  */
 function admin_handle_import() {
@@ -474,18 +554,18 @@ function admin_handle_import() {
 		$user_id = get_current_user_id();
 	}
 	if ( ! $user_id || ! get_userdata( $user_id ) ) {
-		wp_die( esc_html__( 'Invalid user.', 'beruang' ) );
+		wp_die( esc_html__( 'Invalid user.', 'beruang-budget' ) );
 	}
 	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- tmp_name validated by is_uploaded_file.
 	if ( ! isset( $_FILES['beruang_import_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['beruang_import_file']['tmp_name'] ) ) {
-		add_settings_error( 'beruang_import', 'beruang_import', __( 'Invalid file upload.', 'beruang' ), 'error' );
+		add_settings_error( 'beruang_import', 'beruang_import', __( 'Invalid file upload.', 'beruang-budget' ), 'error' );
 		return;
 	}
 	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Validated via is_uploaded_file, local file.
 	$raw  = file_get_contents( $_FILES['beruang_import_file']['tmp_name'] );
 	$data = json_decode( $raw, true );
 	if ( ! is_array( $data ) || ( empty( $data['categories'] ) && empty( $data['transactions'] ) && empty( $data['budgets'] ) ) ) {
-		add_settings_error( 'beruang_import', 'beruang_import', __( 'Invalid or empty import file.', 'beruang' ), 'error' );
+		add_settings_error( 'beruang_import', 'beruang_import', __( 'Invalid or empty import file.', 'beruang-budget' ), 'error' );
 		return;
 	}
 	$map_cat    = array();
@@ -572,7 +652,7 @@ function admin_handle_import() {
 			0
 		);
 	}
-	add_settings_error( 'beruang_import', 'beruang_import', __( 'Import completed.', 'beruang' ), 'success' );
+	add_settings_error( 'beruang_import', 'beruang_import', __( 'Import completed.', 'beruang-budget' ), 'success' );
 }
 
 /**
@@ -582,8 +662,8 @@ function admin_handle_import() {
  * beruang_category_id, beruang_amount, beruang_type. Redirects on success or error.
  */
 function admin_handle_update_transaction() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
 	}
 	check_admin_referer( 'beruang_edit_transaction' );
 	$id = isset( $_POST['beruang_tx_id'] ) ? absint( $_POST['beruang_tx_id'] ) : 0;
@@ -651,8 +731,8 @@ function admin_handle_update_transaction() {
  * Redirects on success or error.
  */
 function admin_handle_update_category() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
 	}
 	check_admin_referer( 'beruang_edit_category' );
 	$id      = isset( $_POST['beruang_cat_id'] ) ? absint( $_POST['beruang_cat_id'] ) : 0;
@@ -728,8 +808,8 @@ function admin_handle_update_category() {
  * Redirects on success or error.
  */
 function admin_handle_update_budget() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
 	}
 	check_admin_referer( 'beruang_edit_budget' );
 	$id      = isset( $_POST['beruang_budget_id'] ) ? absint( $_POST['beruang_budget_id'] ) : 0;
@@ -808,8 +888,8 @@ function admin_handle_update_budget() {
  * Redirects on success or error.
  */
 function admin_handle_update_wallet() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
-		wp_die( esc_html__( 'Not allowed.', 'beruang' ) );
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
 	}
 	check_admin_referer( 'beruang_edit_wallet' );
 	$id      = isset( $_POST['beruang_wallet_id'] ) ? absint( $_POST['beruang_wallet_id'] ) : 0;
@@ -882,7 +962,7 @@ function admin_handle_update_wallet() {
  * Uses WP_List_Table for the transactions table.
  */
 function admin_page_transactions() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
 	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
@@ -898,30 +978,30 @@ function admin_page_transactions() {
 	$currency = get_option( 'beruang_currency', 'IDR' );
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'Transactions', 'beruang' ); ?></h1>
+		<h1><?php esc_html_e( 'Transactions', 'beruang-budget' ); ?></h1>
 		<?php
 		if ( isset( $_GET['beruang_updated'] ) ) {
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Transaction updated.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Transaction updated.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'Transaction not found.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Transaction not found.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( $edit_row ) {
 			?>
 			<div class="beruang-admin-edit-transaction" style="margin-bottom:1.5em;padding:1em;background:#f0f0f1;border-left:4px solid #2271b1;">
-				<h2><?php esc_html_e( 'Edit transaction', 'beruang' ); ?> #<?php echo (int) $edit_row['id']; ?></h2>
+				<h2><?php esc_html_e( 'Edit transaction', 'beruang-budget' ); ?> #<?php echo (int) $edit_row['id']; ?></h2>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="beruang_update_transaction" />
 					<?php wp_nonce_field( 'beruang_edit_transaction' ); ?>
 					<input type="hidden" name="beruang_tx_id" value="<?php echo (int) $edit_row['id']; ?>" />
 					<table class="form-table">
-						<tr><th scope="row"><?php esc_html_e( 'User ID', 'beruang' ); ?></th><td><input type="text" value="<?php echo esc_attr( $edit_row['user_id'] ); ?>" readonly class="regular-text" /></td></tr>
-						<tr><th scope="row"><label for="beruang_edit_date"><?php esc_html_e( 'Date', 'beruang' ); ?></label></th><td><input type="date" id="beruang_edit_date" name="beruang_date" value="<?php echo esc_attr( $edit_row['date'] ); ?>" required /></td></tr>
-						<tr><th scope="row"><label for="beruang_edit_time"><?php esc_html_e( 'Time', 'beruang' ); ?></label></th><td><input type="time" id="beruang_edit_time" name="beruang_time" value="<?php echo esc_attr( $edit_row['time'] ?? '' ); ?>" /></td></tr>
-						<tr><th scope="row"><label for="beruang_edit_description"><?php esc_html_e( 'Description', 'beruang' ); ?></label></th><td><input type="text" id="beruang_edit_description" name="beruang_description" value="<?php echo esc_attr( $edit_row['description'] ); ?>" class="large-text" /></td></tr>
-						<tr><th scope="row"><label for="beruang_edit_category"><?php esc_html_e( 'Category', 'beruang' ); ?></label></th>
+						<tr><th scope="row"><?php esc_html_e( 'User ID', 'beruang-budget' ); ?></th><td><input type="text" value="<?php echo esc_attr( $edit_row['user_id'] ); ?>" readonly class="regular-text" /></td></tr>
+						<tr><th scope="row"><label for="beruang_edit_date"><?php esc_html_e( 'Date', 'beruang-budget' ); ?></label></th><td><input type="date" id="beruang_edit_date" name="beruang_date" value="<?php echo esc_attr( $edit_row['date'] ); ?>" required /></td></tr>
+						<tr><th scope="row"><label for="beruang_edit_time"><?php esc_html_e( 'Time', 'beruang-budget' ); ?></label></th><td><input type="time" id="beruang_edit_time" name="beruang_time" value="<?php echo esc_attr( $edit_row['time'] ?? '' ); ?>" /></td></tr>
+						<tr><th scope="row"><label for="beruang_edit_description"><?php esc_html_e( 'Description', 'beruang-budget' ); ?></label></th><td><input type="text" id="beruang_edit_description" name="beruang_description" value="<?php echo esc_attr( $edit_row['description'] ); ?>" class="large-text" /></td></tr>
+						<tr><th scope="row"><label for="beruang_edit_category"><?php esc_html_e( 'Category', 'beruang-budget' ); ?></label></th>
 						<td><select id="beruang_edit_category" name="beruang_category_id">
-							<option value="0" <?php selected( (int) $edit_row['category_id'], 0 ); ?>><?php esc_html_e( 'Uncategorized', 'beruang' ); ?></option>
+							<option value="0" <?php selected( (int) $edit_row['category_id'], 0 ); ?>><?php esc_html_e( 'Uncategorized', 'beruang-budget' ); ?></option>
 							<?php
 							foreach ( $edit_categories as $c ) {
 								$indent = str_repeat( '— ', (int) ( $c['depth'] ?? 0 ) );
@@ -929,14 +1009,14 @@ function admin_page_transactions() {
 							}
 							?>
 						</select></td></tr>
-						<tr><th scope="row"><label for="beruang_edit_amount"><?php esc_html_e( 'Amount', 'beruang' ); ?></label></th><td><input type="number" id="beruang_edit_amount" name="beruang_amount" step="1" min="0" value="<?php echo esc_attr( shortcode_format_amount_input_value( $edit_row['amount'] ) ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
-						<tr><th scope="row"><label for="beruang_edit_type"><?php esc_html_e( 'Type', 'beruang' ); ?></label></th>
+						<tr><th scope="row"><label for="beruang_edit_amount"><?php esc_html_e( 'Amount', 'beruang-budget' ); ?></label></th><td><input type="number" id="beruang_edit_amount" name="beruang_amount" step="1" min="0" value="<?php echo esc_attr( shortcode_format_amount_input_value( $edit_row['amount'] ) ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
+						<tr><th scope="row"><label for="beruang_edit_type"><?php esc_html_e( 'Type', 'beruang-budget' ); ?></label></th>
 						<td><select id="beruang_edit_type" name="beruang_type">
-							<option value="expense" <?php selected( $edit_row['type'], 'expense' ); ?>><?php esc_html_e( 'Expense', 'beruang' ); ?></option>
-							<option value="income" <?php selected( $edit_row['type'], 'income' ); ?>><?php esc_html_e( 'Income', 'beruang' ); ?></option>
+							<option value="expense" <?php selected( $edit_row['type'], 'expense' ); ?>><?php esc_html_e( 'Expense', 'beruang-budget' ); ?></option>
+							<option value="income" <?php selected( $edit_row['type'], 'income' ); ?>><?php esc_html_e( 'Income', 'beruang-budget' ); ?></option>
 						</select></td></tr>
 					</table>
-					<p><button type="submit" class="button button-primary"><?php esc_html_e( 'Update', 'beruang' ); ?></button>
+					<p><button type="submit" class="button button-primary"><?php esc_html_e( 'Update', 'beruang-budget' ); ?></button>
 					<a href="
 					<?php
 					echo esc_url(
@@ -949,7 +1029,7 @@ function admin_page_transactions() {
 						)
 					);
 					?>
-					" class="button"><?php esc_html_e( 'Cancel', 'beruang' ); ?></a></p>
+					" class="button"><?php esc_html_e( 'Cancel', 'beruang-budget' ); ?></a></p>
 				</form>
 			</div>
 			<?php
@@ -975,7 +1055,7 @@ function admin_page_transactions() {
  * Supports user filter, edit form, and WP_List_Table with pagination, sorting, delete links.
  */
 function admin_page_categories() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
 	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
@@ -1011,19 +1091,19 @@ function admin_page_categories() {
 	}
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'Categories', 'beruang' ); ?></h1>
+		<h1><?php esc_html_e( 'Categories', 'beruang-budget' ); ?></h1>
 		<?php
 		if ( isset( $_GET['beruang_updated'] ) ) {
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Category updated.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Category updated.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'Category not found.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Category not found.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( isset( $_GET['beruang_deleted'] ) ) {
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Category deleted.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Category deleted.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( isset( $_GET['beruang_error'] ) && 'name' === $_GET['beruang_error'] ) {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'Name is required.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Name is required.', 'beruang-budget' ) . '</p></div>';
 		}
 		?>
 		<?php if ( $edit_row ) { ?>
@@ -1037,15 +1117,15 @@ function admin_page_categories() {
 			);
 			?>
 		<div class="beruang-admin-edit-box" style="margin:1em 0;padding:1em;background:#f0f0f1;border-left:4px solid #2271b1;">
-			<h2><?php esc_html_e( 'Edit category', 'beruang' ); ?> #<?php echo (int) $edit_row['id']; ?></h2>
+			<h2><?php esc_html_e( 'Edit category', 'beruang-budget' ); ?> #<?php echo (int) $edit_row['id']; ?></h2>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="beruang_update_category" />
 				<?php wp_nonce_field( 'beruang_edit_category' ); ?>
 				<input type="hidden" name="beruang_cat_id" value="<?php echo (int) $edit_row['id']; ?>" />
 				<input type="hidden" name="beruang_cat_user_id" value="<?php echo (int) $edit_row['user_id']; ?>" />
 				<table class="form-table">
-					<tr><th scope="row"><label for="beruang_edit_cat_name"><?php esc_html_e( 'Name', 'beruang' ); ?></label></th><td><input type="text" id="beruang_edit_cat_name" name="beruang_cat_name" value="<?php echo esc_attr( $edit_row['name'] ); ?>" class="regular-text" required /></td></tr>
-					<tr><th scope="row"><label for="beruang_edit_cat_parent"><?php esc_html_e( 'Parent', 'beruang' ); ?></label></th><td><select id="beruang_edit_cat_parent" name="beruang_cat_parent"><option value="0">—</option>
+					<tr><th scope="row"><label for="beruang_edit_cat_name"><?php esc_html_e( 'Name', 'beruang-budget' ); ?></label></th><td><input type="text" id="beruang_edit_cat_name" name="beruang_cat_name" value="<?php echo esc_attr( $edit_row['name'] ); ?>" class="regular-text" required /></td></tr>
+					<tr><th scope="row"><label for="beruang_edit_cat_parent"><?php esc_html_e( 'Parent', 'beruang-budget' ); ?></label></th><td><select id="beruang_edit_cat_parent" name="beruang_cat_parent"><option value="0">—</option>
 						<?php
 						foreach ( $edit_categories as $c ) {
 							if ( (int) $c['id'] === (int) $edit_row['id'] ) { continue; }
@@ -1055,8 +1135,8 @@ function admin_page_categories() {
 						?>
 					</select></td></tr>
 				</table>
-				<p><button type="submit" class="button button-primary"><?php esc_html_e( 'Update', 'beruang' ); ?></button>
-				<a href="<?php echo esc_url( $categories_cancel_url ); ?>" class="button"><?php esc_html_e( 'Cancel', 'beruang' ); ?></a></p>
+				<p><button type="submit" class="button button-primary"><?php esc_html_e( 'Update', 'beruang-budget' ); ?></button>
+				<a href="<?php echo esc_url( $categories_cancel_url ); ?>" class="button"><?php esc_html_e( 'Cancel', 'beruang-budget' ); ?></a></p>
 			</form>
 		</div>
 		<?php } ?>
@@ -1080,7 +1160,7 @@ function admin_page_categories() {
  * Supports user filter, edit form, and WP_List_Table with pagination, sorting.
  */
 function admin_page_budgets() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
 	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
@@ -1097,16 +1177,16 @@ function admin_page_budgets() {
 	$currency = get_option( 'beruang_currency', 'IDR' );
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'Budgets', 'beruang' ); ?></h1>
+		<h1><?php esc_html_e( 'Budgets', 'beruang-budget' ); ?></h1>
 		<?php
 		if ( isset( $_GET['beruang_updated'] ) ) {
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Budget updated.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Budget updated.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'Budget not found.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Budget not found.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( isset( $_GET['beruang_error'] ) && 'name' === $_GET['beruang_error'] ) {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'Name is required.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Name is required.', 'beruang-budget' ) . '</p></div>';
 		}
 		?>
 		<?php if ( $edit_row ) { ?>
@@ -1120,17 +1200,17 @@ function admin_page_budgets() {
 			);
 			?>
 		<div class="beruang-admin-edit-box" style="margin:1em 0;padding:1em;background:#f0f0f1;border-left:4px solid #2271b1;">
-			<h2><?php esc_html_e( 'Edit budget', 'beruang' ); ?> #<?php echo (int) $edit_row['id']; ?></h2>
+			<h2><?php esc_html_e( 'Edit budget', 'beruang-budget' ); ?> #<?php echo (int) $edit_row['id']; ?></h2>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="beruang_update_budget" />
 				<?php wp_nonce_field( 'beruang_edit_budget' ); ?>
 				<input type="hidden" name="beruang_budget_id" value="<?php echo (int) $edit_row['id']; ?>" />
 				<input type="hidden" name="beruang_budget_user_id" value="<?php echo (int) $edit_row['user_id']; ?>" />
 				<table class="form-table">
-					<tr><th scope="row"><label for="beruang_edit_budget_name"><?php esc_html_e( 'Name', 'beruang' ); ?></label></th><td><input type="text" id="beruang_edit_budget_name" name="beruang_budget_name" value="<?php echo esc_attr( $edit_row['name'] ); ?>" class="regular-text" required /></td></tr>
-					<tr><th scope="row"><label for="beruang_edit_budget_target"><?php esc_html_e( 'Target', 'beruang' ); ?></label></th><td><input type="number" id="beruang_edit_budget_target" name="beruang_budget_target" step="1" min="0" value="<?php echo esc_attr( shortcode_format_amount_input_value( $edit_row['target_amount'] ) ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
-					<tr><th scope="row"><label for="beruang_edit_budget_type"><?php esc_html_e( 'Type', 'beruang' ); ?></label></th><td><select id="beruang_edit_budget_type" name="beruang_budget_type"><option value="monthly" <?php selected( $edit_row['type'], 'monthly' ); ?>><?php esc_html_e( 'Monthly', 'beruang' ); ?></option><option value="yearly" <?php selected( $edit_row['type'], 'yearly' ); ?>><?php esc_html_e( 'Yearly', 'beruang' ); ?></option></select></td></tr>
-					<tr><th scope="row"><?php esc_html_e( 'Categories', 'beruang' ); ?></th><td><fieldset>
+					<tr><th scope="row"><label for="beruang_edit_budget_name"><?php esc_html_e( 'Name', 'beruang-budget' ); ?></label></th><td><input type="text" id="beruang_edit_budget_name" name="beruang_budget_name" value="<?php echo esc_attr( $edit_row['name'] ); ?>" class="regular-text" required /></td></tr>
+					<tr><th scope="row"><label for="beruang_edit_budget_target"><?php esc_html_e( 'Target', 'beruang-budget' ); ?></label></th><td><input type="number" id="beruang_edit_budget_target" name="beruang_budget_target" step="1" min="0" value="<?php echo esc_attr( shortcode_format_amount_input_value( $edit_row['target_amount'] ) ); ?>" required /> <?php echo esc_html( $currency ); ?></td></tr>
+					<tr><th scope="row"><label for="beruang_edit_budget_type"><?php esc_html_e( 'Type', 'beruang-budget' ); ?></label></th><td><select id="beruang_edit_budget_type" name="beruang_budget_type"><option value="monthly" <?php selected( $edit_row['type'], 'monthly' ); ?>><?php esc_html_e( 'Monthly', 'beruang-budget' ); ?></option><option value="yearly" <?php selected( $edit_row['type'], 'yearly' ); ?>><?php esc_html_e( 'Yearly', 'beruang-budget' ); ?></option></select></td></tr>
+					<tr><th scope="row"><?php esc_html_e( 'Categories', 'beruang-budget' ); ?></th><td><fieldset>
 						<?php
 						foreach ( $edit_categories as $c ) {
 							$indent  = str_repeat( '— ', (int) ( $c['depth'] ?? 0 ) );
@@ -1140,8 +1220,8 @@ function admin_page_budgets() {
 						?>
 					</fieldset></td></tr>
 				</table>
-				<p><button type="submit" class="button button-primary"><?php esc_html_e( 'Update', 'beruang' ); ?></button>
-				<a href="<?php echo esc_url( $budgets_cancel_url ); ?>" class="button"><?php esc_html_e( 'Cancel', 'beruang' ); ?></a></p>
+				<p><button type="submit" class="button button-primary"><?php esc_html_e( 'Update', 'beruang-budget' ); ?></button>
+				<a href="<?php echo esc_url( $budgets_cancel_url ); ?>" class="button"><?php esc_html_e( 'Cancel', 'beruang-budget' ); ?></a></p>
 			</form>
 		</div>
 		<?php } ?>
@@ -1165,7 +1245,7 @@ function admin_page_budgets() {
  * Supports user filter, edit form, and WP_List_Table with pagination, sorting, delete links.
  */
 function admin_page_wallets() {
-	if ( ! current_user_can( ADMIN_CAPABILITY ) ) {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
 	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
@@ -1200,19 +1280,19 @@ function admin_page_wallets() {
 	}
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'Wallets', 'beruang' ); ?></h1>
+		<h1><?php esc_html_e( 'Wallets', 'beruang-budget' ); ?></h1>
 		<?php
 		if ( isset( $_GET['beruang_updated'] ) ) {
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Wallet updated.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Wallet updated.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'Wallet not found.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Wallet not found.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( isset( $_GET['beruang_deleted'] ) ) {
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Wallet deleted.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Wallet deleted.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( isset( $_GET['beruang_error'] ) && 'name' === $_GET['beruang_error'] ) {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'Name is required.', 'beruang' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Name is required.', 'beruang-budget' ) . '</p></div>';
 		}
 		?>
 		<?php if ( $edit_row ) { ?>
@@ -1226,17 +1306,17 @@ function admin_page_wallets() {
 			);
 			?>
 		<div class="beruang-admin-edit-box" style="margin:1em 0;padding:1em;background:#f0f0f1;border-left:4px solid #2271b1;">
-			<h2><?php esc_html_e( 'Edit wallet', 'beruang' ); ?> #<?php echo (int) $edit_row['id']; ?></h2>
+			<h2><?php esc_html_e( 'Edit wallet', 'beruang-budget' ); ?> #<?php echo (int) $edit_row['id']; ?></h2>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="beruang_update_wallet" />
 				<?php wp_nonce_field( 'beruang_edit_wallet' ); ?>
 				<input type="hidden" name="beruang_wallet_id" value="<?php echo (int) $edit_row['id']; ?>" />
 				<input type="hidden" name="beruang_wallet_user_id" value="<?php echo (int) $edit_row['user_id']; ?>" />
 				<table class="form-table">
-					<tr><th scope="row"><label for="beruang_edit_wallet_name"><?php esc_html_e( 'Name', 'beruang' ); ?></label></th><td><input type="text" id="beruang_edit_wallet_name" name="beruang_wallet_name" value="<?php echo esc_attr( $edit_row['name'] ); ?>" class="regular-text" required /></td></tr>
+					<tr><th scope="row"><label for="beruang_edit_wallet_name"><?php esc_html_e( 'Name', 'beruang-budget' ); ?></label></th><td><input type="text" id="beruang_edit_wallet_name" name="beruang_wallet_name" value="<?php echo esc_attr( $edit_row['name'] ); ?>" class="regular-text" required /></td></tr>
 				</table>
-				<p><button type="submit" class="button button-primary"><?php esc_html_e( 'Update', 'beruang' ); ?></button>
-				<a href="<?php echo esc_url( $wallets_cancel_url ); ?>" class="button"><?php esc_html_e( 'Cancel', 'beruang' ); ?></a></p>
+				<p><button type="submit" class="button button-primary"><?php esc_html_e( 'Update', 'beruang-budget' ); ?></button>
+				<a href="<?php echo esc_url( $wallets_cancel_url ); ?>" class="button"><?php esc_html_e( 'Cancel', 'beruang-budget' ); ?></a></p>
 			</form>
 		</div>
 		<?php } ?>

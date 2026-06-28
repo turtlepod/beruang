@@ -7,7 +7,7 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,7 +23,7 @@ add_action( 'rest_api_init', __NAMESPACE__ . '\rest_register_routes' );
  */
 function rest_permission_logged_in( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	if ( ! is_user_logged_in() ) {
-		return new \WP_Error( 'rest_not_logged_in', __( 'Not logged in.', 'beruang' ), array( 'status' => 401 ) );
+		return new \WP_Error( 'rest_not_logged_in', __( 'Not logged in.', 'beruang-budget' ), array( 'status' => 401 ) );
 	}
 	return true;
 }
@@ -507,11 +507,11 @@ function rest_save_transaction( $request ) {
 	}
 
 	if ( null !== $wallet_id && ! DB::get_wallet_for_user( $user_id, $wallet_id ) ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid wallet.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid wallet.', 'beruang-budget' ), 400 );
 	}
 
 	if ( $category_id > 0 && ! DB::get_category_for_user( $user_id, $category_id ) ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang-budget' ), 400 );
 	}
 
 	$id = DB::insert_transaction(
@@ -535,7 +535,7 @@ function rest_save_transaction( $request ) {
 			)
 		);
 	}
-	return rest_json_error( new \WP_REST_Response(), __( 'Failed to save.', 'beruang' ), 400 );
+	return rest_json_error( new \WP_REST_Response(), __( 'Failed to save.', 'beruang-budget' ), 400 );
 }
 
 /**
@@ -617,11 +617,11 @@ function rest_get_transaction( $request ) {
 	$user_id = get_current_user_id();
 	$id      = (int) $request['id'];
 	if ( ! $id ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang-budget' ), 400 );
 	}
 	$row = DB::get_transaction_for_user( $user_id, $id );
 	if ( ! $row ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Transaction not found.', 'beruang' ), 404 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Transaction not found.', 'beruang-budget' ), 404 );
 	}
 	return rest_ensure_response(
 		array(
@@ -644,11 +644,11 @@ function rest_update_transaction( $request ) {
 	$body    = is_array( $body ) ? $body : array();
 
 	if ( ! $id ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang-budget' ), 400 );
 	}
 	$existing = DB::get_transaction_for_user( $user_id, $id );
 	if ( ! $existing ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Transaction not found.', 'beruang' ), 404 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Transaction not found.', 'beruang-budget' ), 404 );
 	}
 
 	$existing_wallet_id = isset( $existing['wallet_id'] ) && '' !== (string) $existing['wallet_id']
@@ -671,12 +671,12 @@ function rest_update_transaction( $request ) {
 
 	$wallet_id = $data['wallet_id'];
 	if ( null !== $wallet_id && ! DB::get_wallet_for_user( $user_id, $wallet_id ) ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid wallet.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid wallet.', 'beruang-budget' ), 400 );
 	}
 
 	$cat_id = (int) $data['category_id'];
 	if ( $cat_id > 0 && ! DB::get_category_for_user( $user_id, $cat_id ) ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang-budget' ), 400 );
 	}
 
 	$existing_time = isset( $existing['time'] ) && '' !== trim( (string) $existing['time'] ) ? $existing['time'] : null;
@@ -712,7 +712,7 @@ function rest_update_transaction( $request ) {
 		'type'        => $data['type'],
 	);
 	if ( $existing_normalized === $data_normalized ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'No changes were made.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'No changes were made.', 'beruang-budget' ), 400 );
 	}
 
 	$ok = DB::update_transaction( $id, $data );
@@ -724,7 +724,7 @@ function rest_update_transaction( $request ) {
 			)
 		);
 	}
-	return rest_json_error( new \WP_REST_Response(), __( 'Failed to update.', 'beruang' ), 400 );
+	return rest_json_error( new \WP_REST_Response(), __( 'Failed to update.', 'beruang-budget' ), 400 );
 }
 
 /**
@@ -737,7 +737,7 @@ function rest_delete_transaction( $request ) {
 	$user_id = get_current_user_id();
 	$id      = (int) $request['id'];
 	if ( ! $id ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang-budget' ), 400 );
 	}
 	$ok = DB::delete_transaction( $user_id, $id );
 	return rest_ensure_response(
@@ -806,13 +806,13 @@ function rest_save_category( $request ) {
 	$parent_id = isset( $body['parent_id'] ) ? absint( $body['parent_id'] ) : 0;
 
 	if ( '' === $name ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Name required.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Name required.', 'beruang-budget' ), 400 );
 	}
 	if ( $id > 0 && ! DB::get_category_for_user( $user_id, $id ) ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Category not found.', 'beruang' ), 404 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Category not found.', 'beruang-budget' ), 404 );
 	}
 	if ( $parent_id > 0 && ! DB::get_category_for_user( $user_id, $parent_id ) ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid parent category.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid parent category.', 'beruang-budget' ), 400 );
 	}
 	$saved = DB::save_category(
 		$user_id,
@@ -830,7 +830,7 @@ function rest_save_category( $request ) {
 			)
 		);
 	}
-	return rest_json_error( new \WP_REST_Response(), __( 'Failed to save category.', 'beruang' ), 400 );
+	return rest_json_error( new \WP_REST_Response(), __( 'Failed to save category.', 'beruang-budget' ), 400 );
 }
 
 /**
@@ -843,7 +843,7 @@ function rest_delete_category( $request ) {
 	$user_id = get_current_user_id();
 	$id      = (int) $request['id'];
 	if ( ! $id ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang-budget' ), 400 );
 	}
 	$ok = DB::delete_category( $user_id, $id );
 	return rest_ensure_response(
@@ -898,13 +898,13 @@ function rest_save_wallet( $request ) {
 	$set_as_default = ! empty( $body['set_as_default'] );
 
 	if ( '' === $name ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Name required.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Name required.', 'beruang-budget' ), 400 );
 	}
 
 	if ( $id > 0 ) {
 		$wallet = DB::get_wallet_for_user( $user_id, $id );
 		if ( ! $wallet ) {
-			return rest_json_error( new \WP_REST_Response(), __( 'Wallet not found.', 'beruang' ), 404 );
+			return rest_json_error( new \WP_REST_Response(), __( 'Wallet not found.', 'beruang-budget' ), 404 );
 		}
 	}
 
@@ -934,7 +934,7 @@ function rest_save_wallet( $request ) {
 		);
 	}
 
-	return rest_json_error( new \WP_REST_Response(), __( 'Failed to save wallet.', 'beruang' ), 400 );
+	return rest_json_error( new \WP_REST_Response(), __( 'Failed to save wallet.', 'beruang-budget' ), 400 );
 }
 
 /**
@@ -948,12 +948,12 @@ function rest_delete_wallet( $request ) {
 	$id      = (int) $request['id'];
 
 	if ( ! $id ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang-budget' ), 400 );
 	}
 
 	$wallet = DB::get_wallet_for_user( $user_id, $id );
 	if ( ! $wallet ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Wallet not found.', 'beruang' ), 404 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Wallet not found.', 'beruang-budget' ), 404 );
 	}
 
 	$ok = DB::delete_wallet( $user_id, $id );
@@ -979,11 +979,11 @@ function rest_set_default_wallet( $request ) {
 	$wallet_id = array_key_exists( 'wallet_id', $body ) ? rest_parse_wallet_id( $body['wallet_id'] ) : null;
 
 	if ( null !== $wallet_id && ! DB::get_wallet_for_user( $user_id, $wallet_id ) ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Wallet not found.', 'beruang' ), 404 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Wallet not found.', 'beruang-budget' ), 404 );
 	}
 
 	if ( ! DB::set_default_wallet_id( $user_id, $wallet_id ) ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Failed to set default wallet.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Failed to set default wallet.', 'beruang-budget' ), 400 );
 	}
 
 	return rest_ensure_response(
@@ -1016,26 +1016,26 @@ function rest_transfer_wallet( $request ) {
 	$time        = isset( $body['time'] ) && '' !== (string) $body['time'] ? sanitize_text_field( $body['time'] ) : null;
 
 	if ( ! $from_id || ! $to_id ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Both wallets are required.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Both wallets are required.', 'beruang-budget' ), 400 );
 	}
 	if ( $from_id === $to_id ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Source and target wallets must be different.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Source and target wallets must be different.', 'beruang-budget' ), 400 );
 	}
 	if ( $amount <= 0 ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Amount must be greater than zero.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Amount must be greater than zero.', 'beruang-budget' ), 400 );
 	}
 
 	$from_wallet = DB::get_wallet_for_user( $user_id, $from_id );
 	$to_wallet   = DB::get_wallet_for_user( $user_id, $to_id );
 
 	if ( ! $from_wallet ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Source wallet not found.', 'beruang' ), 404 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Source wallet not found.', 'beruang-budget' ), 404 );
 	}
 	if ( ! $to_wallet ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Target wallet not found.', 'beruang' ), 404 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Target wallet not found.', 'beruang-budget' ), 404 );
 	}
 	if ( $category_id > 0 && ! DB::get_category_for_user( $user_id, $category_id ) ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang-budget' ), 400 );
 	}
 
 	$shared = array(
@@ -1054,14 +1054,14 @@ function rest_transfer_wallet( $request ) {
 			array(
 				'wallet_id'   => $from_id,
 				/* translators: %s: target wallet name */
-				'description' => sprintf( __( 'Transfer to %s', 'beruang' ), $to_wallet['name'] ),
+				'description' => sprintf( __( 'Transfer to %s', 'beruang-budget' ), $to_wallet['name'] ),
 				'type'        => 'expense',
 			)
 		)
 	);
 
 	if ( ! $expense_id ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang' ), 500 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang-budget' ), 500 );
 	}
 
 	// Income to target wallet.
@@ -1072,7 +1072,7 @@ function rest_transfer_wallet( $request ) {
 			array(
 				'wallet_id'   => $to_id,
 				/* translators: %s: source wallet name */
-				'description' => sprintf( __( 'Transfer from %s', 'beruang' ), $from_wallet['name'] ),
+				'description' => sprintf( __( 'Transfer from %s', 'beruang-budget' ), $from_wallet['name'] ),
 				'type'        => 'income',
 			)
 		)
@@ -1081,7 +1081,7 @@ function rest_transfer_wallet( $request ) {
 	if ( ! $income_id ) {
 		// Compensate: roll back the expense already inserted.
 		DB::delete_transaction( $user_id, $expense_id );
-		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang' ), 500 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang-budget' ), 500 );
 	}
 
 	return rest_ensure_response(
@@ -1165,11 +1165,11 @@ function rest_get_budget( $request ) {
 	$user_id = get_current_user_id();
 	$id      = (int) $request['id'];
 	if ( ! $id ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang-budget' ), 400 );
 	}
 	$row = DB::get_budget_for_user( $user_id, $id );
 	if ( ! $row ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Budget not found.', 'beruang' ), 404 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Budget not found.', 'beruang-budget' ), 404 );
 	}
 	return rest_ensure_response(
 		array(
@@ -1196,14 +1196,14 @@ function rest_save_budget( $request ) {
 	$category_ids  = isset( $body['category_ids'] ) && is_array( $body['category_ids'] ) ? array_map( 'absint', $body['category_ids'] ) : array();
 
 	if ( '' === $name ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Name required.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Name required.', 'beruang-budget' ), 400 );
 	}
 	if ( $id > 0 && ! DB::get_budget_for_user( $user_id, $id ) ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Budget not found.', 'beruang' ), 404 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Budget not found.', 'beruang-budget' ), 404 );
 	}
 	foreach ( $category_ids as $cid ) {
 		if ( $cid > 0 && ! DB::get_category_for_user( $user_id, $cid ) ) {
-			return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang' ), 400 );
+			return rest_json_error( new \WP_REST_Response(), __( 'Invalid category.', 'beruang-budget' ), 400 );
 		}
 	}
 	$saved = DB::save_budget(
@@ -1224,7 +1224,7 @@ function rest_save_budget( $request ) {
 			)
 		);
 	}
-	return rest_json_error( new \WP_REST_Response(), __( 'Failed to save budget.', 'beruang' ), 400 );
+	return rest_json_error( new \WP_REST_Response(), __( 'Failed to save budget.', 'beruang-budget' ), 400 );
 }
 
 /**
@@ -1237,7 +1237,7 @@ function rest_delete_budget( $request ) {
 	$user_id = get_current_user_id();
 	$id      = (int) $request['id'];
 	if ( ! $id ) {
-		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang' ), 400 );
+		return rest_json_error( new \WP_REST_Response(), __( 'Invalid ID.', 'beruang-budget' ), 400 );
 	}
 	$ok = DB::delete_budget( $user_id, $id );
 	return rest_ensure_response(

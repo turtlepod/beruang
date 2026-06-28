@@ -7,29 +7,26 @@
 | | |
 |---|---|
 | **Purpose** | Per-user money tracking: transactions, wallets, budgets |
-| **Namespace** | `Beruang` |
+| **Namespace** | `BeruangBudget` |
 | **PHP** | 8.2+ |
-| **Text domain** | `beruang` |
+| **Text domain** | `beruang-budget` |
 
 ## Constants
 
 | Constant | File | Meaning |
 |----------|------|---------|
-| `BERUANG_VERSION` | beruang.php | Version string |
-| `BERUANG_PLUGIN_FILE` | beruang.php | Main plugin file path |
-| `BERUANG_PLUGIN_DIR` | beruang.php | Plugin dir (trailing slash) |
-| `BERUANG_PLUGIN_URL` | beruang.php | Plugin URL |
-|| `ADMIN_SLUG` | includes/admin.php | `'beruang'` |
-|| `ADMIN_CAPABILITY` | includes/admin.php | `'manage_options'` |
-|| `THEME_SETTINGS_OPTION` | includes/admin.php | `'beruang_theme_settings'` |
-|| `THEME_SETTINGS_GROUP` | includes/admin.php | `'beruang_theme_settings_group'` |
-|| `THEME_ADMIN_SLUG` | includes/admin.php | `'beruang-theme-settings'` |
-|| `DB::DB_VERSION` | class-beruang-db.php | Schema version (4) |
+| `BERUANG_BUDGET_VERSION` | beruang-budget.php | Version string |
+| `BERUANG_BUDGET_PLUGIN_FILE` | beruang-budget.php | Main plugin file path |
+| `BERUANG_BUDGET_PLUGIN_DIR` | beruang-budget.php | Plugin dir (trailing slash) |
+| `BERUANG_BUDGET_PLUGIN_URL` | beruang-budget.php | Plugin URL |
+| `BERUANG_BUDGET_ADMIN_SLUG` | beruang-budget.php | `'beruang'` (admin page slug) |
+| `BERUANG_BUDGET_ADMIN_CAPABILITY` | beruang-budget.php | `'manage_options'` (required cap) |
+| `DB::DB_VERSION` | class-beruang-db.php | Schema version (4) |
 
 ## File Map
 
 ```
-beruang.php                    Entry; constants; loads core + WP-CLI
+beruang-budget.php             Entry; constants; loads core + WP-CLI
 includes/
   core.php                     Bootstrap; activation; enqueue; print templates;
                                use_logged_in_user_locale_on_frontend; theme dir ref
@@ -94,7 +91,8 @@ All require logged-in user. Frontend JS uses `window.beruangData` (restUrl, rest
 
 | Hook | Callback | Location |
 |------|----------|----------|
-| `plugins_loaded` | on_plugins_loaded, admin_setup | core.php, admin.php |
+| `plugins_loaded` | on_plugins_loaded | core.php |
+| `plugins_loaded` (is_admin only) | admin_setup | admin.php |
 | `init` | shortcodes_setup, manifest_register_rewrite | shortcodes.php, manifest.php |
 | `determine_locale` | use_logged_in_user_locale_on_frontend | core.php |
 | `wp_enqueue_scripts` | enqueue_front_scripts | core.php |

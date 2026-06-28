@@ -5,7 +5,7 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 // phpcs:disable WordPress.Security.NonceVerification.Recommended -- GET for sorting/filtering in admin list.
 
@@ -87,12 +87,12 @@ class Categories_List_Table extends \WP_List_Table {
 	 */
 	public function get_columns() {
 		return array(
-			'id'         => __( 'ID', 'beruang' ),
-			'user_id'    => __( 'User ID', 'beruang' ),
-			'name'       => __( 'Name', 'beruang' ),
-			'parent_id'  => __( 'Parent ID', 'beruang' ),
-			'sort_order' => __( 'Sort Order', 'beruang' ),
-			'actions'    => __( 'Actions', 'beruang' ),
+			'id'         => __( 'ID', 'beruang-budget' ),
+			'user_id'    => __( 'User ID', 'beruang-budget' ),
+			'name'       => __( 'Name', 'beruang-budget' ),
+			'parent_id'  => __( 'Parent ID', 'beruang-budget' ),
+			'sort_order' => __( 'Sort Order', 'beruang-budget' ),
+			'actions'    => __( 'Actions', 'beruang-budget' ),
 		);
 	}
 
@@ -213,7 +213,7 @@ class Categories_List_Table extends \WP_List_Table {
 		$user_filter = $this->user_filter ? $this->user_filter : (int) $item['user_id'];
 		$edit_url    = add_query_arg(
 			array(
-				'page'    => ADMIN_SLUG . '-categories',
+				'page'    => BERUANG_BUDGET_ADMIN_SLUG . '-categories',
 				'user_id' => $user_filter,
 				'edit'    => $item['id'],
 			),
@@ -222,7 +222,7 @@ class Categories_List_Table extends \WP_List_Table {
 		$del_url     = wp_nonce_url(
 			add_query_arg(
 				array(
-					'page'    => ADMIN_SLUG . '-categories',
+					'page'    => BERUANG_BUDGET_ADMIN_SLUG . '-categories',
 					'user_id' => $user_filter,
 					'delete'  => $item['id'],
 				),
@@ -230,7 +230,7 @@ class Categories_List_Table extends \WP_List_Table {
 			),
 			'beruang_delete_cat_' . $item['id']
 		);
-		return '<a href="' . esc_url( $edit_url ) . '">' . esc_html__( 'Edit', 'beruang' ) . '</a> | <a href="' . esc_url( $del_url ) . '" class="submitdelete">' . esc_html__( 'Delete', 'beruang' ) . '</a>';
+		return '<a href="' . esc_url( $edit_url ) . '">' . esc_html__( 'Edit', 'beruang-budget' ) . '</a> | <a href="' . esc_url( $del_url ) . '" class="submitdelete">' . esc_html__( 'Delete', 'beruang-budget' ) . '</a>';
 	}
 
 	/**
@@ -259,7 +259,7 @@ class Categories_List_Table extends \WP_List_Table {
 	 * Message when no items found.
 	 */
 	public function no_items() {
-		esc_html_e( 'No categories.', 'beruang' );
+		esc_html_e( 'No categories.', 'beruang-budget' );
 	}
 
 	/**
@@ -275,9 +275,9 @@ class Categories_List_Table extends \WP_List_Table {
 		$selected_user = $this->user_filter;
 		?>
 		<div class="alignleft actions">
-			<label for="filter-by-user" class="screen-reader-text"><?php esc_html_e( 'Filter by user', 'beruang' ); ?></label>
+			<label for="filter-by-user" class="screen-reader-text"><?php esc_html_e( 'Filter by user', 'beruang-budget' ); ?></label>
 			<select name="user_id" id="filter-by-user">
-				<option value="0" <?php selected( $selected_user, 0 ); ?>><?php esc_html_e( 'All users', 'beruang' ); ?></option>
+				<option value="0" <?php selected( $selected_user, 0 ); ?>><?php esc_html_e( 'All users', 'beruang-budget' ); ?></option>
 				<?php
 				foreach ( $user_ids as $uid ) {
 					$user  = get_userdata( $uid );
@@ -286,7 +286,7 @@ class Categories_List_Table extends \WP_List_Table {
 				}
 				?>
 			</select>
-			<?php submit_button( __( 'Filter', 'beruang' ), '', 'filter_action', false, array( 'id' => 'beruang-categories-query-submit' ) ); ?>
+			<?php submit_button( __( 'Filter', 'beruang-budget' ), '', 'filter_action', false, array( 'id' => 'beruang-categories-query-submit' ) ); ?>
 		</div>
 		<?php
 	}

@@ -5,7 +5,7 @@
  * @package Beruang
  */
 
-namespace Beruang;
+namespace BeruangBudget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
