@@ -1046,6 +1046,9 @@ function rest_transfer_wallet( $request ) {
 		'amount'      => $amount,
 	);
 
+	global $wpdb;
+	$wpdb->query( 'START TRANSACTION' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+
 	// Expense from source wallet.
 	$expense_id = DB::insert_transaction(
 		$user_id,
@@ -1061,6 +1064,7 @@ function rest_transfer_wallet( $request ) {
 	);
 
 	if ( ! $expense_id ) {
+		$wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang-budget' ), 500 );
 	}
 
@@ -1079,10 +1083,11 @@ function rest_transfer_wallet( $request ) {
 	);
 
 	if ( ! $income_id ) {
-		// Compensate: roll back the expense already inserted.
-		DB::delete_transaction( $user_id, $expense_id );
+		$wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang-budget' ), 500 );
 	}
+
+	$wpdb->query( 'COMMIT' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 	return rest_ensure_response(
 		array(
