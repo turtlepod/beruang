@@ -85,6 +85,23 @@ function beruang_dist_exists() {
  * Enqueue frontend scripts and styles when shortcodes are present.
  */
 function enqueue_front_scripts() {
+	global $post;
+	$should_enqueue = false;
+
+	if ( is_a( $post, 'WP_Post' ) ) {
+		$shortcodes = array( 'beruang-form', 'beruang-list', 'beruang-graph', 'beruang-budget', 'beruang-wallet', 'beruang_install_button' );
+		foreach ( $shortcodes as $sc ) {
+			if ( has_shortcode( $post->post_content, $sc ) ) {
+				$should_enqueue = true;
+				break;
+			}
+		}
+	}
+
+	if ( ! $should_enqueue ) {
+		return;
+	}
+
 	if ( ! beruang_dist_exists() ) {
 		return;
 	}
