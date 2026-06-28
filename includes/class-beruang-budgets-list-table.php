@@ -161,10 +161,10 @@ class Budgets_List_Table extends \WP_List_Table {
 		// Fetch category_ids for each budget in this page.
 		if ( ! empty( $items ) ) {
 			$budget_ids   = array_map( 'absint', wp_list_pluck( $items, 'id' ) );
-			$ids_imploded = implode( ',', $budget_ids );
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table from API, IDs are absint.
+			$placeholders = implode( ',', array_fill( 0, count( $budget_ids ), '%d' ) );
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- $bc_table is a constant, $placeholders is %d list
 			$bc_rows = $wpdb->get_results(
-				"SELECT budget_id, category_id FROM $bc_table WHERE budget_id IN ($ids_imploded)",
+				$wpdb->prepare( "SELECT budget_id, category_id FROM $bc_table WHERE budget_id IN ($placeholders)", ...$budget_ids ),
 				ARRAY_A
 			);
 			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
