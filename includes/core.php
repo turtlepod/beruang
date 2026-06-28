@@ -42,9 +42,6 @@ function on_activation() {
 }
 
 /**
- * Fires on plugins_loaded: load text domain, register shortcodes, and hook actions.
- */
-/**
  * Use the logged-in user's locale for frontend requests.
  *
  * WordPress applies user locale automatically in wp-admin, but not on
@@ -116,7 +113,7 @@ function enqueue_front_scripts() {
 		'chartjs',
 		BERUANG_BUDGET_PLUGIN_URL . 'assets/js/chart.umd.min.js',
 		array(),
-		file_exists( $chart_asset ) ? (string) filemtime( $chart_asset ) : '4.4.1',
+		'4.4.1',
 		true
 	);
 	$deps[]         = 'chartjs';

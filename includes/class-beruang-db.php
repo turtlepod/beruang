@@ -856,9 +856,9 @@ class DB {
 		$wallet_id   = array_key_exists( 'wallet_id', $data )
 			? self::normalize_wallet_id( $data['wallet_id'] )
 			: self::normalize_wallet_id( $existing['wallet_id'] ?? null );
-		$category_id = isset( $data['category_id'] ) ? absint( $data['category_id'] ) : 0;
-		$amount      = isset( $data['amount'] ) ? floatval( $data['amount'] ) : 0;
-		$type        = isset( $data['type'] ) && 'income' === $data['type'] ? 'income' : 'expense';
+		$category_id = isset( $data['category_id'] ) ? absint( $data['category_id'] ) : (int) ( $existing['category_id'] ?? 0 );
+		$amount      = isset( $data['amount'] ) ? floatval( $data['amount'] ) : (float) ( $existing['amount'] ?? 0 );
+		$type        = isset( $data['type'] ) ? ( 'income' === $data['type'] ? 'income' : 'expense' ) : ( $existing['type'] ?? 'expense' );
 
 		return (bool) self::wpdb()->update(
 			$table,

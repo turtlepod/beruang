@@ -301,7 +301,7 @@ function admin_page_settings() {
 		</form>
 		<hr />
 		<h2><?php esc_html_e( 'Export / Import', 'beruang-budget' ); ?></h2>
-		<p>
+		<div>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:block;margin-bottom:1em;">
 				<input type="hidden" name="action" value="beruang_export" />
 				<?php wp_nonce_field( 'beruang_export' ); ?>
@@ -332,7 +332,7 @@ function admin_page_settings() {
 				</label>
 				<button type="submit" name="beruang_export_csv" class="button"><?php esc_html_e( 'Export transactions (CSV)', 'beruang-budget' ); ?></button>
 			</form>
-		</p>
+		</div>
 		<form method="post" enctype="multipart/form-data">
 			<?php wp_nonce_field( 'beruang_import' ); ?>
 			<p>
@@ -428,7 +428,7 @@ function admin_handle_export() {
 		}
 		flush();
 		++$page;
-	} while ( $item_count === $chunk_size );
+	} while ( $item_count === $chunk_size && $page <= 10000 );
 
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- closing JSON structure.
 	echo ']}';
@@ -533,7 +533,7 @@ function admin_handle_export_csv() {
 		}
 		flush();
 		++$page;
-	} while ( $item_count === $chunk_size );
+	} while ( $item_count === $chunk_size && $page <= 10000 );
 
 	// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- php://output stream, no filesystem path.
 	fclose( $output );
