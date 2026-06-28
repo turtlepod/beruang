@@ -835,14 +835,21 @@ class DB {
 	/**
 	 * Update an existing transaction.
 	 *
-	 * @param int   $id   Transaction ID.
-	 * @param array $data date, time, description, note, wallet_id, category_id, amount, type.
+	 * Uses get_transaction_for_user() for scoped fetch — this method previously
+	 * used get_transaction_by_id() (no user scope), which was flagged in code
+	 * review as a potential cross-user data leak in partial updates. The
+	 * $user_id parameter and scoped fetch prevent that. Do not revert to the
+	 * unscoped version.
+	 *
+	 * @param int   $user_id User ID.
+	 * @param int   $id      Transaction ID.
+	 * @param array $data    date, time, description, note, wallet_id, category_id, amount, type.
 	 * @return bool
 	 */
-	public static function update_transaction( $id, $data ) {
+	public static function update_transaction( $user_id, $id, $data ) {
 		$table    = self::table_transaction();
 		$id       = absint( $id );
-		$existing = self::get_transaction_by_id( $id );
+		$existing = self::get_transaction_for_user( $user_id, $id );
 		$date     = isset( $data['date'] ) ? sanitize_text_field( $data['date'] ) : '';
 		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
 			$date = current_time( 'Y-m-d' );

@@ -702,6 +702,7 @@ function admin_handle_update_transaction() {
 	$amount      = isset( $_POST['beruang_amount'] ) ? floatval( $_POST['beruang_amount'] ) : 0;
 	$type        = isset( $_POST['beruang_type'] ) && 'income' === $_POST['beruang_type'] ? 'income' : 'expense';
 	DB::update_transaction(
+		$existing['user_id'],
 		$id,
 		array(
 			'date'        => $date,

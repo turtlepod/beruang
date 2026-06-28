@@ -715,7 +715,7 @@ function rest_update_transaction( $request ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'No changes were made.', 'beruang-budget' ), 400 );
 	}
 
-	$ok = DB::update_transaction( $id, $data );
+	$ok = DB::update_transaction( $user_id, $id, $data );
 	if ( $ok ) {
 		return rest_ensure_response(
 			array(
