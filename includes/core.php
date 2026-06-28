@@ -107,8 +107,7 @@ function enqueue_front_scripts() {
 			$front_style_ver
 		);
 	}
-	$deps        = array();
-	$chart_asset = BERUANG_BUDGET_PLUGIN_DIR . 'assets/js/chart.umd.min.js';
+
 	wp_enqueue_script(
 		'chartjs',
 		BERUANG_BUDGET_PLUGIN_URL . 'assets/js/chart.umd.min.js',
@@ -116,10 +115,10 @@ function enqueue_front_scripts() {
 		'4.4.1',
 		true
 	);
-	$deps[]         = 'chartjs';
+
 	$front_js_dist  = BERUANG_BUDGET_PLUGIN_DIR . 'dist/js/front.js';
 	$front_js_asset = BERUANG_BUDGET_PLUGIN_DIR . 'dist/js/front.asset.php';
-	$front_js_deps  = $deps;
+	$front_js_deps  = [ 'chartjs' ];
 	$front_js_ver   = BERUANG_BUDGET_VERSION;
 	if ( file_exists( $front_js_dist ) ) {
 		if ( file_exists( $front_js_asset ) ) {
