@@ -185,13 +185,22 @@ class DB {
 		$wallet_table = self::table_wallet();
 
 		// Ensure wallet_id column allows NULL (dbDelta does not ALTER existing column constraints).
-		self::wpdb()->query( "ALTER TABLE $tx_table MODIFY wallet_id bigint(20) unsigned DEFAULT NULL" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange
+		$result = self::wpdb()->query( "ALTER TABLE $tx_table MODIFY wallet_id bigint(20) unsigned DEFAULT NULL" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange
+		if ( false === $result ) {
+			error_log( 'Beruang: Failed to ALTER wallet_id column: ' . self::wpdb()->last_error ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		}
 
 		// Legacy "Cash" sentinel is now represented as NULL wallet_id.
-		self::wpdb()->query( "UPDATE $tx_table SET wallet_id = NULL WHERE wallet_id = 0" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$result = self::wpdb()->query( "UPDATE $tx_table SET wallet_id = NULL WHERE wallet_id = 0" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		if ( false === $result ) {
+			error_log( 'Beruang: Failed to UPDATE wallet_id sentinel: ' . self::wpdb()->last_error ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		}
 
-		$today = current_time( 'Y-m-d' );
-		self::wpdb()->query( "UPDATE $wallet_table SET initial_amount = 0 WHERE initial_amount IS NULL" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$today  = current_time( 'Y-m-d' );
+		$result = self::wpdb()->query( "UPDATE $wallet_table SET initial_amount = 0 WHERE initial_amount IS NULL" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		if ( false === $result ) {
+			error_log( 'Beruang: Failed to UPDATE initial_amount: ' . self::wpdb()->last_error ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		}
 		self::wpdb()->query(
 			self::wpdb()->prepare(
 				"UPDATE $wallet_table SET initial_date = %s WHERE initial_date IS NULL OR initial_date = '0000-00-00'",
