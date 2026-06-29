@@ -9,8 +9,6 @@
 
 namespace BeruangBudget;
 
-// phpcs:disable WordPress.Security.NonceVerification.Recommended -- GET for filters; admin_post forms verified.
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -966,8 +964,8 @@ function admin_page_transactions() {
 	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
-	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
-	$edit_id     = isset( $_GET['edit'] ) ? absint( $_GET['edit'] ) : 0;
+	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$edit_id     = isset( $_GET['edit'] ) ? absint( $_GET['edit'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$edit_row    = $edit_id ? DB::get_transaction_by_id( $edit_id ) : null;
 	if ( $edit_row ) {
 		$edit_categories = DB::get_categories_flat( (int) $edit_row['user_id'], true );
@@ -981,10 +979,10 @@ function admin_page_transactions() {
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Transactions', 'beruang-budget' ); ?></h1>
 		<?php
-		if ( isset( $_GET['beruang_updated'] ) ) {
+		if ( isset( $_GET['beruang_updated'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Transaction updated.', 'beruang-budget' ) . '</p></div>';
 		}
-		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) {
+		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Transaction not found.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( $edit_row ) {
@@ -1059,8 +1057,8 @@ function admin_page_categories() {
 	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
-	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
-	$edit_id     = isset( $_GET['edit'] ) ? absint( $_GET['edit'] ) : 0;
+	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$edit_id     = isset( $_GET['edit'] ) ? absint( $_GET['edit'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$edit_row    = $edit_id ? DB::get_category_by_id( $edit_id ) : null;
 	if ( $edit_row ) {
 		$edit_user_filter = $user_filter ? $user_filter : (int) $edit_row['user_id'];
@@ -1071,13 +1069,13 @@ function admin_page_categories() {
 		$edit_categories  = array();
 		$edit_user_filter = $user_filter;
 	}
-	if ( isset( $_GET['delete'] ) && check_admin_referer( 'beruang_delete_cat_' . absint( $_GET['delete'] ) ) ) {
-		$del_user = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
+	if ( isset( $_GET['delete'] ) && check_admin_referer( 'beruang_delete_cat_' . absint( $_GET['delete'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$del_user = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( $del_user < 1 ) {
-			$cat      = DB::get_category_by_id( absint( $_GET['delete'] ) );
+			$cat      = DB::get_category_by_id( absint( $_GET['delete'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$del_user = $cat ? (int) $cat['user_id'] : get_current_user_id();
 		}
-		DB::delete_category( $del_user, absint( $_GET['delete'] ) );
+		DB::delete_category( $del_user, absint( $_GET['delete'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		wp_safe_redirect(
 			add_query_arg(
 				array(
@@ -1094,16 +1092,16 @@ function admin_page_categories() {
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Categories', 'beruang-budget' ); ?></h1>
 		<?php
-		if ( isset( $_GET['beruang_updated'] ) ) {
+		if ( isset( $_GET['beruang_updated'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Category updated.', 'beruang-budget' ) . '</p></div>';
 		}
-		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) {
+		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Category not found.', 'beruang-budget' ) . '</p></div>';
 		}
-		if ( isset( $_GET['beruang_deleted'] ) ) {
+		if ( isset( $_GET['beruang_deleted'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Category deleted.', 'beruang-budget' ) . '</p></div>';
 		}
-		if ( isset( $_GET['beruang_error'] ) && 'name' === $_GET['beruang_error'] ) {
+		if ( isset( $_GET['beruang_error'] ) && 'name' === $_GET['beruang_error'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Name is required.', 'beruang-budget' ) . '</p></div>';
 		}
 		?>
@@ -1164,8 +1162,8 @@ function admin_page_budgets() {
 	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
-	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
-	$edit_id     = isset( $_GET['edit'] ) ? absint( $_GET['edit'] ) : 0;
+	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$edit_id     = isset( $_GET['edit'] ) ? absint( $_GET['edit'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$edit_row    = $edit_id ? DB::get_budget_by_id( $edit_id ) : null;
 	if ( $edit_row ) {
 		$edit_user_filter = $user_filter ? $user_filter : (int) $edit_row['user_id'];
@@ -1180,13 +1178,13 @@ function admin_page_budgets() {
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Budgets', 'beruang-budget' ); ?></h1>
 		<?php
-		if ( isset( $_GET['beruang_updated'] ) ) {
+		if ( isset( $_GET['beruang_updated'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Budget updated.', 'beruang-budget' ) . '</p></div>';
 		}
-		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) {
+		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Budget not found.', 'beruang-budget' ) . '</p></div>';
 		}
-		if ( isset( $_GET['beruang_error'] ) && 'name' === $_GET['beruang_error'] ) {
+		if ( isset( $_GET['beruang_error'] ) && 'name' === $_GET['beruang_error'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Name is required.', 'beruang-budget' ) . '</p></div>';
 		}
 		?>
@@ -1249,8 +1247,8 @@ function admin_page_wallets() {
 	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		return;
 	}
-	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
-	$edit_id     = isset( $_GET['edit'] ) ? absint( $_GET['edit'] ) : 0;
+	$user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$edit_id     = isset( $_GET['edit'] ) ? absint( $_GET['edit'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$edit_row    = $edit_id ? DB::get_wallet_by_id( $edit_id ) : null;
 	if ( $edit_row ) {
 		$edit_user_filter = $user_filter ? $user_filter : (int) $edit_row['user_id'];
@@ -1259,13 +1257,13 @@ function admin_page_wallets() {
 		$edit_row         = null;
 		$edit_user_filter = $user_filter;
 	}
-	if ( isset( $_GET['delete'] ) && check_admin_referer( 'beruang_delete_wallet_' . absint( $_GET['delete'] ) ) ) {
-		$del_user = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
+	if ( isset( $_GET['delete'] ) && check_admin_referer( 'beruang_delete_wallet_' . absint( $_GET['delete'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$del_user = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( $del_user < 1 ) {
-			$wallet   = DB::get_wallet_by_id( absint( $_GET['delete'] ) );
+			$wallet   = DB::get_wallet_by_id( absint( $_GET['delete'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$del_user = $wallet ? (int) $wallet['user_id'] : get_current_user_id();
 		}
-		$deleted = DB::delete_wallet( $del_user, absint( $_GET['delete'] ) );
+		$deleted = DB::delete_wallet( $del_user, absint( $_GET['delete'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		wp_safe_redirect(
 			add_query_arg(
 				array(
@@ -1283,16 +1281,16 @@ function admin_page_wallets() {
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Wallets', 'beruang-budget' ); ?></h1>
 		<?php
-		if ( isset( $_GET['beruang_updated'] ) ) {
+		if ( isset( $_GET['beruang_updated'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Wallet updated.', 'beruang-budget' ) . '</p></div>';
 		}
-		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) {
+		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Wallet not found.', 'beruang-budget' ) . '</p></div>';
 		}
-		if ( isset( $_GET['beruang_deleted'] ) ) {
+		if ( isset( $_GET['beruang_deleted'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Wallet deleted.', 'beruang-budget' ) . '</p></div>';
 		}
-		if ( isset( $_GET['beruang_error'] ) && 'name' === $_GET['beruang_error'] ) {
+		if ( isset( $_GET['beruang_error'] ) && 'name' === $_GET['beruang_error'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Name is required.', 'beruang-budget' ) . '</p></div>';
 		}
 		?>
