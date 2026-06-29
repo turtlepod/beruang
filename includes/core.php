@@ -100,6 +100,7 @@ function enqueue_front_scripts() {
 			$front_style_ver   = $front_style_asset['version'] ?? $front_style_ver;
 		}
 		$front_css_url = BERUANG_BUDGET_PLUGIN_URL . 'dist/css/front-style.css';
+		// @nofix intentionally load the files site-wide for better compat/integration.
 		wp_enqueue_style(
 			'beruang-front',
 			$front_css_url,
@@ -108,6 +109,7 @@ function enqueue_front_scripts() {
 		);
 	}
 
+	// @nofix intentionally load the files site-wide for better compat/integration.
 	wp_enqueue_script(
 		'chartjs',
 		BERUANG_BUDGET_PLUGIN_URL . 'assets/js/chart.umd.min.js',
@@ -127,6 +129,7 @@ function enqueue_front_scripts() {
 			$front_js_ver        = $front_js_asset_data['version'] ?? $front_js_ver;
 		}
 		$front_js_url = BERUANG_BUDGET_PLUGIN_URL . 'dist/js/front.js';
+		// @nofix intentionally load the files site-wide for better compat/integration.
 		wp_enqueue_script(
 			'beruang-front',
 			$front_js_url,
@@ -134,7 +137,9 @@ function enqueue_front_scripts() {
 			$front_js_ver,
 			true
 		);
+		// @nofix intentionally load the templates site-wide for better compat/integration.
 		add_action( 'wp_footer', __NAMESPACE__ . '\print_front_templates', 5 );
+
 		wp_localize_script(
 			'beruang-front',
 			'beruangData',
