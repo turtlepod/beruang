@@ -1047,8 +1047,9 @@ function rest_transfer_wallet( $request ) {
 	);
 
 	global $wpdb;
-	$wpdb->query( 'START TRANSACTION' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-
+	if ( false === $wpdb->query( 'START TRANSACTION' ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang-budget' ), 500 );
+	}
 	// Expense from source wallet.
 	$expense_id = DB::insert_transaction(
 		$user_id,
@@ -1087,8 +1088,10 @@ function rest_transfer_wallet( $request ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang-budget' ), 500 );
 	}
 
-	$wpdb->query( 'COMMIT' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-
+	if ( false === $wpdb->query( 'COMMIT' ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang-budget' ), 500 );
+	}
 	return rest_ensure_response(
 		array(
 			'success' => true,
