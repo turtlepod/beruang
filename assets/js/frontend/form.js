@@ -9,7 +9,7 @@
 import { i18n, getDecimalPlaces, editIcon, deleteIcon } from './config.js';
 import { request, beruangTemplate, setFormLoading } from './utils.js';
 
-var lastDateTimeReset = Date.now();
+let lastDateTimeReset = Date.now();
 
 function setCurrentDateTime( form ) {
 	const dateInput = form.querySelector( '[name="date"]' );
@@ -238,7 +238,7 @@ export function initForm() {
 			catSubmitBtn.textContent = i18n.add_category || 'Add category';
 			catSubmitBtn.style.display = '';
 		}
-		if ( catCancelBtn ) catCancelBtn.style.display = 'none';
+		if ( catCancelBtn ) catCancelBtn.hidden = true;
 		catModal.hidden = false;
 		const loading = document.querySelector( '.beruang-cat-loading' );
 		if ( loading ) loading.style.display = '';
@@ -293,7 +293,7 @@ export function initForm() {
 						catSubmitBtn.textContent = i18n.add_category || 'Add category';
 						catSubmitBtn.style.display = '';
 					}
-					if ( catCancelBtn ) catCancelBtn.style.display = 'none';
+					if ( catCancelBtn ) catCancelBtn.hidden = true;
 					refreshCategoriesInModal();
 				} else {
 					catMessage.textContent =
@@ -336,7 +336,7 @@ export function initForm() {
 			catSubmitBtn.textContent = i18n.update_category || 'Update category';
 			catSubmitBtn.style.display = '';
 		}
-		if ( catCancelBtn ) catCancelBtn.style.display = '';
+		if ( catCancelBtn ) catCancelBtn.hidden = false;
 		refreshCategoriesInModal( id, parent || '0' );
 	} );
 
