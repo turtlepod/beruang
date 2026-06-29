@@ -99,8 +99,21 @@ function shortcode_load_template( $name, $args = array() ) {
 	if ( ! file_exists( $path ) ) {
 		return;
 	}
-	// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- keys are hardcoded caller-controlled arrays.
-	extract( $args, EXTR_SKIP );
+	// Declare template variables explicitly instead of extract() for WPCS compliance.
+	// Each key maps to a variable available in the included template.
+	$today             = $args['today'] ?? null;
+	$time              = $args['time'] ?? null;
+	$currency          = $args['currency'] ?? null;
+	$categories        = $args['categories'] ?? array();
+	$wallets           = $args['wallets'] ?? array();
+	$budgets           = $args['budgets'] ?? array();
+	$year              = $args['year'] ?? null;
+	$month             = $args['month'] ?? null;
+	$default_wallet_id = $args['default_wallet_id'] ?? null;
+	$decimal_places    = $args['decimal_places'] ?? null;
+	$mode              = $args['mode'] ?? null;
+	$form_id           = $args['form_id'] ?? null;
+	$field_prefix      = $args['field_prefix'] ?? null;
 	include $path;
 }
 
