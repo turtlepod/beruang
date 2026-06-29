@@ -1116,7 +1116,7 @@ function rest_get_budgets( $request ) {
 	if ( false === $monthly_ts ) {
 		return rest_json_error( new \WP_REST_Response(), __( 'Invalid year/month.', 'beruang-budget' ), 400 );
 	}
-	$monthly_to   = gmdate( 'Y-m-t', $monthly_ts );
+	$monthly_to = gmdate( 'Y-m-t', $monthly_ts );
 
 	$groups      = array();
 	$group_spent = array();
