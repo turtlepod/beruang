@@ -10,7 +10,7 @@
  * @var string $time         Default time (H:i).
  * @var string $currency     Currency code.
  * @var array  $categories   Flat categories from DB.
- * @var array  $wallets          Wallets from DB.
+ * @var array  $wallets      Wallets from DB.
  * @var int    $default_wallet_id Default wallet ID.
  * @var int    $decimal_places    Number of decimal places.
  */
