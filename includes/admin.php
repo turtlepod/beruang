@@ -547,6 +547,9 @@ function admin_handle_export_csv() {
  * Sets success or error via add_settings_error().
  */
 function admin_handle_import() {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
+	}
 	$user_id = isset( $_POST['beruang_import_user_id'] ) ? absint( $_POST['beruang_import_user_id'] ) : 0;
 	if ( ! $user_id ) {
 		$user_id = get_current_user_id();
