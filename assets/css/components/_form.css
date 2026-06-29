@@ -42,7 +42,7 @@
 
 		&:focus {
 			outline: none;
-			border-color: #000 !important;
+			border-color: var(--br-primary) !important;
 		}
 	}
 
@@ -83,7 +83,7 @@
 
 		&:focus {
 			outline: none;
-			border-color: #000 !important;
+			border-color: var(--br-primary) !important;
 		}
 	}
 

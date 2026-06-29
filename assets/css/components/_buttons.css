@@ -19,6 +19,11 @@
 	font-size: 1em;
 	font-weight: 500;
 
+	&:focus-visible {
+		outline: 2px solid var(--br-primary);
+		outline-offset: 2px;
+	}
+
 	& .beruang-icon,
 	& svg {
 		width: 1em;
