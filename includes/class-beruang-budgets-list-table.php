@@ -162,12 +162,12 @@ class Budgets_List_Table extends \WP_List_Table {
 		if ( ! empty( $items ) ) {
 			$budget_ids   = array_map( 'absint', wp_list_pluck( $items, 'id' ) );
 			$placeholders = implode( ',', array_fill( 0, count( $budget_ids ), '%d' ) );
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- $bc_table is a constant, $placeholders is %d list
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- $bc_table comes from DB::table_budget_category(), $placeholders is a %d list
 			$bc_rows = $wpdb->get_results(
 				$wpdb->prepare( "SELECT budget_id, category_id FROM $bc_table WHERE budget_id IN ($placeholders)", ...$budget_ids ),
 				ARRAY_A
 			);
-			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$by_budget = array();
 			foreach ( $bc_rows as $row ) {
 				$bid = (int) $row['budget_id'];
