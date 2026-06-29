@@ -3,10 +3,11 @@
  * Template for [beruang-budget] shortcode.
  *
  * @package Beruang
- * @var string $currency    Currency code.
- * @var array  $categories  Flat categories from DB.
- * @var int    $year        Current year for filter.
- * @var int    $month       Current month for filter.
+ * @var string $currency       Currency code.
+ * @var array  $categories     Flat categories from DB.
+ * @var int    $year           Current year for filter.
+ * @var int    $month          Current month for filter.
+ * @var int    $decimal_places Number of decimal places.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
