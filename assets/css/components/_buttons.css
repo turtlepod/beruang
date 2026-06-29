@@ -19,9 +19,13 @@
 	font-size: 1em;
 	font-weight: 500;
 
-	&:focus-visible {
+	&:focus {
 		outline: 2px solid var(--br-primary);
 		outline-offset: 2px;
+	}
+
+	&:focus:not(:focus-visible) {
+		outline: none;
 	}
 
 	& .beruang-icon,
