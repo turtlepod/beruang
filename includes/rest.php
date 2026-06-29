@@ -1090,6 +1090,8 @@ function rest_transfer_wallet( $request ) {
 
 	if ( false === $wpdb->query( 'COMMIT' ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		DB::delete_transaction( $user_id, $expense_id );
+		DB::delete_transaction( $user_id, $income_id );
 		return rest_json_error( new \WP_REST_Response(), __( 'Transfer failed.', 'beruang-budget' ), 500 );
 	}
 	return rest_ensure_response(
