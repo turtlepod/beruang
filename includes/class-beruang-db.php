@@ -988,10 +988,11 @@ class DB {
 		$ids     = self::wpdb()->get_col( self::wpdb()->prepare( "SELECT id FROM $budget WHERE user_id = %d", $user_id ) );
 		$bc_del  = 0;
 		if ( ! empty( $ids ) ) {
-			$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $bc is a table constant, %d placeholders are safe
-			$sql    = "DELETE FROM $bc WHERE budget_id IN ($placeholders)";
-			$bc_del = self::wpdb()->query( self::wpdb()->prepare( $sql, ...$ids ) );
+$ids          = array_map( 'absint', $ids );
+$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $bc is an internal table name; placeholders are prepared below.
+$sql    = "DELETE FROM $bc WHERE budget_id IN ($placeholders)";
+$bc_del = self::wpdb()->query( self::wpdb()->prepare( $sql, $ids ) );
 		}
 		$bud_del  = self::wpdb()->query( self::wpdb()->prepare( "DELETE FROM $budget WHERE user_id = %d", $user_id ) );
 		$wallet   = self::table_wallet();
