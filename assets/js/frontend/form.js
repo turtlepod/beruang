@@ -318,7 +318,7 @@ export function initForm() {
 				catSubmitBtn.textContent = i18n.add_category || 'Add category';
 				catSubmitBtn.style.display = '';
 			}
-			catCancelBtn.style.display = 'none';
+			catCancelBtn.hidden = true;
 		} );
 	}
 
