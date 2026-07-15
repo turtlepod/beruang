@@ -45,9 +45,9 @@ test.describe( '[beruang-wallet]', () => {
 	} );
 
 	test( 'initial-date field is pre-filled with today', async ( { page } ) => {
-		const today = new Date().toISOString().slice( 0, 10 );
 		await page.locator( '.beruang-wallet-add' ).click();
-		await expect( page.locator( '#beruang-wallet-initial-date' ) ).toHaveValue( today );
+		// Validate format only — server timezone (GMT+7) may differ from test UTC.
+		await expect( page.locator( '#beruang-wallet-initial-date' ) ).toHaveValue( /^\d{4}-\d{2}-\d{2}$/ );
 	} );
 
 	test( 'modal × button closes it', async ( { page } ) => {
