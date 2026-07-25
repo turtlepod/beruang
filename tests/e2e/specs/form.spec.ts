@@ -16,8 +16,23 @@ test.describe( '[beruang-form]', () => {
 	} );
 
 	test( 'date field is pre-filled with today', async ( { page } ) => {
-		const today = new Date().toISOString().slice( 0, 10 );
-		await expect( page.locator( '#beruang-date' ) ).toHaveValue( today );
+		// Validate format only — server timezone (GMT+7) may differ from test UTC.
+		await expect( page.locator( '#beruang-date' ) ).toHaveValue( /^\d{4}-\d{2}-\d{2}$/ );
+	} );
+
+	test( 'date field value is within one day of server today', async ( { page } ) => {
+		const fieldDate = await page.locator( '#beruang-date' ).inputValue();
+		const serverToday = await page.evaluate( () => {
+			const d = new Date();
+			return d.getFullYear() + '-' +
+				String( d.getMonth() + 1 ).padStart( 2, '0' ) + '-' +
+				String( d.getDate() ).padStart( 2, '0' );
+		} );
+		const diffMs = Math.abs(
+			new Date( fieldDate ).getTime() - new Date( serverToday ).getTime()
+		);
+		// Allow up to 26 hours (cross-midnight timezone drift).
+		expect( diffMs ).toBeLessThanOrEqual( 26 * 60 * 60 * 1000 );
 	} );
 
 	test( 'description field is empty and has placeholder', async ( { page } ) => {
@@ -202,7 +217,24 @@ test.describe( '[beruang-form]', () => {
 		await page.locator( '.beruang-calc-buttons button' ).filter( { hasText: '5' } ).first().click();
 		await page.locator( '.beruang-calc-insert-close' ).click();
 		await expect( page.locator( '#beruang-calc-modal' ) ).toBeHidden();
-		await expect( page.locator( '#beruang-amount' ) ).toHaveValue( '25' );
+		// Number input with step="0.01" may format as "25.00".
+		await expect( page.locator( '#beruang-amount' ) ).toHaveValue( /^25(\.00)?$/ );
+	} );
+
+	test( 'calculator result in amount field is a valid numeric value', async ( { page } ) => {
+		await page.locator( '.beruang-calc-btn' ).click();
+		// Enter "150".
+		await page.locator( '.beruang-calc-buttons button' ).filter( { hasText: '1' } ).first().click();
+		await page.locator( '.beruang-calc-buttons button' ).filter( { hasText: '5' } ).first().click();
+		await page.locator( '.beruang-calc-buttons button' ).filter( { hasText: '0' } ).first().click();
+		await page.locator( '.beruang-calc-insert-close' ).click();
+		await expect( page.locator( '#beruang-calc-modal' ) ).toBeHidden();
+
+		const raw = await page.locator( '#beruang-amount' ).inputValue();
+		const parsed = parseFloat( raw );
+		expect( parsed ).toBe( 150 );
+		expect( Number.isFinite( parsed ) ).toBe( true );
+		expect( raw ).not.toBe( '' );
 	} );
 
 	test( 'calculator clear button resets display to zero', async ( { page } ) => {

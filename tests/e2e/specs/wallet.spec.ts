@@ -45,9 +45,24 @@ test.describe( '[beruang-wallet]', () => {
 	} );
 
 	test( 'initial-date field is pre-filled with today', async ( { page } ) => {
-		const today = new Date().toISOString().slice( 0, 10 );
 		await page.locator( '.beruang-wallet-add' ).click();
-		await expect( page.locator( '#beruang-wallet-initial-date' ) ).toHaveValue( today );
+		// Validate format only — server timezone (GMT+7) may differ from test UTC.
+		await expect( page.locator( '#beruang-wallet-initial-date' ) ).toHaveValue( /^\d{4}-\d{2}-\d{2}$/ );
+	} );
+
+	test( 'initial-date field value is within one day of server today', async ( { page } ) => {
+		await page.locator( '.beruang-wallet-add' ).click();
+		const fieldDate = await page.locator( '#beruang-wallet-initial-date' ).inputValue();
+		const serverToday = await page.evaluate( () => {
+			const d = new Date();
+			return d.getFullYear() + '-' +
+				String( d.getMonth() + 1 ).padStart( 2, '0' ) + '-' +
+				String( d.getDate() ).padStart( 2, '0' );
+		} );
+		const diffMs = Math.abs(
+			new Date( fieldDate ).getTime() - new Date( serverToday ).getTime()
+		);
+		expect( diffMs ).toBeLessThanOrEqual( 26 * 60 * 60 * 1000 );
 	} );
 
 	test( 'modal × button closes it', async ( { page } ) => {

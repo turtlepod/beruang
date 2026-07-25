@@ -77,7 +77,8 @@ export default async function globalSetup() {
 	await page.fill( '#user_login', TEST_USER );
 	await page.fill( '#user_pass', TEST_PASS );
 	await page.click( '#wp-submit' );
-	await page.waitForURL( `${ BASE_URL }/wp-admin/**` );
+	// Wait for the admin bar (logged-in indicator) instead of a brittle URL glob.
+	await page.waitForSelector( '#wpadminbar', { timeout: 15_000 } );
 
 	await context.storageState( { path: join( AUTH_DIR, 'user.json' ) } );
 	await browser.close();

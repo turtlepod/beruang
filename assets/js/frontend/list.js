@@ -185,7 +185,7 @@ export function initList() {
 	accordion.addEventListener( 'keydown', function ( e ) {
 		const head = e.target.closest( '.beruang-accordion-month-head' );
 		if ( ! head ) return;
-		if ( e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar' ) return;
+		if ( e.key !== 'Enter' && e.key !== ' ' ) return;
 		e.preventDefault();
 		const month = head.closest( '.beruang-accordion-month' );
 		if ( ! month ) return;

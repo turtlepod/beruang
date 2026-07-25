@@ -2,8 +2,7 @@
  * Beruang – responsive styles.
  */
 
-/* stylelint-disable-next-line media-feature-range-notation */
-@media (max-width: 600px) {
+@media (width <= 600px) {
 .beruang-datetime-wrap {
 		flex-wrap: nowrap;
 

@@ -547,6 +547,9 @@ function admin_handle_export_csv() {
  * Sets success or error via add_settings_error().
  */
 function admin_handle_import() {
+	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
+	}
 	$user_id = isset( $_POST['beruang_import_user_id'] ) ? absint( $_POST['beruang_import_user_id'] ) : 0;
 	if ( ! $user_id ) {
 		$user_id = get_current_user_id();
@@ -697,7 +700,7 @@ function admin_handle_update_transaction() {
 	}
 	$description = isset( $_POST['beruang_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['beruang_description'] ) ) : '';
 	$category_id = isset( $_POST['beruang_category_id'] ) ? absint( $_POST['beruang_category_id'] ) : 0;
-	$amount      = isset( $_POST['beruang_amount'] ) ? floatval( $_POST['beruang_amount'] ) : 0;
+	$amount      = isset( $_POST['beruang_amount'] ) ? floatval( wp_unslash( $_POST['beruang_amount'] ) ) : 0;
 	$type        = isset( $_POST['beruang_type'] ) && 'income' === $_POST['beruang_type'] ? 'income' : 'expense';
 	DB::update_transaction(
 		$existing['user_id'],
@@ -840,7 +843,7 @@ function admin_handle_update_budget() {
 		exit;
 	}
 	$name          = isset( $_POST['beruang_budget_name'] ) ? sanitize_text_field( wp_unslash( $_POST['beruang_budget_name'] ) ) : '';
-	$target_amount = isset( $_POST['beruang_budget_target'] ) ? floatval( $_POST['beruang_budget_target'] ) : 0;
+	$target_amount = isset( $_POST['beruang_budget_target'] ) ? floatval( wp_unslash( $_POST['beruang_budget_target'] ) ) : 0;
 	$type          = isset( $_POST['beruang_budget_type'] ) && 'yearly' === $_POST['beruang_budget_type'] ? 'yearly' : 'monthly';
 	$category_ids  = ! empty( $_POST['beruang_budget_categories'] ) && is_array( $_POST['beruang_budget_categories'] ) ? array_map( 'absint', $_POST['beruang_budget_categories'] ) : array();
 	if ( '' === $name ) {

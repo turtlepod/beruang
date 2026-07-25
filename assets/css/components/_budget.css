@@ -56,7 +56,7 @@
 	transition: width 0.2s;
 
 	&.warning {
-		background: #f59e0b;
+		background: var(--br-warning);
 	}
 
 	&.over {
