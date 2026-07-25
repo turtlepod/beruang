@@ -85,6 +85,13 @@ Visit [pandaplugin.com](https://pandaplugin.com) for the companion theme, setup 
 
 == Changelog ==
 
+= 0.6.0 =
+* Renamed `[beruang_install_button]` to `[beruang-install-button]` for consistency with other shortcodes.
+* Added `npm version` postversion hook to sync all version references automatically.
+* Replaced GPLv2 license with GPLv3.
+* Fixed cancel button using `.hidden` class instead of inline `.style.display`.
+* Code quality improvements across CSS, JS, and templates.
+
 = 0.5.0 =
 * Transfer wallet.
 * **Beruang Pro features absorbed:** `[beruang-install-button]` shortcode, user locale on frontend,
