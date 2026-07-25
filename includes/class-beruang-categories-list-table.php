@@ -148,7 +148,7 @@ class Categories_List_Table extends \WP_List_Table {
 		$order_sql = $order_sql ? $order_sql : 'name ASC, id ASC';
 
 		$values_limit = array_merge( $values, array( $per_page, $offset ) );
-		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Dynamic table/where for admin list.
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Dynamic table/where for admin list, table from internal API.
 		$total = (int) $wpdb->get_var(
 			$values
 				? $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE $where", $values )

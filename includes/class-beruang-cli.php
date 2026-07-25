@@ -232,7 +232,7 @@ class CLI {
 			$values[] = absint( $assoc_args['category_id'] );
 		}
 		$sql = "SELECT budget_id, category_id FROM $table WHERE " . implode( ' AND ', $where );
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table from API, no user input in SQL.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table from API, no user input in SQL.
 		$items  = $values ? $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A ) : $wpdb->get_results( $sql, ARRAY_A );
 		$items  = is_array( $items ) ? $items : array();
 		$format = isset( $assoc_args['format'] ) ? $assoc_args['format'] : 'table';
@@ -295,7 +295,7 @@ class CLI {
 			$budget_table = DB::table_budget();
 			$bc_table     = DB::table_budget_category();
 			$cat_table    = DB::table_category();
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names from API, no user input.
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table names from API, no user input.
 			$user_ids = $wpdb->get_col( "SELECT DISTINCT user_id FROM $tx_table UNION SELECT DISTINCT user_id FROM $budget_table UNION SELECT DISTINCT user_id FROM $cat_table" );
 			$user_ids = array_filter( array_map( 'absint', $user_ids ) );
 			if ( empty( $user_ids ) ) {

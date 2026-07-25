@@ -550,6 +550,8 @@ function admin_handle_import() {
 	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
 	}
+	check_admin_referer( 'beruang_import' );
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified above via check_admin_referer, but Plugin Check can't trace call chain.
 	$user_id = isset( $_POST['beruang_import_user_id'] ) ? absint( $_POST['beruang_import_user_id'] ) : 0;
 	if ( ! $user_id ) {
 		$user_id = get_current_user_id();
