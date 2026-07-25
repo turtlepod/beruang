@@ -115,7 +115,6 @@ class Transactions_List_Table extends \WP_List_Table {
 	public function prepare_items() {
 		global $wpdb;
 
-		$table        = DB::table_transaction();
 		$where        = '1=1';
 		$values       = array();
 		$per_page     = 20;
@@ -161,15 +160,16 @@ class Transactions_List_Table extends \WP_List_Table {
 		}
 
 		$values_limit = array_merge( $values, array( $per_page, $offset ) );
-		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Dynamic table/where for admin list, table from internal API.
+		$table_ref    = DB::table_transaction();
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Dynamic table/where for admin list, table from internal API.
 		$total = (int) $wpdb->get_var(
 			$values
-				? $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE $where", $values )
-				: "SELECT COUNT(*) FROM $table WHERE $where"
+				? $wpdb->prepare( 'SELECT COUNT(*) FROM ' . $table_ref . " WHERE $where", $values )
+				: 'SELECT COUNT(*) FROM ' . $table_ref . " WHERE $where"
 		);
 		$items = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM $table WHERE $where ORDER BY $order_sql LIMIT %d OFFSET %d",
+				'SELECT * FROM ' . $table_ref . " WHERE $where ORDER BY $order_sql LIMIT %d OFFSET %d",
 				$values_limit
 			),
 			ARRAY_A

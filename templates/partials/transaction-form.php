@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables passed via shortcode_load_template().
+
 $is_edit        = ( 'edit' === $mode );
 $date_id        = $field_prefix . '-date';
 $time_id        = $field_prefix . '-time';

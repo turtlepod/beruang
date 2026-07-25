@@ -111,8 +111,6 @@ class Budgets_List_Table extends \WP_List_Table {
 	public function prepare_items() {
 		global $wpdb;
 
-		$table        = DB::table_budget();
-		$bc_table     = DB::table_budget_category();
 		$where        = '1=1';
 		$values       = array();
 		$per_page     = 20;
@@ -143,15 +141,16 @@ class Budgets_List_Table extends \WP_List_Table {
 		$order_sql = $order_sql ? $order_sql : 'name ASC, id ASC';
 
 		$values_limit = array_merge( $values, array( $per_page, $offset ) );
-		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Dynamic table/where for admin list, table from internal API.
+		$table_ref    = DB::table_budget();
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Dynamic table/where for admin list, table from internal API.
 		$total = (int) $wpdb->get_var(
 			$values
-				? $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE $where", $values )
-				: "SELECT COUNT(*) FROM $table WHERE $where"
+				? $wpdb->prepare( 'SELECT COUNT(*) FROM ' . $table_ref . " WHERE $where", $values )
+				: 'SELECT COUNT(*) FROM ' . $table_ref . " WHERE $where"
 		);
 		$items = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM $table WHERE $where ORDER BY $order_sql LIMIT %d OFFSET %d",
+				'SELECT * FROM ' . $table_ref . " WHERE $where ORDER BY $order_sql LIMIT %d OFFSET %d",
 				$values_limit
 			),
 			ARRAY_A
@@ -162,9 +161,10 @@ class Budgets_List_Table extends \WP_List_Table {
 		if ( ! empty( $items ) ) {
 			$budget_ids   = array_map( 'absint', wp_list_pluck( $items, 'id' ) );
 			$placeholders = implode( ',', array_fill( 0, count( $budget_ids ), '%d' ) );
-// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $bc_table from DB::table_budget_category(), $placeholders is a %d list
+			$bc_table_ref = DB::table_budget_category();
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQL.NotPrepared -- $placeholders is a %d list, $bc_table_ref from DB::table_budget_category().
 			$bc_rows = $wpdb->get_results(
-				$wpdb->prepare( "SELECT budget_id, category_id FROM $bc_table WHERE budget_id IN ($placeholders)", ...$budget_ids ),
+				$wpdb->prepare( 'SELECT budget_id, category_id FROM ' . $bc_table_ref . " WHERE budget_id IN ($placeholders)", ...$budget_ids ),
 				ARRAY_A
 			);
 // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare

@@ -550,8 +550,13 @@ function admin_handle_import() {
 	if ( ! current_user_can( BERUANG_BUDGET_ADMIN_CAPABILITY ) ) {
 		wp_die( esc_html__( 'Not allowed.', 'beruang-budget' ) );
 	}
-	check_admin_referer( 'beruang_import' );
-	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified above via check_admin_referer, but Plugin Check can't trace call chain.
+
+	// Verify nonce (explicit wp_verify_nonce for Plugin Check static analysis).
+	$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : '';
+	if ( ! wp_verify_nonce( $nonce, 'beruang_import' ) ) {
+		wp_die( esc_html__( 'Security check failed.', 'beruang-budget' ) );
+	}
+
 	$user_id = isset( $_POST['beruang_import_user_id'] ) ? absint( $_POST['beruang_import_user_id'] ) : 0;
 	if ( ! $user_id ) {
 		$user_id = get_current_user_id();
@@ -559,12 +564,12 @@ function admin_handle_import() {
 	if ( ! $user_id || ! get_userdata( $user_id ) ) {
 		wp_die( esc_html__( 'Invalid user.', 'beruang-budget' ) );
 	}
-	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- tmp_name validated by is_uploaded_file.
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- tmp_name validated by is_uploaded_file, nonce verified above.
 	if ( ! isset( $_FILES['beruang_import_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['beruang_import_file']['tmp_name'] ) ) {
 		add_settings_error( 'beruang_import', 'beruang_import', __( 'Invalid file upload.', 'beruang-budget' ), 'error' );
 		return;
 	}
-	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Validated via is_uploaded_file, local file.
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Validated via is_uploaded_file, local file, nonce verified above.
 	$raw  = file_get_contents( $_FILES['beruang_import_file']['tmp_name'] );
 	$data = json_decode( $raw, true );
 	if ( ! is_array( $data ) || ( empty( $data['categories'] ) && empty( $data['transactions'] ) && empty( $data['budgets'] ) ) ) {
