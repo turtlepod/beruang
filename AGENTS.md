@@ -1,16 +1,15 @@
 # AGENTS.md — Beruang Budget Plugin
 
-## Version bump checklist
+## Version bump
 
-When bumping the plugin version, update ALL of these:
+Run: `npm version X.Y.Z`
 
-| # | File | Line / Key | Example |
-|---|------|-----------|---------|
-| 1 | `beruang-budget.php` | Plugin header `* Version: X.Y.Z` | `* Version: 0.6.0` |
-| 2 | `beruang-budget.php` | `define( 'BERUANG_BUDGET_VERSION', 'X.Y.Z' )` | `define( 'BERUANG_BUDGET_VERSION', '0.6.0' )` |
-| 3 | `readme.txt` | `Stable tag: X.Y.Z` | `Stable tag: 0.6.0` |
-| 4 | `package.json` | `"version": "X.Y.Z"` | `"version": "0.6.0"` |
-| 5 | `package-lock.json` | `"version": "X.Y.Z"` (2 occurrences: root + packages → "") | `"version": "0.6.0"` |
-| 6 | `tests/bootstrap.php` | `define( 'BERUANG_BUDGET_VERSION', 'X.Y.Z' )` | `define( 'BERUANG_BUDGET_VERSION', '0.6.0' )` |
+This updates **all** locations automatically:
+- `package.json` + `package-lock.json` (via `npm version`)
+- `beruang-budget.php` header + constant (via `postversion` sed)
+- `tests/bootstrap.php` constant (via `postversion` sed)
+- `readme.txt` Stable tag (via `postversion` sed)
 
-**Note:** `composer.json` has no version field — not needed.
+`npm version` also creates a git commit + tag by default. Use `--no-git-tag-version` to skip.
+
+**Never bump unless explicitly asked.**
