@@ -49,6 +49,9 @@ Use on pages where users are logged in:
 * `[beruang-budget]` – List budgets with progress; add/edit budget modal
 * `[beruang-wallet]` – List and manage your wallets.
 * `[beruang-install-button]` – PWA install button/link (enable PWA in Settings first)
+  * `label` – button text (default: "Install App")
+  * `tag` – `button` (default) or `a` for a link
+  * `class` – extra CSS class
 
 == Resources ==
 
