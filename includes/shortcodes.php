@@ -20,7 +20,7 @@ function shortcodes_setup() {
 	add_shortcode( 'beruang-graph', __NAMESPACE__ . '\\shortcode_render_graph' );
 	add_shortcode( 'beruang-budget', __NAMESPACE__ . '\\shortcode_render_budget' );
 	add_shortcode( 'beruang-wallet', __NAMESPACE__ . '\\shortcode_render_wallet' );
-	add_shortcode( 'beruang_install_button', __NAMESPACE__ . '\\shortcode_install_button' );
+	add_shortcode( 'beruang-install-button', __NAMESPACE__ . '\\shortcode_install_button' );
 }
 add_action( 'init', __NAMESPACE__ . '\shortcodes_setup' );
 
@@ -294,11 +294,11 @@ function shortcode_format_amount( $amount, $currency = '' ) {
 }
 
 /**
- * [beruang_install_button]
+ * [beruang-install-button]
  *
  * Usage:
- * [beruang_install_button]
- * [beruang_install_button label="Install App" tag="a"]
+ * [beruang-install-button]
+ * [beruang-install-button label="Install App" tag="a"]
  *
  * @param array<string, string> $atts Shortcode attrs.
  * @return string
@@ -315,7 +315,7 @@ function shortcode_install_button( $atts ) {
 			'class' => '',
 		),
 		$atts,
-		'beruang_install_button'
+		'beruang-install-button'
 	);
 
 	$tag          = 'a' === strtolower( $atts['tag'] ) ? 'a' : 'button';

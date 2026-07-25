@@ -3,8 +3,8 @@ Contributors: turtlepod
 Donate link: https://pandaplugin.com/donate/
 Tags: budget, finance, transactions, expense, income
 Requires at least: 6.0
-Tested up to: 7.0
-Stable tag: 0.5.0
+Tested up to: 6.8
+Stable tag: 0.6.0
 Requires PHP: 8.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -33,7 +33,7 @@ Visit [pandaplugin.com/beruang](https://pandaplugin.com/beruang/) for the compan
 
 == Installation ==
 
-1. Upload the `beruang` folder to `wp-content/plugins/`.
+1. Upload the `beruang-budget` folder to `wp-content/plugins/`.
 2. Activate the plugin in **Plugins**.
 3. Tables are created on activation: `beruang_category`, `beruang_transaction`, `beruang_budget`, `beruang_budget_category`.
 
@@ -48,7 +48,10 @@ Use on pages where users are logged in:
 * `[beruang-graph]` – Chart (by month or by category) with year selector
 * `[beruang-budget]` – List budgets with progress; add/edit budget modal
 * `[beruang-wallet]` – List and manage your wallets.
-* `[beruang_install_button]` – PWA install button/link (enable PWA in Settings first)
+* `[beruang-install-button]` – PWA install button/link (enable PWA in Settings first)
+  * `label` – button text (default: "Install App")
+  * `tag` – `button` (default) or `a` for a link
+  * `class` – extra CSS class
 
 == Resources ==
 
@@ -82,9 +85,16 @@ Visit [pandaplugin.com](https://pandaplugin.com) for the companion theme, setup 
 
 == Changelog ==
 
+= 0.6.0 =
+* Renamed `[beruang_install_button]` to `[beruang-install-button]` for consistency with other shortcodes.
+* Added `npm version` postversion hook to sync all version references automatically.
+* Replaced GPLv2 license with GPLv3.
+* Fixed cancel button using `.hidden` class instead of inline `.style.display`.
+* Code quality improvements across CSS, JS, and templates.
+
 = 0.5.0 =
 * Transfer wallet.
-* **Beruang Pro features absorbed:** `[beruang_install_button]` shortcode, user locale on frontend,
+* **Beruang Pro features absorbed:** `[beruang-install-button]` shortcode, user locale on frontend,
   Beruang Theme available separately, Theme Settings admin page.
 * Various fixes.
 

@@ -1,6 +1,6 @@
 {
   "name": "beruang-budget",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "private": true,
   "description": "Track money, transactions, and budgets. Per-user data with shortcodes and admin pages.",
   "license": "GPL-3.0-or-later",
@@ -31,6 +31,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "zip": "npm run build && composer run test && version=$(node -p \"require('./package.json').version\") && cd .. && zip -r beruang-budget.$version.zip beruang-budget -x '*/.?*' -x '*node_modules*' -x '*/vendor/*' -x '*/test-results/*' -x '*/tests/e2e/report/*' -x '*/playwright-report/*'",
+    "postversion": "sed -i \"s/^* Version: .*/ * Version: $npm_package_version/\" beruang-budget.php && sed -i \"s/define( 'BERUANG_BUDGET_VERSION', '[^']*' )/define( 'BERUANG_BUDGET_VERSION', '$npm_package_version' )/\" beruang-budget.php tests/bootstrap.php && sed -i \"s/^Stable tag: .*/Stable tag: $npm_package_version/\" readme.txt",
     "clean-dist": "rm -rf ./dist",
     "make-pot": "wp i18n make-pot . languages/beruang-budget.pot --domain=beruang-budget --path=../../.. --allow-root",
     "make-mo": "wp i18n make-mo languages/beruang-budget-id_ID.po --path=../../.. --allow-root",

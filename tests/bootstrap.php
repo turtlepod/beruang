@@ -7,7 +7,7 @@
 
 // Plugin constants required before loading plugin files.
 define( 'ABSPATH', '/' );
-define( 'BERUANG_BUDGET_VERSION', '0.4.0-beta' );
+define( 'BERUANG_BUDGET_VERSION', '0.6.0' );
 define( 'BERUANG_BUDGET_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
 define( 'BERUANG_BUDGET_PLUGIN_FILE', dirname( __DIR__ ) . '/beruang-budget.php' );
 define( 'BERUANG_BUDGET_PLUGIN_URL', 'http://example.com/wp-content/plugins/beruang/' );
