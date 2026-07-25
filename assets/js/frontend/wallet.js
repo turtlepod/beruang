@@ -172,10 +172,10 @@ export function initWallet() {
 		transferFromEl.innerHTML = html;
 		transferToEl.innerHTML = html;
 		// Restore previous selection when the wallet still exists.
-		if ( prevFrom && transferFromEl.querySelector( '[value="' + prevFrom + '"]' ) ) {
+		if ( prevFrom && transferFromEl.querySelector( '[value="' + CSS.escape( prevFrom ) + '"]' ) ) {
 			transferFromEl.value = prevFrom;
 		}
-		if ( prevTo && transferToEl.querySelector( '[value="' + prevTo + '"]' ) ) {
+		if ( prevTo && transferToEl.querySelector( '[value="' + CSS.escape( prevTo ) + '"]' ) ) {
 			transferToEl.value = prevTo;
 		}
 		transferOpenBtns.forEach( function ( btn ) {

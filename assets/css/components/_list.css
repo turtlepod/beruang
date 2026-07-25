@@ -46,7 +46,7 @@
 
 .beruang-accordion-month-head {
 	padding: 0.85em 1em;
-	background: #e8eaed;
+	background: var(--br-bg-hover);
 	font-weight: 600;
 	display: flex;
 	justify-content: space-between;

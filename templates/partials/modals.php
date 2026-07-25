@@ -59,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 			<div class="beruang-form-row">
 				<button type="submit" class="beruang-btn beruang-btn--primary beruang-submit beruang-cat-submit-add"><?php esc_html_e( 'Add category', 'beruang-budget' ); ?></button>
-				<button type="button" class="beruang-btn beruang-btn--secondary beruang-cat-cancel-edit" style="display:none;"><?php esc_html_e( 'Cancel', 'beruang-budget' ); ?></button>
+				<button type="button" class="beruang-btn beruang-btn--secondary beruang-cat-cancel-edit" hidden><?php esc_html_e( 'Cancel', 'beruang-budget' ); ?></button>
 				<span class="beruang-form-message" aria-live="polite"></span>
 			</div>
 		</form>
