@@ -48,7 +48,7 @@ Use on pages where users are logged in:
 * `[beruang-graph]` – Chart (by month or by category) with year selector
 * `[beruang-budget]` – List budgets with progress; add/edit budget modal
 * `[beruang-wallet]` – List and manage your wallets.
-* `[beruang_install_button]` – PWA install button/link (enable PWA in Settings first)
+* `[beruang-install-button]` – PWA install button/link (enable PWA in Settings first)
 
 == Resources ==
 
@@ -84,7 +84,7 @@ Visit [pandaplugin.com](https://pandaplugin.com) for the companion theme, setup 
 
 = 0.5.0 =
 * Transfer wallet.
-* **Beruang Pro features absorbed:** `[beruang_install_button]` shortcode, user locale on frontend,
+* **Beruang Pro features absorbed:** `[beruang-install-button]` shortcode, user locale on frontend,
   Beruang Theme available separately, Theme Settings admin page.
 * Various fixes.
 

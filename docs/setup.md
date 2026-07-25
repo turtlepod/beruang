@@ -96,7 +96,7 @@ If you are not using the `beruang-saas` theme, place these shortcodes on any pag
 | `[beruang-graph]` | Monthly / yearly charts |
 | `[beruang-budget]` | Budget cards with progress |
 | `[beruang-wallet]` | Wallet management (add, transfer, set default) |
-| `[beruang_install_button]` | PWA install button (enable PWA in Settings) |
+| `[beruang-install-button]` | PWA install button (enable PWA in Settings) |
 
 All shortcodes require the visitor to be logged in. Logged-out users see nothing.
 
@@ -111,8 +111,8 @@ All shortcodes require the visitor to be logged in. Logged-out users see nothing
 To render an install button anywhere on the site:
 
 ```
-[beruang_install_button]
-[beruang_install_button label="Install App" tag="a" class="my-class"]
+[beruang-install-button]
+[beruang-install-button label="Install App" tag="a" class="my-class"]
 ```
 
 ---
