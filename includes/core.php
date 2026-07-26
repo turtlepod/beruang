@@ -65,7 +65,6 @@ function use_logged_in_user_locale_on_frontend( $locale ) {
  */
 function on_plugins_loaded() {
 	DB::maybe_upgrade();
-	load_plugin_textdomain( 'beruang-budget', false, dirname( plugin_basename( BERUANG_BUDGET_PLUGIN_FILE ) ) . '/languages' );
 	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_front_scripts' );
 	manifest_setup();
 
