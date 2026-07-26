@@ -13,6 +13,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables passed via shortcode_load_template().
 ?>
 <div class="beruang beruang-budget-wrapper">
 	<div class="beruang-budget-header">

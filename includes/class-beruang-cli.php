@@ -220,9 +220,9 @@ class CLI {
 	 */
 	private function budget_category_list( $assoc_args ) {
 		global $wpdb;
-		$table  = DB::table_budget_category();
-		$where  = array( '1=1' );
-		$values = array();
+		$table_ref = DB::table_budget_category();
+		$where     = array( '1=1' );
+		$values    = array();
 		if ( ! empty( $assoc_args['budget_id'] ) ) {
 			$where[]  = 'budget_id = %d';
 			$values[] = absint( $assoc_args['budget_id'] );
@@ -231,8 +231,8 @@ class CLI {
 			$where[]  = 'category_id = %d';
 			$values[] = absint( $assoc_args['category_id'] );
 		}
-		$sql = "SELECT budget_id, category_id FROM $table WHERE " . implode( ' AND ', $where );
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table from API, no user input in SQL.
+		$sql = 'SELECT budget_id, category_id FROM ' . $table_ref . ' WHERE ' . implode( ' AND ', $where );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table from DB API, no user input in table name.
 		$items  = $values ? $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A ) : $wpdb->get_results( $sql, ARRAY_A );
 		$items  = is_array( $items ) ? $items : array();
 		$format = isset( $assoc_args['format'] ) ? $assoc_args['format'] : 'table';
@@ -291,12 +291,8 @@ class CLI {
 		$all = ! empty( $assoc_args['all'] );
 		if ( $all ) {
 			global $wpdb;
-			$tx_table     = DB::table_transaction();
-			$budget_table = DB::table_budget();
-			$bc_table     = DB::table_budget_category();
-			$cat_table    = DB::table_category();
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names from API, no user input.
-			$user_ids = $wpdb->get_col( "SELECT DISTINCT user_id FROM $tx_table UNION SELECT DISTINCT user_id FROM $budget_table UNION SELECT DISTINCT user_id FROM $cat_table" );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names from DB API, no user input.
+			$user_ids = $wpdb->get_col( 'SELECT DISTINCT user_id FROM ' . DB::table_transaction() . ' UNION SELECT DISTINCT user_id FROM ' . DB::table_budget() . ' UNION SELECT DISTINCT user_id FROM ' . DB::table_category() );
 			$user_ids = array_filter( array_map( 'absint', $user_ids ) );
 			if ( empty( $user_ids ) ) {
 				\WP_CLI::success( 'No data to reset.' );

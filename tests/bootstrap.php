@@ -5,9 +5,15 @@
  * @package Beruang
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Test polyfills for WP core functions.
+
+if ( ! defined( 'ABSPATH' ) ) {
+	define( 'ABSPATH', '/' );
+}
+
 // Plugin constants required before loading plugin files.
-define( 'ABSPATH', '/' );
-define( 'BERUANG_BUDGET_VERSION', '0.6.0' );
+if ( ! defined( 'BERUANG_BUDGET_VERSION' ) ) {
+define( 'BERUANG_BUDGET_VERSION', '0.7.0' );
 define( 'BERUANG_BUDGET_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
 define( 'BERUANG_BUDGET_PLUGIN_FILE', dirname( __DIR__ ) . '/beruang-budget.php' );
 define( 'BERUANG_BUDGET_PLUGIN_URL', 'http://example.com/wp-content/plugins/beruang/' );
@@ -121,6 +127,8 @@ if ( ! function_exists( 'current_time' ) ) {
 // ---------------------------------------------------------------------------
 // Load plugin source files under test.
 // ---------------------------------------------------------------------------
+
+} // End if ( ! defined( 'BERUANG_BUDGET_VERSION' ) ).
 
 require_once dirname( __DIR__ ) . '/includes/icon-helpers.php';
 require_once dirname( __DIR__ ) . '/includes/class-beruang-db.php';
