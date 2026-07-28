@@ -6,7 +6,7 @@
 
 /* Pages with list tables: Transactions, Categories, Budgets. */
 .beruang-admin-table #wpbody {
-	overflow-x: hidden !important;
+	overflow-x: hidden;
 }
 
 /* Filter form spacing and layout. */
@@ -78,7 +78,7 @@
 
 /* Hide toggle row on all table pages. */
 .beruang-admin-table .beruang-admin-table-wrap .wp-list-table .toggle-row {
-	display: none !important;
+	display: none;
 }
 
 /* Shared mobile layout – show all columns with horizontal scroll. */
