@@ -1035,14 +1035,25 @@ class DB {
 			return array();
 		}
 		$bc_table = self::table_budget_category();
-		foreach ( $rows as &$row ) {
-			$row['category_ids'] = self::wpdb()->get_col(
+		$ids      = array_column( $rows, 'id' );
+		$cat_map  = array();
+		if ( ! empty( $ids ) ) {
+			$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $bc_table is a static method, $placeholders is safe.
+			$links = self::wpdb()->get_results(
 				self::wpdb()->prepare(
-					"SELECT category_id FROM $bc_table WHERE budget_id = %d",
-					(int) $row['id']
-				)
+					// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Dynamic placeholders.
+					"SELECT budget_id, category_id FROM $bc_table WHERE budget_id IN ($placeholders)",
+					$ids
+				),
+				ARRAY_A
 			);
-			$row['category_ids'] = array_map( 'intval', $row['category_ids'] );
+			foreach ( $links as $link ) {
+				$cat_map[ (int) $link['budget_id'] ][] = (int) $link['category_id'];
+			}
+		}
+		foreach ( $rows as &$row ) {
+			$row['category_ids'] = $cat_map[ (int) $row['id'] ] ?? array();
 		}
 		return $rows;
 	}
