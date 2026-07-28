@@ -72,6 +72,7 @@ export function initGraph() {
 				},
 				options: { responsive: true, maintainAspectRatio: true },
 			} );
+			updateSrSummary( groupBy, expenseLabels, expenseValues, incomeLabels, incomeValues );
 		} else {
 			const months = [];
 			const expenseByMonth = [];
@@ -112,7 +113,45 @@ export function initGraph() {
 					scales: { y: { beginAtZero: true } },
 				},
 			} );
+			updateSrSummaryMonthly( months, expenseByMonth, incomeByMonth );
 		}
+	}
+
+	function updateSrSummary( groupBy, expenseLabels, expenseValues, incomeLabels, incomeValues ) {
+		const sr = document.getElementById( 'beruang-graph-sr-summary' );
+		if ( ! sr ) return;
+		let text = '';
+		if ( expenseLabels.length && expenseValues.length ) {
+			text += i18n.expense + ': ';
+			expenseLabels.forEach( function ( label, i ) {
+				text += label + ' (' + ( expenseValues[ i ] || 0 ) + ')';
+				if ( i < expenseLabels.length - 1 ) text += ', ';
+			} );
+			text += '. ';
+		}
+		if ( incomeLabels.length && incomeValues.length ) {
+			text += i18n.income + ': ';
+			incomeLabels.forEach( function ( label, i ) {
+				text += label + ' (' + ( incomeValues[ i ] || 0 ) + ')';
+				if ( i < incomeLabels.length - 1 ) text += ', ';
+			} );
+			text += '.';
+		}
+		if ( ! text ) text = i18n.no_data || 'No data available.';
+		sr.textContent = text;
+	}
+
+	function updateSrSummaryMonthly( months, expenses, incomes ) {
+		const sr = document.getElementById( 'beruang-graph-sr-summary' );
+		if ( ! sr ) return;
+		let text = '';
+		for ( let i = 0; i < months.length; i++ ) {
+			if ( expenses[ i ] || incomes[ i ] ) {
+				text += months[ i ] + ': ' + ( i18n.expense || 'Expense' ) + ' ' + ( expenses[ i ] || 0 ) + ', ' + ( i18n.income || 'Income' ) + ' ' + ( incomes[ i ] || 0 ) + '. ';
+			}
+		}
+		if ( ! text ) text = i18n.no_data || 'No data available.';
+		sr.textContent = text;
 	}
 
 	const yearEl = document.querySelector( '.beruang-graph-year' );
