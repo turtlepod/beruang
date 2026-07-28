@@ -191,9 +191,14 @@ class Categories_List_Table extends \WP_List_Table {
 	protected function column_name( $item ) {
 		$name = ! empty( $item['name'] ) ? esc_html( $item['name'] ) : '—';
 		if ( $this->user_filter > 0 && is_array( $this->flat_categories_cache ) ) {
-			$depth = 0;
-			$pid   = (int) $item['parent_id'];
-			while ( $pid > 0 && isset( $this->flat_categories_cache[ $pid ] ) ) {
+			$depth   = 0;
+			$pid     = (int) $item['parent_id'];
+			$visited = array( (int) $item['id'] );
+			while ( $pid > 0 && isset( $this->flat_categories_cache[ $pid ] ) && $depth < 100 ) {
+				if ( in_array( $pid, $visited, true ) ) {
+					break; // Cycle detected.
+				}
+				$visited[] = $pid;
 				++$depth;
 				$pid = (int) $this->flat_categories_cache[ $pid ]['parent_id'];
 			}
