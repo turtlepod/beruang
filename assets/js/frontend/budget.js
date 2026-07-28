@@ -9,6 +9,16 @@
 import { i18n, editIcon, deleteIcon } from './config.js';
 import { request, beruangTemplate, formatNum, formatAmountForInput } from './utils.js';
 
+function setFormValue(form, name, value) {
+	const el = form.querySelector('[name="' + name + '"]');
+	if (el) el.value = value;
+}
+
+function getFormValue(form, name) {
+	const el = form.querySelector('[name="' + name + '"]');
+	return el ? el.value : '';
+}
+
 export function initBudget() {
 	const list = document.getElementById( 'beruang-budget-list' );
 	const modal = document.getElementById( 'beruang-budget-modal' );
@@ -50,11 +60,10 @@ export function initBudget() {
 		request( 'GET', '/budgets/' + id ).then( function ( r ) {
 			if ( ! r.success || ! r.data || ! r.data.budget ) return;
 			const b = r.data.budget;
-			form.querySelector( '[name="id"]' ).value = b.id;
-			form.querySelector( '[name="name"]' ).value = b.name || '';
-			form.querySelector( '[name="target_amount"]' ).value = formatAmountForInput( b.target_amount ) || '';
-			form.querySelector( '[name="type"]' ).value =
-				b.type === 'yearly' ? 'yearly' : 'monthly';
+			setFormValue( form, 'id', b.id );
+			setFormValue( form, 'name', b.name || '' );
+			setFormValue( form, 'target_amount', formatAmountForInput( b.target_amount ) || '' );
+			setFormValue( form, 'type', b.type === 'yearly' ? 'yearly' : 'monthly' );
 			form.querySelectorAll( '[name="category_ids[]"]' ).forEach( function ( cb ) {
 				cb.checked = false;
 			} );
@@ -138,10 +147,10 @@ export function initBudget() {
 	const budgetAdd = budgetWrap && budgetWrap.querySelector( '.beruang-budget-add' );
 	if ( budgetAdd ) {
 		budgetAdd.addEventListener( 'click', function () {
-			form.querySelector( '[name="id"]' ).value = '';
-			form.querySelector( '[name="name"]' ).value = '';
-			form.querySelector( '[name="target_amount"]' ).value = '';
-			form.querySelector( '[name="type"]' ).value = 'monthly';
+			setFormValue( form, 'id', '' );
+			setFormValue( form, 'name', '' );
+			setFormValue( form, 'target_amount', '' );
+			setFormValue( form, 'type', 'monthly' );
 			form.querySelectorAll( '[name="category_ids[]"]' ).forEach( function ( cb ) {
 				cb.checked = false;
 			} );
@@ -161,10 +170,10 @@ export function initBudget() {
 
 	form.addEventListener( 'submit', function ( e ) {
 		e.preventDefault();
-		const id = form.querySelector( '[name="id"]' ).value;
-		const name = form.querySelector( '[name="name"]' ).value;
-		const target = form.querySelector( '[name="target_amount"]' ).value;
-		const type = form.querySelector( '[name="type"]' ).value;
+		const id = getFormValue( form, 'id' );
+		const name = getFormValue( form, 'name' );
+		const target = getFormValue( form, 'target_amount' );
+		const type = getFormValue( form, 'type' );
 		const catIds = [];
 		form
 			.querySelectorAll( '[name="category_ids[]"]:checked' )
