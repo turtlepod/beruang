@@ -29,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</select>
 	</div>
 	<div class="beruang-graph-canvas-wrap">
-		<canvas id="beruang-graph-canvas" width="400" height="300"></canvas>
+		<canvas id="beruang-graph-canvas" width="400" height="300" role="img" aria-label="<?php esc_attr_e( 'Monthly expense and income chart', 'beruang-budget' ); ?>"></canvas>
 	</div>
+	<div id="beruang-graph-sr-summary" class="screen-reader-text" aria-live="polite"></div>
 </div>
