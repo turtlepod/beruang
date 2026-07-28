@@ -133,7 +133,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 					<div class="beruang-form-row">
 						<label for="beruang-wallet-initial-amount"><?php esc_html_e( 'Amount on selected date', 'beruang-budget' ); ?></label>
-						<input type="number" id="beruang-wallet-initial-amount" name="initial_amount" step="0.01" />
+						<input type="number" id="beruang-wallet-initial-amount" name="initial_amount" step="<?php echo $decimal_places > 0 ? esc_attr( '0.' . str_repeat( '0', $decimal_places - 1 ) . '1' ) : '1'; ?>" />
 					</div>
 					<div class="beruang-form-row">
 						<label for="beruang-wallet-initial-date"><?php esc_html_e( 'Selected date', 'beruang-budget' ); ?></label>
