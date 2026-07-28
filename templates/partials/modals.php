@@ -46,6 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="beruang-modal-inner beruang-categories-modal-inner">
 		<h4><?php esc_html_e( 'Manage categories', 'beruang-budget' ); ?></h4>
 		<form id="beruang-category-form" class="beruang-categories-form">
+		<?php wp_nonce_field( 'beruang_category', 'beruang_category_nonce' ); ?>
 			<input type="hidden" id="beruang-cat-edit-id" name="id" value="" />
 			<div class="beruang-form-row">
 				<label for="beruang-cat-name"><?php esc_html_e( 'Name', 'beruang-budget' ); ?></label>

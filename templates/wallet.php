@@ -65,6 +65,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<h4><?php esc_html_e( 'Transfer between wallets', 'beruang-budget' ); ?></h4>
 				<div class="beruang-form-wrapper">
 					<form id="beruang-wallet-transfer-form" class="beruang-form">
+					<?php wp_nonce_field( 'beruang_transfer', 'beruang_transfer_nonce' ); ?>
 						<div class="beruang-form-row beruang-form-row--split">
 							<div class="beruang-form-field">
 								<label for="beruang-transfer-date"><?php esc_html_e( 'Date', 'beruang-budget' ); ?></label>
@@ -126,6 +127,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="beruang-modal-inner beruang-wallet-modal-inner">
 				<h4><?php esc_html_e( 'Add / Edit wallet', 'beruang-budget' ); ?></h4>
 				<form id="beruang-wallet-form" class="beruang-wallet-form">
+				<?php wp_nonce_field( 'beruang_wallet', 'beruang_wallet_nonce' ); ?>
 					<input type="hidden" id="beruang-wallet-edit-id" name="id" value="" />
 					<div class="beruang-form-row">
 						<label for="beruang-wallet-name"><?php esc_html_e( 'Name', 'beruang-budget' ); ?></label>
