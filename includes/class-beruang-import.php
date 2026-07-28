@@ -250,18 +250,24 @@ class ImportHandler {
 	 * @param array $data    Decoded export data (already validated).
 	 * @return array{categories: int, wallets: int, transactions: int, budgets: int}
 	 *              Counts of records imported per section.
+	 * @throws \Exception If any import step fails, after rolling back partial data.
 	 */
 	public static function run( int $user_id, array $data ): array {
-		$map_cat    = self::import_categories( $user_id, $data['categories'] ?? array() );
-		$map_wallet = self::import_wallets( $user_id, $data['wallets'] ?? array() );
-		$tx_count   = self::import_transactions( $user_id, $data['transactions'] ?? array(), $map_cat, $map_wallet );
-		$bg_count   = self::import_budgets( $user_id, $data['budgets'] ?? array(), $map_cat );
+		try {
+			$map_cat    = self::import_categories( $user_id, $data['categories'] ?? array() );
+			$map_wallet = self::import_wallets( $user_id, $data['wallets'] ?? array() );
+			$tx_count   = self::import_transactions( $user_id, $data['transactions'] ?? array(), $map_cat, $map_wallet );
+			$bg_count   = self::import_budgets( $user_id, $data['budgets'] ?? array(), $map_cat );
 
-		return array(
-			'categories'   => count( $map_cat ),
-			'wallets'      => count( $map_wallet ),
-			'transactions' => $tx_count,
-			'budgets'      => $bg_count,
-		);
+			return array(
+				'categories'   => count( $map_cat ),
+				'wallets'      => count( $map_wallet ),
+				'transactions' => $tx_count,
+				'budgets'      => $bg_count,
+			);
+		} catch ( \Exception $e ) {
+			DB::reset_user_data( $user_id );
+			throw $e;
+		}
 	}
 }
