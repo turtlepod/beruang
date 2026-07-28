@@ -30,6 +30,34 @@ class Budgets_List_Table extends \WP_List_Table {
 	protected $user_filter = 0;
 
 	/**
+	 * Cached formatting settings (loaded once in prepare_items).
+	 *
+	 * @var string
+	 */
+	protected $cached_currency = 'IDR';
+
+	/**
+	 * Cached decimal separator.
+	 *
+	 * @var string
+	 */
+	protected $cached_decimal_sep = ',';
+
+	/**
+	 * Cached thousands separator.
+	 *
+	 * @var string
+	 */
+	protected $cached_thousands_sep = '.';
+
+	/**
+	 * Cached decimal places count.
+	 *
+	 * @var int
+	 */
+	protected $cached_decimal_places = 2;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param int $user_filter Optional user ID to filter by. 0 for all users.
@@ -190,6 +218,12 @@ class Budgets_List_Table extends \WP_List_Table {
 				'total_pages' => ceil( $total / $per_page ),
 			)
 		);
+
+		// Cache formatting options once per request instead of per row.
+		$this->cached_currency       = get_option( 'beruang_currency', 'IDR' );
+		$this->cached_decimal_sep    = get_option( 'beruang_decimal_sep', ',' );
+		$this->cached_thousands_sep  = get_option( 'beruang_thousands_sep', '.' );
+		$this->cached_decimal_places = (int) get_option( 'beruang_decimal_places', 2 );
 	}
 
 	/**
@@ -219,10 +253,6 @@ class Budgets_List_Table extends \WP_List_Table {
 	 * @return string
 	 */
 	protected function column_default( $item, $column_name ) {
-		$currency = get_option( 'beruang_currency', 'IDR' );
-		$dec      = get_option( 'beruang_decimal_sep', ',' );
-		$thou     = get_option( 'beruang_thousands_sep', '.' );
-
 		switch ( $column_name ) {
 			case 'id':
 				return (string) $item['id'];
@@ -231,8 +261,8 @@ class Budgets_List_Table extends \WP_List_Table {
 			case 'name':
 				return ! empty( $item['name'] ) ? esc_html( $item['name'] ) : '—';
 			case 'target_amount':
-				$amount = number_format( (float) $item['target_amount'], (int) get_option( 'beruang_decimal_places', 2 ), $dec, $thou );
-				return esc_html( $amount . ' ' . $currency );
+				$amount = number_format( (float) $item['target_amount'], $this->cached_decimal_places, $this->cached_decimal_sep, $this->cached_thousands_sep );
+				return esc_html( $amount . ' ' . $this->cached_currency );
 			case 'type':
 				return esc_html( $item['type'] );
 			case 'category_ids':
