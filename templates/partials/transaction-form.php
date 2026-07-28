@@ -34,6 +34,7 @@ $has_wallets    = ! empty( $wallets );
 $default_wallet = null === $default_wallet_id ? '' : (string) $default_wallet_id;
 ?>
 <form class="beruang-form beruang-transaction-form" id="<?php echo esc_attr( $form_id ); ?>" data-mode="<?php echo esc_attr( $mode ); ?>">
+	<?php wp_nonce_field( 'beruang_transaction', 'beruang_transaction_nonce' ); ?>
 	<?php if ( $is_edit ) : ?>
 		<input type="hidden" name="id" id="<?php echo esc_attr( $field_prefix ); ?>-id" value="" />
 	<?php endif; ?>

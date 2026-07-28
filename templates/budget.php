@@ -68,6 +68,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="beruang-modal-inner beruang-budget-modal-inner">
 			<h4><?php esc_html_e( 'Add / Edit budget', 'beruang-budget' ); ?></h4>
 			<form id="beruang-budget-form">
+			<?php wp_nonce_field( 'beruang_budget', 'beruang_budget_nonce' ); ?>
 				<input type="hidden" name="id" value="" />
 				<div class="beruang-form-row">
 					<label for="beruang-budget-name"><?php esc_html_e( 'Budget name', 'beruang-budget' ); ?></label>
