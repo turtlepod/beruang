@@ -742,7 +742,7 @@ function rest_delete_transaction( $request ) {
 	$ok = DB::delete_transaction( $user_id, $id );
 	return rest_ensure_response(
 		array(
-			'success' => true,
+			'success' => (bool) $ok,
 			'data'    => array( 'deleted' => $ok ),
 		)
 	);
@@ -848,7 +848,7 @@ function rest_delete_category( $request ) {
 	$ok = DB::delete_category( $user_id, $id );
 	return rest_ensure_response(
 		array(
-			'success' => true,
+			'success' => (bool) $ok,
 			'data'    => array( 'deleted' => $ok ),
 		)
 	);
@@ -1246,7 +1246,7 @@ function rest_delete_budget( $request ) {
 	$ok = DB::delete_budget( $user_id, $id );
 	return rest_ensure_response(
 		array(
-			'success' => true,
+			'success' => (bool) $ok,
 			'data'    => array( 'deleted' => $ok ),
 		)
 	);
