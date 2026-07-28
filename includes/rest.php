@@ -657,7 +657,7 @@ function rest_update_transaction( $request ) {
 
 	$data = array(
 		'date'        => isset( $body['date'] ) ? sanitize_text_field( $body['date'] ) : $existing['date'],
-		'time'        => isset( $body['time'] ) ? sanitize_text_field( $body['time'] ) : null,
+		'time'        => array_key_exists( 'time', $body ) ? sanitize_text_field( $body['time'] ) : (string) ( $existing['time'] ?? '' ),
 		'description' => isset( $body['description'] ) ? sanitize_textarea_field( $body['description'] ) : $existing['description'],
 		'note'        => isset( $body['note'] ) ? sanitize_textarea_field( $body['note'] ) : (string) ( $existing['note'] ?? '' ),
 		'wallet_id'   => array_key_exists( 'wallet_id', $body ) ? rest_parse_wallet_id( $body['wallet_id'] ) : $existing_wallet_id,
