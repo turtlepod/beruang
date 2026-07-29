@@ -80,14 +80,14 @@ $default_wallet = null === $default_wallet_id ? '' : (string) $default_wallet_id
 				}
 				?>
 			</select>
-			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-manage-categories-btn" title="<?php esc_attr_e( 'Manage categories', 'beruang-budget' ); ?>" aria-label="<?php esc_attr_e( 'Manage categories', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'list' ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-manage-categories-btn" title="<?php esc_attr_e( 'Manage categories', 'beruang-budget' ); ?>" aria-label="<?php esc_attr_e( 'Manage categories', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'list', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		</span>
 	</div>
 	<div class="beruang-form-row beruang-amount-row">
 		<label for="<?php echo esc_attr( $amt_id ); ?>"><?php esc_html_e( 'Amount', 'beruang-budget' ); ?> <span class="beruang-label-currency">(<?php echo esc_html( $currency ); ?>)</span></label>
 		<span class="beruang-wrap">
 			<input type="number" id="<?php echo esc_attr( $amt_id ); ?>" name="amount" step="<?php echo $decimal_places > 0 ? esc_attr( '0.' . str_repeat( '0', $decimal_places - 1 ) . '1' ) : '1'; ?>" min="0" value="" required placeholder="0" />
-			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-calc-btn" title="<?php esc_attr_e( 'Calculator', 'beruang-budget' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'calc' ); ?></button>
+			<button type="button" class="beruang-btn beruang-btn--icon beruang-btn--secondary beruang-calc-btn" title="<?php esc_attr_e( 'Calculator', 'beruang-budget' ); ?>" aria-label="<?php esc_attr_e( 'Calculator', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'calc', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
 		</span>
 	</div>
 	<div class="beruang-form-row beruang-type-row">
