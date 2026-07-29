@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="beruang-calc-bottom-row">
 				<button type="button" class="beruang-calc-clear" aria-label="<?php esc_attr_e( 'Clear', 'beruang-budget' ); ?>">C</button>
 				<button type="button" class="beruang-calc-backspace" aria-label="<?php esc_attr_e( 'Backspace', 'beruang-budget' ); ?>"><?php \BeruangBudget\beruang_icon( 'backspace', array( 'attrs' => array( 'aria-hidden' => 'true' ) ) ); ?></button>
-				<button type="button" class="beruang-calc-equals">=</button>
+				<button type="button" class="beruang-calc-equals" aria-label="<?php esc_attr_e( 'Equals', 'beruang-budget' ); ?>">=</button>
 			</div>
 			<button type="button" class="beruang-calc-insert-close"><?php esc_html_e( 'Insert & Close', 'beruang-budget' ); ?></button>
 		</div>
