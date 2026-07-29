@@ -60,7 +60,7 @@ export function initBudget() {
 			} );
 			( b.category_ids || [] ).forEach( function ( cid ) {
 				const cb = form.querySelector(
-					'[name="category_ids[]"][value="' + cid + '"]'
+					'[name="category_ids[]"][value="' + CSS.escape(String(cid)) + '"]'
 				);
 				if ( cb ) cb.checked = true;
 			} );
