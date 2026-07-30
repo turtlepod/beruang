@@ -1297,6 +1297,9 @@ function admin_page_wallets() {
 		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Wallet not found.', 'beruang-budget' ) . '</p></div>';
 		}
+		if ( isset( $_GET['beruang_error'] ) && 'default' === $_GET['beruang_error'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Failed to delete wallet.', 'beruang-budget' ) . '</p></div>';
+		}
 		if ( isset( $_GET['beruang_deleted'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Wallet deleted.', 'beruang-budget' ) . '</p></div>';
 		}
