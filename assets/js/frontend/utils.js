@@ -35,6 +35,38 @@ export function beruangTemplate( name ) {
 	};
 }
 
+/**
+ * Show a toast notification. Auto-removes after 4 seconds.
+ *
+ * Uses a shared toast container appended to document.body on first call.
+ * Subsequent calls replace the content and restart the timer.
+ *
+ * @param {string} message Text to display.
+ * @param {string} type    'error' | 'success' (default: 'error').
+ */
+export function showToast( message, type ) {
+	type = type || 'error';
+	let container = document.getElementById( 'beruang-toast' );
+	if ( ! container ) {
+		container = document.createElement( 'div' );
+		container.id = 'beruang-toast';
+		container.setAttribute( 'aria-live', 'polite' );
+		container.style.cssText =
+			'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:99999;' +
+			'max-width:90vw;padding:10px 20px;border-radius:6px;font-size:14px;' +
+			'box-shadow:0 2px 12px rgba(0,0,0,.15);transition:opacity .3s;opacity:0;';
+		document.body.appendChild( container );
+	}
+	clearTimeout( container._timeout );
+	container.textContent = message;
+	container.style.background = type === 'success' ? '#00a32a' : '#d63638';
+	container.style.color = '#fff';
+	container.style.opacity = '1';
+	container._timeout = setTimeout( function () {
+		container.style.opacity = '0';
+	}, 4000 );
+}
+
 export function request( method, path, data ) {
 	data = data || {};
 	let url = restUrl + path;
@@ -70,6 +102,7 @@ export function request( method, path, data ) {
 			return r.json();
 		} )
 		.catch( function () {
+			showToast( beruangData.i18n.error || 'Something went wrong.', 'error' );
 			return { success: false, data: { message: 'Error' } };
 		} );
 }

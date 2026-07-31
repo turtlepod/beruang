@@ -7,7 +7,7 @@
 'use strict';
 
 import { i18n } from './config.js';
-import { request } from './utils.js';
+import { request, showToast } from './utils.js';
 
 export function initGraph() {
 	const wrap = document.querySelector( '.beruang-graph-wrapper' );
@@ -30,7 +30,10 @@ export function initGraph() {
 		const year = yearEl ? parseInt( yearEl.value, 10 ) : new Date().getFullYear();
 		const groupBy = groupEl ? groupEl.value : 'month';
 		request( 'GET', '/graph', { year, group_by: groupBy } ).then( function ( r ) {
-			if ( ! r.success || ! r.data || ! r.data.data ) return;
+			if ( ! r.success || ! r.data || ! r.data.data ) {
+				showToast( ( r.data && r.data.message ) || i18n.error || 'Error', 'error' );
+				return;
+			}
 			renderChart( r.data.data, groupBy, year );
 		} );
 	}
