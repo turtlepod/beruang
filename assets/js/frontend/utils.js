@@ -17,6 +17,30 @@ export function escapeHtml( str ) {
 		.replace( /'/g, '&#039;' );
 }
 
+/**
+ * Strip dangerous HTML from strings that will be rendered raw.
+ * Defense-in-depth: removes <script>, event handlers, javascript: URLs,
+ * and other XSS vectors while preserving safe tags like <svg>, <button>, <path>.
+ *
+ * @param {string} html Raw HTML string.
+ * @return {string} Sanitized HTML.
+ */
+function stripDangerousHtml( html ) {
+	return String( html )
+		// Remove <script> tags and their content.
+		.replace( /<script\b[^>]*>[\s\S]*?<\/script>/gi, '' )
+		// Remove self-closing script-like tags.
+		.replace( /<script\b[^>]*\/>/gi, '' )
+		// Strip javascript: URLs.
+		.replace( /\s+href\s*=\s*["']javascript:[^"']*["']/gi, '' )
+		.replace( /\s+src\s*=\s*["']javascript:[^"']*["']/gi, '' )
+		// Strip on* event handler attributes.
+		.replace( /\s+on\w+\s*=\s*["'][^"']*["']/gi, '' )
+		.replace( /\s+on\w+\s*=\s*[^\s>]+/gi, '' )
+		// Remove <form>, <iframe>, <embed>, <object>, <applet> tags.
+		.replace( /<\/?(?:form|iframe|embed|object|applet)\b[^>]*>/gi, '' );
+}
+
 export function beruangTemplate( name ) {
 	const script = document.getElementById( 'tmpl-' + name );
 	if ( ! script ) return function () { return ''; };
@@ -26,7 +50,7 @@ export function beruangTemplate( name ) {
 		return html
 			.replace( /\{\{\{\s*data\.(\w+)\s*\}\}\}/g, function ( _, key ) {
 				const val = data[ key ];
-				return val !== undefined && val !== null ? String( val ) : '';
+				return val !== undefined && val !== null ? stripDangerousHtml( String( val ) ) : '';
 			} )
 			.replace( /\{\{\s*data\.(\w+)\s*\}\}/g, function ( _, key ) {
 				const val = data[ key ];
