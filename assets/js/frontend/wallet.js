@@ -15,6 +15,12 @@ export function initWallet() {
 	const modal = document.getElementById( 'beruang-wallet-modal' );
 	if ( ! form || ! list || ! modal ) return;
 
+	const listeners = [];
+	function on( target, event, handler, options ) {
+		target.addEventListener( event, handler, options );
+		listeners.push( { target, event, handler } );
+	}
+
 	const walletAddBtn = document.querySelector( '.beruang-wallet-add' );
 	const walletItemTpl = beruangTemplate( 'beruang-wallet-item' );
 	const walletEmptyTpl = beruangTemplate( 'beruang-wallet-empty' );
@@ -171,7 +177,6 @@ export function initWallet() {
 		} );
 		transferFromEl.innerHTML = html;
 		transferToEl.innerHTML = html;
-		// Restore previous selection when the wallet still exists.
 		if ( prevFrom && transferFromEl.querySelector( '[value="' + CSS.escape( prevFrom ) + '"]' ) ) {
 			transferFromEl.value = prevFrom;
 		}
@@ -194,31 +199,31 @@ export function initWallet() {
 	}
 
 	if ( walletAddBtn ) {
-		walletAddBtn.addEventListener( 'click', openAddModal );
+		on( walletAddBtn, 'click', openAddModal );
 	}
 
 	transferOpenBtns.forEach( function ( btn ) {
-		btn.addEventListener( 'click', openTransferModal );
+		on( btn, 'click', openTransferModal );
 	} );
 
 	if ( transferModal ) {
-		transferModal.addEventListener( 'click', function ( e ) {
+		on( transferModal, 'click', function ( e ) {
 			if ( e.target === transferModal ) closeTransferModal();
 		} );
 		transferModal.querySelectorAll( '.beruang-wallet-transfer-close' ).forEach( function ( btn ) {
-			btn.addEventListener( 'click', closeTransferModal );
+			on( btn, 'click', closeTransferModal );
 		} );
 	}
 
 	if ( cancelBtn ) {
-		cancelBtn.addEventListener( 'click', closeModal );
+		on( cancelBtn, 'click', closeModal );
 	}
 
-	modal.addEventListener( 'click', function ( e ) {
+	on( modal, 'click', function ( e ) {
 		if ( e.target === modal ) closeModal();
 	} );
 
-	form.addEventListener( 'submit', function ( e ) {
+	on( form, 'submit', function ( e ) {
 		e.preventDefault();
 		clearMessage();
 		setFormLoading( form, true );
@@ -249,7 +254,7 @@ export function initWallet() {
 		} );
 	} );
 
-	list.addEventListener( 'click', function ( e ) {
+	function onListClick( e ) {
 		const editBtn = e.target.closest( '.beruang-action-edit' );
 		if ( editBtn ) {
 			const item = editBtn.closest( '.beruang-wallet-card' );
@@ -270,10 +275,12 @@ export function initWallet() {
 				alert( i18n.error_delete_wallet || 'Failed to delete wallet.' );
 			}
 		} );
-	} );
+	}
+
+	on( list, 'click', onListClick );
 
 	if ( defaultWalletSelect ) {
-		defaultWalletSelect.addEventListener( 'change', function () {
+		on( defaultWalletSelect, 'change', function () {
 			const walletId = this.value;
 			request( 'POST', '/wallets/default', { wallet_id: walletId } ).then( function ( r ) {
 				if ( r.success ) {
@@ -284,7 +291,7 @@ export function initWallet() {
 	}
 
 	if ( transferForm ) {
-		transferForm.addEventListener( 'submit', function ( e ) {
+		on( transferForm, 'submit', function ( e ) {
 			e.preventDefault();
 			if ( ! transferMessage ) return;
 			transferMessage.textContent = '';
@@ -332,5 +339,12 @@ export function initWallet() {
 	}
 
 	refreshWallets();
-	document.addEventListener( 'beruang-transaction-saved', refreshWallets );
+	on( document, 'beruang-transaction-saved', refreshWallets );
+
+	return function destroy() {
+		while ( listeners.length ) {
+			const l = listeners.pop();
+			l.target.removeEventListener( l.event, l.handler );
+		}
+	};
 }

@@ -14,10 +14,16 @@ export function initGraph() {
 	const canvas = document.getElementById( 'beruang-graph-canvas' );
 	if ( ! canvas || typeof window.Chart === 'undefined' ) return;
 
+	const listeners = [];
+	function on( target, event, handler, options ) {
+		target.addEventListener( event, handler, options );
+		listeners.push( { target, event, handler } );
+	}
+
 	const graphFilters = document.getElementById( 'beruang-graph-filters' );
 	const graphFilterBtn = wrap && wrap.querySelector( '.beruang-filter-btn' );
 	if ( graphFilterBtn && graphFilters ) {
-		graphFilterBtn.addEventListener( 'click', function () {
+		on( graphFilterBtn, 'click', function () {
 			graphFilters.hidden = ! graphFilters.hidden;
 		} );
 	}
@@ -117,14 +123,25 @@ export function initGraph() {
 
 	const yearEl = document.querySelector( '.beruang-graph-year' );
 	const groupEl = document.querySelector( '.beruang-graph-group' );
-	if ( yearEl ) yearEl.addEventListener( 'change', loadGraph );
-	if ( groupEl ) groupEl.addEventListener( 'change', loadGraph );
-	if ( window.Chart ) loadGraph();
-	else window.addEventListener( 'load', function () {
-		setTimeout( loadGraph, 100 );
-	} );
-	document.addEventListener( 'beruang-transaction-saved', loadGraph );
-	document.addEventListener( 'beruang-tab-activated', function ( e ) {
+	if ( yearEl ) on( yearEl, 'change', loadGraph );
+	if ( groupEl ) on( groupEl, 'change', loadGraph );
+
+	function onTabActivated( e ) {
 		if ( e.detail && e.detail.tab === 'graph' && chart ) chart.resize();
-	} );
+	}
+
+	if ( window.Chart ) loadGraph();
+	else on( window, 'load', function () { setTimeout( loadGraph, 100 ); }, { once: true } );
+
+	on( document, 'beruang-transaction-saved', loadGraph );
+	on( document, 'beruang-tab-activated', onTabActivated );
+
+	return function destroy() {
+		while ( listeners.length ) {
+			const l = listeners.pop();
+			l.target.removeEventListener( l.event, l.handler );
+		}
+		// Only call chart.destroy() if chart was created (canvas still in DOM).
+		// chart is local; GC handles it.
+	};
 }

@@ -15,13 +15,19 @@ export function initBudget() {
 	const form = document.getElementById( 'beruang-budget-form' );
 	if ( ! list ) return;
 
+	const listeners = [];
+	function on( target, event, handler, options ) {
+		target.addEventListener( event, handler, options );
+		listeners.push( { target, event, handler } );
+	}
+
 	const budgetWrap = list.closest( '.beruang-budget-wrapper' );
 	const filters = budgetWrap && budgetWrap.querySelector( '#beruang-budget-filters' );
 	const filterBtn =
 		budgetWrap && budgetWrap.querySelector( '.beruang-budget-header .beruang-filter-btn' );
 
 	if ( filterBtn && filters ) {
-		filterBtn.addEventListener( 'click', function () {
+		on( filterBtn, 'click', function () {
 			filters.hidden = ! filters.hidden;
 		} );
 	}
@@ -29,7 +35,7 @@ export function initBudget() {
 	const msgTpl = beruangTemplate( 'beruang-message' );
 	const budgetCardTpl = beruangTemplate( 'beruang-budget-card' );
 
-	document.addEventListener( 'click', function ( e ) {
+	function onDeleteClick( e ) {
 		const deleteBtn = e.target.closest( '.beruang-action-delete' );
 		if ( ! deleteBtn ) return;
 		const card = deleteBtn.closest( '.beruang-budget-card' );
@@ -39,8 +45,9 @@ export function initBudget() {
 		request( 'DELETE', '/budgets/' + id ).then( function ( res ) {
 			if ( res.success ) loadBudgets();
 		} );
-	} );
-	document.addEventListener( 'click', function ( e ) {
+	}
+
+	function onEditClick( e ) {
 		const editBtn = e.target.closest( '.beruang-action-edit' );
 		if ( ! editBtn ) return;
 		const card = editBtn.closest( '.beruang-budget-card' );
@@ -66,7 +73,10 @@ export function initBudget() {
 			} );
 			modal.hidden = false;
 		} );
-	} );
+	}
+
+	on( document, 'click', onDeleteClick );
+	on( document, 'click', onEditClick );
 
 	function loadBudgets() {
 		const yearSel = budgetWrap && budgetWrap.querySelector( '.beruang-filter-year' );
@@ -122,10 +132,10 @@ export function initBudget() {
 	}
 
 	if ( budgetWrap ) {
-		budgetWrap.addEventListener( 'click', function ( e ) {
+		on( budgetWrap, 'click', function ( e ) {
 			if ( e.target.closest( '.beruang-filter-apply' ) ) loadBudgets();
 		} );
-		budgetWrap.addEventListener( 'click', function ( e ) {
+		on( budgetWrap, 'click', function ( e ) {
 			if ( ! e.target.closest( '.beruang-filter-reset' ) ) return;
 			const yearSel = budgetWrap.querySelector( '.beruang-filter-year' );
 			const monthSel = budgetWrap.querySelector( '.beruang-filter-month' );
@@ -137,7 +147,7 @@ export function initBudget() {
 
 	const budgetAdd = budgetWrap && budgetWrap.querySelector( '.beruang-budget-add' );
 	if ( budgetAdd ) {
-		budgetAdd.addEventListener( 'click', function () {
+		on( budgetAdd, 'click', function () {
 			form.querySelector( '[name="id"]' ).value = '';
 			form.querySelector( '[name="name"]' ).value = '';
 			form.querySelector( '[name="target_amount"]' ).value = '';
@@ -150,7 +160,7 @@ export function initBudget() {
 	}
 
 	if ( modal ) {
-		modal.addEventListener( 'click', function ( e ) {
+		on( modal, 'click', function ( e ) {
 			if (
 				e.target === modal ||
 				e.target.classList.contains( 'beruang-budget-modal-close' )
@@ -159,7 +169,7 @@ export function initBudget() {
 		} );
 	}
 
-	form.addEventListener( 'submit', function ( e ) {
+	on( form, 'submit', function ( e ) {
 		e.preventDefault();
 		const id = form.querySelector( '[name="id"]' ).value;
 		const name = form.querySelector( '[name="name"]' ).value;
@@ -186,5 +196,12 @@ export function initBudget() {
 	} );
 
 	loadBudgets();
-	document.addEventListener( 'beruang-transaction-saved', loadBudgets );
+	on( document, 'beruang-transaction-saved', loadBudgets );
+
+	return function destroy() {
+		while ( listeners.length ) {
+			const l = listeners.pop();
+			l.target.removeEventListener( l.event, l.handler );
+		}
+	};
 }
