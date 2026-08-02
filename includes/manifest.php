@@ -19,6 +19,7 @@ function manifest_setup() {
 	add_filter( 'query_vars', __NAMESPACE__ . '\manifest_query_vars' );
 	add_action( 'template_redirect', __NAMESPACE__ . '\manifest_serve', 1 );
 	add_action( 'wp_head', __NAMESPACE__ . '\manifest_head_tags', 1 );
+	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\manifest_enqueue_sw_script' );
 }
 
 /**
@@ -98,11 +99,21 @@ function manifest_head_tags() {
 			esc_attr( $theme_color )
 		);
 	}
+}
 
+/**
+ * Enqueue service worker registration script when PWA is enabled.
+ */
+function manifest_enqueue_sw_script() {
+	if ( ! get_option( 'beruang_pwa_enabled', false ) ) {
+		return;
+	}
 	$sw_url = add_query_arg( 'beruang_sw', '1', home_url( '/' ) );
-	printf(
-		"<script>(function(){if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register(%s).catch(function(){});});}})();</script>\n",
-		wp_json_encode( esc_url_raw( $sw_url ) )
+	wp_register_script( 'beruang-sw', false, array(), BERUANG_BUDGET_VERSION, true );
+	wp_enqueue_script( 'beruang-sw' );
+	wp_add_inline_script(
+		'beruang-sw',
+		'(function(){if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register(' . wp_json_encode( esc_url_raw( $sw_url ) ) . ').catch(function(){});});}})()'  // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
 	);
 }
 

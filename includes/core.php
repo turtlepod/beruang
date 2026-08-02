@@ -113,7 +113,7 @@ function enqueue_front_scripts() {
 		'chartjs',
 		BERUANG_BUDGET_PLUGIN_URL . 'assets/js/chart.umd.min.js',
 		array(),
-		'4.4.1', // @nofix Hardcoded: vendored library, version rarely changes. Update manually when upgrading Chart.js.
+		'4.5.1', // @nofix Hardcoded: vendored library, version rarely changes. Update manually when upgrading Chart.js.
 		true
 	);
 
