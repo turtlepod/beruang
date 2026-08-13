@@ -69,6 +69,12 @@ export function initForm() {
 	const catItemTpl = beruangTemplate( 'beruang-cat-item' );
 	const catEmptyTpl = beruangTemplate( 'beruang-cat-empty' );
 
+	const listeners = [];
+	function on( target, event, handler, options ) {
+		target.addEventListener( event, handler, options );
+		listeners.push( { target, event, handler } );
+	}
+
 	let noteTargetForm = null;
 	let noteTargetInput = null;
 	const noteModal = document.getElementById( 'beruang-note-modal' );
@@ -82,7 +88,7 @@ export function initForm() {
 		if ( noteModal ) noteModal.hidden = true;
 	}
 
-	document.addEventListener( 'click', function ( e ) {
+	function onNoteBtnClick( e ) {
 		const noteBtn = e.target.closest( '.beruang-note-btn' );
 		if ( ! noteBtn || ! noteModal || ! noteModalText ) return;
 		const form = noteBtn.closest( '.beruang-transaction-form' );
@@ -94,10 +100,12 @@ export function initForm() {
 		noteModalText.value = noteInput.value || '';
 		noteModal.hidden = false;
 		noteModalText.focus();
-	} );
+	}
+
+	on( document, 'click', onNoteBtnClick );
 
 	if ( noteSaveBtn && noteModalText ) {
-		noteSaveBtn.addEventListener( 'click', function () {
+		on( noteSaveBtn, 'click', function () {
 			if ( noteTargetInput ) {
 				noteTargetInput.value = noteModalText.value;
 			}
@@ -109,11 +117,11 @@ export function initForm() {
 	}
 
 	if ( noteCancelBtn ) {
-		noteCancelBtn.addEventListener( 'click', closeNoteModal );
+		on( noteCancelBtn, 'click', closeNoteModal );
 	}
 
 	if ( noteModal ) {
-		noteModal.addEventListener( 'click', function ( e ) {
+		on( noteModal, 'click', function ( e ) {
 			if ( e.target === noteModal ) closeNoteModal();
 		} );
 	}
@@ -228,7 +236,7 @@ export function initForm() {
 		} );
 	}
 
-	document.addEventListener( 'click', function ( e ) {
+	function onManageCategoriesClick( e ) {
 		const manageBtn = e.target.closest( '.beruang-manage-categories-btn' );
 		if ( ! manageBtn || ! catModal ) return;
 		if ( catEditId ) catEditId.value = '';
@@ -244,7 +252,9 @@ export function initForm() {
 		if ( loading ) loading.style.display = '';
 		if ( catList ) catList.innerHTML = '';
 		refreshCategoriesInModal();
-	} );
+	}
+
+	on( document, 'click', onManageCategoriesClick );
 
 	function closeCatModal() {
 		const catMsg = catForm && catForm.querySelector( '.beruang-form-message' );
@@ -256,13 +266,13 @@ export function initForm() {
 	}
 
 	const catModalClose = catModal && catModal.querySelector( '.beruang-categories-modal-close' );
-	if ( catModalClose ) catModalClose.addEventListener( 'click', closeCatModal );
+	if ( catModalClose ) on( catModalClose, 'click', closeCatModal );
 	if ( catModal ) {
-		catModal.addEventListener( 'click', function ( e ) {
+		on( catModal, 'click', function ( e ) {
 			if ( e.target === catModal ) closeCatModal();
 		} );
 		const catCloseX = catModal.querySelector( '.beruang-modal-close-x' );
-		if ( catCloseX ) catCloseX.addEventListener( 'click', function () {
+		if ( catCloseX ) on( catCloseX, 'click', function () {
 			const catMsg = catForm && catForm.querySelector( '.beruang-form-message' );
 			if ( catMsg ) {
 				catMsg.textContent = '';
@@ -273,7 +283,7 @@ export function initForm() {
 
 	if ( catForm ) {
 		const catMessage = catForm.querySelector( '.beruang-form-message' );
-		catForm.addEventListener( 'submit', function ( e ) {
+		on( catForm, 'submit', function ( e ) {
 			e.preventDefault();
 			catMessage.textContent = '';
 			const id = catEditId ? catEditId.value : '';
@@ -310,7 +320,7 @@ export function initForm() {
 	}
 
 	if ( catCancelBtn ) {
-		catCancelBtn.addEventListener( 'click', function () {
+		on( catCancelBtn, 'click', function () {
 			if ( catEditId ) catEditId.value = '';
 			if ( catName ) catName.value = '';
 			if ( catParent ) catParent.value = '0';
@@ -322,7 +332,7 @@ export function initForm() {
 		} );
 	}
 
-	document.addEventListener( 'click', function ( e ) {
+	function onCategoryEditClick( e ) {
 		const editBtn = e.target.closest( '.beruang-action-edit' );
 		if ( ! editBtn ) return;
 		const li = editBtn.closest( '.beruang-cat-item' );
@@ -338,9 +348,11 @@ export function initForm() {
 		}
 		if ( catCancelBtn ) catCancelBtn.hidden = false;
 		refreshCategoriesInModal( id, parent || '0' );
-	} );
+	}
 
-	document.addEventListener( 'click', function ( e ) {
+	on( document, 'click', onCategoryEditClick );
+
+	function onCategoryDeleteClick( e ) {
 		const deleteBtn = e.target.closest( '.beruang-action-delete' );
 		if ( ! deleteBtn ) return;
 		const li = deleteBtn.closest( '.beruang-cat-item' );
@@ -351,7 +363,9 @@ export function initForm() {
 		request( 'DELETE', '/categories/' + id ).then( function ( r ) {
 			if ( r.success ) refreshCategoriesInModal();
 		} );
-	} );
+	}
+
+	on( document, 'click', onCategoryDeleteClick );
 
 	// Calculator modal – shared; track which form's amount input to insert into
 	let calcTargetInput = null;
@@ -361,7 +375,7 @@ export function initForm() {
 	let calcOp = null;
 	let calcPrev = null;
 
-	document.addEventListener( 'click', function ( e ) {
+	function onCalcBtnClick( e ) {
 		const calcBtn = e.target.closest( '.beruang-calc-btn' );
 		if ( ! calcBtn ) return;
 		const form = calcBtn.closest( '.beruang-transaction-form' );
@@ -373,7 +387,9 @@ export function initForm() {
 		calcPrev = null;
 		calcDisplay.value = initVal;
 		calcModal.hidden = false;
-	} );
+	}
+
+	on( document, 'click', onCalcBtnClick );
 
 	if ( calcModal && calcDisplay ) {
 		const updateDisplay = function () {
@@ -409,7 +425,7 @@ export function initForm() {
 		};
 		const insertCloseBtn = calcModal.querySelector( '.beruang-calc-insert-close' );
 		if ( insertCloseBtn ) {
-			insertCloseBtn.addEventListener( 'click', function () {
+			on( insertCloseBtn, 'click', function () {
 				doEquals();
 				const places = getDecimalPlaces();
 				const num = parseFloat( calcVal ) || 0;
@@ -421,7 +437,7 @@ export function initForm() {
 				calcModal.hidden = true;
 			} );
 		}
-		calcModal.addEventListener( 'click', function ( e ) {
+		on( calcModal, 'click', function ( e ) {
 			if ( e.target === calcModal ) calcModal.hidden = true;
 		} );
 		const btns = [
@@ -434,26 +450,13 @@ export function initForm() {
 		container.innerHTML = '';
 		btns.forEach( function ( row ) {
 			row.forEach( function ( key ) {
-				const isOp =
-					key === '+' ||
-					key === '-' ||
-					key === '*' ||
-					key === '/' ||
-					key === '\u00f7' ||
-					key === '\u00d7';
 				const b = document.createElement( 'button' );
 				b.type = 'button';
 				b.textContent = key;
+				const isOp = key === '+' || key === '-' || key === '*' || key === '/' || key === '\u00f7' || key === '\u00d7';
 				if ( isOp ) b.classList.add( 'beruang-calc-op' );
 				b.addEventListener( 'click', function () {
-					if (
-						key === '+' ||
-						key === '-' ||
-						key === '*' ||
-						key === '/' ||
-						key === '\u00f7' ||
-						key === '\u00d7'
-					) {
+					if ( key === '+' || key === '-' || key === '*' || key === '/' || key === '\u00f7' || key === '\u00d7' ) {
 						if ( calcOp && calcPrev !== null ) {
 							doEquals();
 						}
@@ -471,9 +474,9 @@ export function initForm() {
 			} );
 		} );
 		const clearBtn = calcModal.querySelector( '.beruang-calc-clear' );
-		if ( clearBtn ) clearBtn.addEventListener( 'click', doClear );
+		if ( clearBtn ) on( clearBtn, 'click', doClear );
 		const backspaceBtn = calcModal.querySelector( '.beruang-calc-backspace' );
-		if ( backspaceBtn ) backspaceBtn.addEventListener( 'click', function () {
+		if ( backspaceBtn ) on( backspaceBtn, 'click', function () {
 			if ( calcVal.length > 1 ) {
 				calcVal = calcVal.slice( 0, -1 );
 			} else {
@@ -482,14 +485,14 @@ export function initForm() {
 			updateDisplay();
 		} );
 		const equalsBtn = calcModal.querySelector( '.beruang-calc-equals' );
-		if ( equalsBtn ) equalsBtn.addEventListener( 'click', doEquals );
+		if ( equalsBtn ) on( equalsBtn, 'click', doEquals );
 	}
 
 	// Description autocomplete
 	function initDescriptionAutocomplete( input ) {
 		let debounceTimer = null;
-		let currentSuggestions = [];
-		let activeIndex = -1;
+		const currentSuggestions = { val: [] };
+		const activeIndex = { val: -1 };
 
 		const listId = 'beruang-desc-suggestions-' + Math.random().toString( 36 ).slice( 2 );
 
@@ -513,8 +516,8 @@ export function initForm() {
 		function closeSuggestions() {
 			list.hidden = true;
 			list.innerHTML = '';
-			currentSuggestions = [];
-			activeIndex = -1;
+			currentSuggestions.val = [];
+			activeIndex.val = -1;
 			input.setAttribute( 'aria-expanded', 'false' );
 			input.removeAttribute( 'aria-activedescendant' );
 		}
@@ -529,9 +532,9 @@ export function initForm() {
 				items[ idx ].classList.add( 'is-active' );
 				items[ idx ].setAttribute( 'aria-selected', 'true' );
 				input.setAttribute( 'aria-activedescendant', items[ idx ].id );
-				activeIndex = idx;
+				activeIndex.val = idx;
 			} else {
-				activeIndex = -1;
+				activeIndex.val = -1;
 				input.removeAttribute( 'aria-activedescendant' );
 			}
 		}
@@ -558,10 +561,10 @@ export function initForm() {
 			} );
 			list.hidden = false;
 			input.setAttribute( 'aria-expanded', 'true' );
-			activeIndex = -1;
+			activeIndex.val = -1;
 		}
 
-		input.addEventListener( 'input', function () {
+		on( input, 'input', function () {
 			clearTimeout( debounceTimer );
 			const val = input.value.trim();
 			if ( ! val ) {
@@ -571,42 +574,42 @@ export function initForm() {
 			debounceTimer = setTimeout( function () {
 				request( 'GET', '/descriptions', { search: val } ).then( function ( r ) {
 					if ( r.success && r.data && r.data.descriptions ) {
-						currentSuggestions = r.data.descriptions;
-						renderSuggestions( currentSuggestions );
+						currentSuggestions.val = r.data.descriptions;
+						renderSuggestions( currentSuggestions.val );
 					}
 				} );
 			}, 200 );
 		} );
 
-		input.addEventListener( 'keydown', function ( e ) {
+		on( input, 'keydown', function ( e ) {
 			if ( list.hidden ) return;
 			const items = list.querySelectorAll( '.beruang-desc-suggestion-item' );
 			if ( e.key === 'ArrowDown' ) {
 				e.preventDefault();
-				setActive( Math.min( activeIndex + 1, items.length - 1 ) );
+				setActive( Math.min( activeIndex.val + 1, items.length - 1 ) );
 			} else if ( e.key === 'ArrowUp' ) {
 				e.preventDefault();
-				setActive( Math.max( activeIndex - 1, 0 ) );
-			} else if ( e.key === 'Enter' && activeIndex >= 0 ) {
+				setActive( Math.max( activeIndex.val - 1, 0 ) );
+			} else if ( e.key === 'Enter' && activeIndex.val >= 0 ) {
 				e.preventDefault();
-				input.value = currentSuggestions[ activeIndex ];
+				input.value = currentSuggestions.val[ activeIndex.val ];
 				closeSuggestions();
 			} else if ( e.key === 'Escape' ) {
 				closeSuggestions();
 			}
 		} );
 
-		input.addEventListener( 'blur', function () {
+		on( input, 'blur', function () {
 			setTimeout( closeSuggestions, 150 );
 		} );
 
-		window.addEventListener( 'popstate', closeSuggestions );
+		on( window, 'popstate', closeSuggestions );
 	}
 
 	// Transaction forms
 	const forms = document.querySelectorAll( '.beruang-transaction-form' );
 	refreshWalletSelects();
-	document.addEventListener( 'beruang-wallets-updated', refreshWalletSelects );
+	on( document, 'beruang-wallets-updated', refreshWalletSelects );
 	forms.forEach( function ( form ) {
 		const typeField = form.querySelector( '[name="type"]' );
 		const message = form.querySelector( '.beruang-form-message' );
@@ -620,13 +623,13 @@ export function initForm() {
 
 		syncNoteUi( form );
 		if ( noteEl ) {
-			noteEl.addEventListener( 'input', function () {
+			on( noteEl, 'input', function () {
 				syncNoteUi( form );
 			} );
 		}
 
 		form.querySelectorAll( '.beruang-type-btn' ).forEach( function ( btn ) {
-			btn.addEventListener( 'click', function () {
+			on( btn, 'click', function () {
 				const t = this.dataset.type;
 				form.querySelectorAll( '.beruang-type-btn' ).forEach( function ( b ) {
 					b.classList.remove( 'active' );
@@ -636,7 +639,7 @@ export function initForm() {
 			} );
 		} );
 
-		form.addEventListener( 'submit', function ( e ) {
+		on( form, 'submit', function ( e ) {
 			e.preventDefault();
 			if ( message ) message.textContent = '';
 			setFormLoading( form, true );
@@ -682,12 +685,21 @@ export function initForm() {
 	} );
 
 	// Refresh date/time on add-mode forms when tab becomes visible (only if stale > 10s).
-	document.addEventListener( 'visibilitychange', function () {
+	function onVisibilityChange() {
 		if ( document.hidden || Date.now() - lastDateTimeReset <= 10000 ) return;
 		document.querySelectorAll( '.beruang-transaction-form[data-mode="add"]' ).forEach( function ( f ) {
 			setCurrentDateTime( f );
 		} );
-	} );
+	}
+
+	on( document, 'visibilitychange', onVisibilityChange );
 
 	document.querySelectorAll( '.beruang-transaction-form [name="description"]' ).forEach( initDescriptionAutocomplete );
+
+	return function destroy() {
+		while ( listeners.length ) {
+			const l = listeners.pop();
+			l.target.removeEventListener( l.event, l.handler );
+		}
+	};
 }

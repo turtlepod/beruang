@@ -13,6 +13,12 @@ export function initList() {
 	const accordion = document.getElementById( 'beruang-list-accordion' );
 	if ( ! accordion ) return;
 
+	const listeners = [];
+	function on( target, event, handler, options ) {
+		target.addEventListener( event, handler, options );
+		listeners.push( { target, event, handler } );
+	}
+
 	const listWrap = accordion.closest( '.beruang-list-wrapper' );
 	const filters = listWrap && listWrap.querySelector( '#beruang-list-filters' );
 	const filterBtn = listWrap && listWrap.querySelector( '.beruang-filter-btn' );
@@ -22,7 +28,7 @@ export function initList() {
 	const budgetEl = listWrap && listWrap.querySelector( '.beruang-filter-budget' );
 	const walletEl = listWrap && listWrap.querySelector( '.beruang-filter-wallet' );
 	if ( filterBtn && filters ) {
-		filterBtn.addEventListener( 'click', function () {
+		on( filterBtn, 'click', function () {
 			filters.hidden = ! filters.hidden;
 		} );
 	}
@@ -160,10 +166,10 @@ export function initList() {
 	}
 
 	const filterApply = listWrap && listWrap.querySelector( '.beruang-filter-apply' );
-	if ( filterApply ) filterApply.addEventListener( 'click', loadList );
+	if ( filterApply ) on( filterApply, 'click', loadList );
 	const filterReset = listWrap && listWrap.querySelector( '.beruang-filter-reset' );
 	if ( filterReset ) {
-		filterReset.addEventListener( 'click', function () {
+		on( filterReset, 'click', function () {
 			if ( yearSel ) yearSel.value = accordion.dataset.year || '';
 			if ( searchEl ) searchEl.value = '';
 			if ( categoryEl ) categoryEl.value = '';
@@ -173,7 +179,7 @@ export function initList() {
 		} );
 	}
 
-	accordion.addEventListener( 'click', function ( e ) {
+	function onAccordionClick( e ) {
 		const head = e.target.closest( '.beruang-accordion-month-head' );
 		if ( ! head ) return;
 		const month = head.closest( '.beruang-accordion-month' );
@@ -181,8 +187,9 @@ export function initList() {
 		const isOpen = month.classList.contains( 'is-open' );
 		month.classList.toggle( 'is-open', ! isOpen );
 		head.setAttribute( 'aria-expanded', ! isOpen );
-	} );
-	accordion.addEventListener( 'keydown', function ( e ) {
+	}
+
+	function onAccordionKeydown( e ) {
 		const head = e.target.closest( '.beruang-accordion-month-head' );
 		if ( ! head ) return;
 		if ( e.key !== 'Enter' && e.key !== ' ' ) return;
@@ -192,13 +199,16 @@ export function initList() {
 		const isOpen = month.classList.contains( 'is-open' );
 		month.classList.toggle( 'is-open', ! isOpen );
 		head.setAttribute( 'aria-expanded', ! isOpen );
-	} );
+	}
+
+	on( accordion, 'click', onAccordionClick );
+	on( accordion, 'keydown', onAccordionKeydown );
 
 	// Edit transaction modal
 	const editModal = document.getElementById( 'beruang-edit-tx-modal' );
 	const editForm = document.getElementById( 'beruang-edit-tx-form' );
 	if ( editModal && editForm ) {
-		document.addEventListener( 'click', function ( e ) {
+		const onEditTransactionClick = function ( e ) {
 			const editBtn = e.target.closest( '.beruang-action-edit' );
 			if ( ! editBtn ) return;
 			const item = editBtn.closest( '.beruang-transaction-item' );
@@ -242,9 +252,9 @@ export function initList() {
 				} );
 				editModal.hidden = false;
 			} );
-		} );
+		}
 
-		document.addEventListener( 'click', function ( e ) {
+		const onDeleteTransactionClick = function ( e ) {
 			const deleteBtn = e.target.closest( '.beruang-action-delete' );
 			if ( ! deleteBtn ) return;
 			const item = deleteBtn.closest( '.beruang-transaction-item' );
@@ -258,7 +268,10 @@ export function initList() {
 			request( 'DELETE', '/transactions/' + id ).then( function ( r ) {
 				if ( r.success ) loadList();
 			} );
-		} );
+		}
+
+		on( document, 'click', onEditTransactionClick );
+		on( document, 'click', onDeleteTransactionClick );
 
 		const editMessage = editForm.querySelector( '.beruang-form-message' );
 
@@ -268,23 +281,30 @@ export function initList() {
 				editMessage.style.color = '';
 			}
 			editModal.hidden = true;
-		};
+		}
 
 		const editCancel = document.querySelector( '.beruang-edit-tx-cancel' );
-		if ( editCancel ) editCancel.addEventListener( 'click', closeEditModal );
-		editModal.addEventListener( 'click', function ( e ) {
+		if ( editCancel ) on( editCancel, 'click', closeEditModal );
+		on( editModal, 'click', function ( e ) {
 			if ( e.target === editModal ) closeEditModal();
 		} );
 		const editCloseX = editModal.querySelector( '.beruang-modal-close-x' );
-		if ( editCloseX ) editCloseX.addEventListener( 'click', function () {
+		if ( editCloseX ) on( editCloseX, 'click', function () {
 			if ( editMessage ) {
 				editMessage.textContent = '';
 				editMessage.style.color = '';
 			}
 		} );
 
-		document.addEventListener( 'beruang-transaction-saved', loadList );
+		on( document, 'beruang-transaction-saved', loadList );
 	}
 
 	loadList();
+
+	return function destroy() {
+		while ( listeners.length ) {
+			const l = listeners.pop();
+			l.target.removeEventListener( l.event, l.handler );
+		}
+	};
 }
