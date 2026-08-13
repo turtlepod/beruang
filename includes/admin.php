@@ -1085,13 +1085,14 @@ function admin_page_categories() {
 			$cat      = DB::get_category_by_id( absint( $_GET['delete'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$del_user = $cat ? (int) $cat['user_id'] : get_current_user_id();
 		}
-		DB::delete_category( $del_user, absint( $_GET['delete'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$deleted = DB::delete_category( $del_user, absint( $_GET['delete'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		wp_safe_redirect(
 			add_query_arg(
 				array(
 					'page'            => 'beruang-categories',
 					'user_id'         => $del_user ? $del_user : null,
-					'beruang_deleted' => '1',
+					'beruang_deleted' => $deleted ? '1' : null,
+					'beruang_error'   => $deleted ? null : 'default',
 				),
 				admin_url( 'admin.php' )
 			)
@@ -1107,6 +1108,9 @@ function admin_page_categories() {
 		}
 		if ( isset( $_GET['beruang_error'] ) && 'notfound' === $_GET['beruang_error'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Category not found.', 'beruang-budget' ) . '</p></div>';
+		}
+		if ( isset( $_GET['beruang_error'] ) && 'default' === $_GET['beruang_error'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Failed to delete category.', 'beruang-budget' ) . '</p></div>';
 		}
 		if ( isset( $_GET['beruang_deleted'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Category deleted.', 'beruang-budget' ) . '</p></div>';
