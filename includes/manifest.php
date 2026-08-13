@@ -123,7 +123,8 @@ function manifest_enqueue_sw_script() {
  * @return string
  */
 function manifest_get_service_worker_script() {
-	return "const CACHE='beruang-pwa-v1';\n"
+	$version = BERUANG_BUDGET_VERSION;
+	return "const CACHE='beruang-pwa-v{$version}';\n"
 		. "self.addEventListener('install',event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.add('/')).catch(()=>{}));});\n"
 		. "self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});\n"
 		. "self.addEventListener('fetch',event=>{if(event.request.method!=='GET'){return;}event.respondWith(fetch(event.request).catch(()=>caches.match(event.request).then(resp=>resp||caches.match('/'))));});\n";
