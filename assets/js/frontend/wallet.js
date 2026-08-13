@@ -7,7 +7,7 @@
 'use strict';
 
 import { i18n, editIcon, deleteIcon } from './config.js';
-import { request, beruangTemplate, setFormLoading, escapeHtml, formatNum } from './utils.js';
+import { request, beruangTemplate, setFormLoading, escapeHtml, formatNum, showToast } from './utils.js';
 
 export function initWallet() {
 	const form = document.getElementById( 'beruang-wallet-form' );
@@ -185,7 +185,10 @@ export function initWallet() {
 
 	function refreshWallets() {
 		request( 'GET', '/wallets' ).then( function ( r ) {
-			if ( ! r.success || ! r.data || ! r.data.wallets ) return;
+			if ( ! r.success || ! r.data || ! r.data.wallets ) {
+				showToast( ( r.data && r.data.message ) || i18n.error || 'Error', 'error' );
+				return;
+			}
 			renderWallets( r.data.wallets, r.data.default_wallet_id );
 			updateDefaultSelect( r.data.wallets, r.data.default_wallet_id );
 			updateTransferSelects( r.data.wallets );

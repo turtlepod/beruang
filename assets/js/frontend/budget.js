@@ -7,7 +7,7 @@
 'use strict';
 
 import { i18n, editIcon, deleteIcon } from './config.js';
-import { request, beruangTemplate, formatNum, formatAmountForInput } from './utils.js';
+import { request, beruangTemplate, formatNum, formatAmountForInput, showToast } from './utils.js';
 
 export function initBudget() {
 	const list = document.getElementById( 'beruang-budget-list' );
@@ -38,6 +38,7 @@ export function initBudget() {
 		if ( ! id || ! confirm( i18n.confirm_delete || 'Delete this budget?' ) ) return;
 		request( 'DELETE', '/budgets/' + id ).then( function ( res ) {
 			if ( res.success ) loadBudgets();
+			else showToast( ( res.data && res.data.message ) || i18n.error || 'Error', 'error' );
 		} );
 	} );
 	document.addEventListener( 'click', function ( e ) {
