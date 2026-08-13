@@ -176,7 +176,7 @@ export function initForm() {
 				const currentVal = el.value;
 				el.innerHTML = buildWalletOptions( wallets );
 				el.dataset.defaultWalletId = defaultWalletId;
-				if ( currentVal && el.querySelector( 'option[value="' + currentVal + '"]' ) ) {
+				if ( currentVal && el.querySelector( 'option[value="' + CSS.escape(String(currentVal)) + '"]' ) ) {
 					el.value = currentVal;
 				} else {
 					el.value = defaultWalletId;
@@ -199,7 +199,7 @@ export function initForm() {
 			document.querySelectorAll( '.beruang-transaction-form [name="category_id"]' ).forEach( function ( el ) {
 				const currentVal = el.value;
 				el.innerHTML = buildMainCategoryOptions( cats );
-				if ( currentVal && el.querySelector( 'option[value="' + currentVal + '"]' ) ) {
+				if ( currentVal && el.querySelector( 'option[value="' + CSS.escape(String(currentVal)) + '"]' ) ) {
 					el.value = currentVal;
 				}
 			} );
