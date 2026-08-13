@@ -569,9 +569,23 @@ function admin_handle_import() {
 		add_settings_error( 'beruang_import', 'beruang_import', __( 'Invalid file upload.', 'beruang-budget' ), 'error' );
 		return;
 	}
+
+	// Enforce a 5 MB filesize limit to prevent memory exhaustion from large uploads.
+	$max_size = 5 * 1024 * 1024; // 5 MB.
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- tmp_name is server-assigned by PHP's file upload handler, not user input.
+	if ( filesize( $_FILES['beruang_import_file']['tmp_name'] ) > $max_size ) {
+		add_settings_error( 'beruang_import', 'beruang_import', __( 'Import file is too large. Maximum allowed size is 5 MB.', 'beruang-budget' ), 'error' );
+		return;
+	}
+
 	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Validated via is_uploaded_file, local file, nonce verified above.
-	$raw  = file_get_contents( $_FILES['beruang_import_file']['tmp_name'] );
-	$data = json_decode( $raw, true );
+	$raw = file_get_contents( $_FILES['beruang_import_file']['tmp_name'] );
+	try {
+		$data = json_decode( $raw, true, 512, JSON_THROW_ON_ERROR );
+	} catch ( \JsonException $e ) {
+		add_settings_error( 'beruang_import', 'beruang_import', __( 'Invalid JSON file.', 'beruang-budget' ), 'error' );
+		return;
+	}
 	if ( ! is_array( $data ) || ( empty( $data['categories'] ) && empty( $data['transactions'] ) && empty( $data['budgets'] ) ) ) {
 		add_settings_error( 'beruang_import', 'beruang_import', __( 'Invalid or empty import file.', 'beruang-budget' ), 'error' );
 		return;
