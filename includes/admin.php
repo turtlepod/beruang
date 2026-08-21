@@ -173,9 +173,7 @@ function admin_register_settings() {
 		array(
 			'type'              => 'boolean',
 			'default'           => false,
-			'sanitize_callback' => function ( $v ) {
-				return ! empty( $v );
-			},
+			'sanitize_callback' => 'rest_sanitize_boolean',
 		)
 	);
 	register_setting(
