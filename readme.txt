@@ -60,6 +60,18 @@ Font Awesome Free Icons
 * License: CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/
 * The plugin uses inline SVG paths derived from Font Awesome Free icons: xmark (close), calculator (calc), list-ul (list), filter (filter), file-circle-plus (add), pen-to-square (edit), trash-can (trash).
 
+== Source Code ==
+
+The compiled assets in `dist/` are generated from the human-readable sources in this repository.
+
+* Repository: https://github.com/turtlepod/beruang-budget
+* JavaScript source: `assets/js/` (entry point `assets/js/beruang-front.js`)
+* CSS source: `assets/css/`
+
+The `dist/` bundle is built with [10up-toolkit](https://github.com/10up/10up-toolkit). To rebuild:
+
+`npm install && npm run build`
+
 == Upgrade Notice ==
 
 Maintenance update.
